@@ -4,13 +4,14 @@ import { UserService } from "src/domain/user.service";
 import { HttpStatusCode } from "src/helpers/httpStatusCode";
 import { Response } from "express";
 import { QueryParamsModel } from "src/models/PaginationQuery";
+import { UserQueryRepository } from "src/queryRepositories/user.query-repository";
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly userService: UserService){}
+  constructor(private readonly userService: UserService, private readonly userQueryRepository: UserQueryRepository){}
   @Get()
   async getUsers(@Query() params: QueryParamsModel) {
-    return await this.userService.getUsers(params)
+    return await this.userQueryRepository.getUsers(params)
   }
   
   @Post()
