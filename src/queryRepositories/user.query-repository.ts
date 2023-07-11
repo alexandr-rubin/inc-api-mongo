@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { User, UserDocument } from "src/models/User";
-import { Paginator } from "src/models/Paginator";
-import { QueryParamsModel } from "src/models/PaginationQuery";
-import { createPaginationQuery, createPaginationResult } from "src/helpers/pagination";
+import { User, UserDocument } from "../models/User";
+import { Paginator } from "../models/Paginator";
+import { QueryParamsModel } from "../models/PaginationQuery";
+import { createPaginationQuery, createPaginationResult } from "../helpers/pagination";
 
 @Injectable()
 export class UserQueryRepository {

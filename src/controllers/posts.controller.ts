@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from "@nestjs/common";
-import { HttpStatusCode } from "src/helpers/httpStatusCode";
+import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { Response } from "express";
-import { PostInputModel } from "src/models/Post";
-import { PostService } from "src/domain/post.service";
-import { PostQueryRepository } from "src/queryRepositories/post.query-repository";
-import { QueryParamsModel } from "src/models/PaginationQuery";
+import { PostInputModel } from "../models/Post";
+import { PostService } from "../domain/post.service";
+import { PostQueryRepository } from "../queryRepositories/post.query-repository";
+import { QueryParamsModel } from "../models/PaginationQuery";
 
 @Controller('posts')
 export class PostsController {

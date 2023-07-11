@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, Res } from "@nestjs/common";
 import { UserInputModel } from "src/models/User";
 import { UserService } from "src/domain/user.service";
-import { HttpStatusCode } from "src/helpers/httpStatusCode";
+import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { Response } from "express";
-import { QueryParamsModel } from "src/models/PaginationQuery";
-import { UserQueryRepository } from "src/queryRepositories/user.query-repository";
+import { QueryParamsModel } from "../models/PaginationQuery";
+import { UserQueryRepository } from "../queryRepositories/user.query-repository";
 
 @Controller('users')
 export class UsersController {

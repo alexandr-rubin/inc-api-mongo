@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from "@nestjs/common";
-import { HttpStatusCode } from "src/helpers/httpStatusCode";
+import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { Response } from "express";
-import { BlogService } from "src/domain/blog.service";
-import { BlogInputModel } from "src/models/Blogs";
-import { QueryParamsModel } from "src/models/PaginationQuery";
-import { BlogQueryRepository } from "src/queryRepositories/blog.query-repository";
-import { PostInputModel } from "src/models/Post";
+import { BlogService } from "../domain/blog.service";
+import { BlogInputModel } from "../models/Blogs";
+import { QueryParamsModel } from "../models/PaginationQuery";
+import { BlogQueryRepository } from "../queryRepositories/blog.query-repository";
+import { PostInputModel } from "../models/Post";
 
 @Controller('blogs')
 export class BlogsController {

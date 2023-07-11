@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { LikeStatuses } from "src/helpers/likeStatuses";
-import { Comment, CommentDocument, CommentViewModel } from "src/models/Comment";
-import { CommentLikeDocument } from "src/models/Like";
+import { LikeStatuses } from "../helpers/likeStatuses";
+import { Comment, CommentDocument, CommentViewModel } from "../models/Comment";
+import { CommentLikeDocument } from "../models/Like";
 
 @Injectable()
 export class CommentQueryRepository {

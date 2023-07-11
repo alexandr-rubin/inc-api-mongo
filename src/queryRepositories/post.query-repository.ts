@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Paginator } from "src/models/Paginator";
-import { QueryParamsModel } from "src/models/PaginationQuery";
-import { createPaginationQuery, createPaginationResult } from "src/helpers/pagination";
-import { Post, PostDocument, PostViewModel } from "src/models/Post";
-import { PostLikeDocument } from "src/models/Like";
-import { LikeStatuses } from "src/helpers/likeStatuses";
+import { Paginator } from "../models/Paginator";
+import { QueryParamsModel } from "../models/PaginationQuery";
+import { createPaginationQuery, createPaginationResult } from "../helpers/pagination";
+import { Post, PostDocument, PostViewModel } from "../models/Post";
+import { PostLikeDocument } from "../models/Like";
+import { LikeStatuses } from "../helpers/likeStatuses";
 
 @Injectable()
 export class PostQueryRepository {

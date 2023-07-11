@@ -1,6 +1,6 @@
 import { Request } from "express"
 import { Paginator } from '../models/Paginator'
-import { QueryParamsModel } from 'src/models/PaginationQuery'
+import { QueryParamsModel } from '../models/PaginationQuery'
 
 export const createPaginationQuery = (query: QueryParamsModel): QueryParamsModel => {
         const resultQuery: QueryParamsModel = {

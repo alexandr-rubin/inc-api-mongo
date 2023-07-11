@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from "@nestjs/common";
-import { HttpStatusCode } from "src/helpers/httpStatusCode";
+import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { Response } from "express";
-import { CommentQueryRepository } from "src/queryRepositories/comment.query-repository";
+import { CommentQueryRepository } from "../queryRepositories/comment.query-repository";
 
 @Controller('comments')
 export class CommentController {

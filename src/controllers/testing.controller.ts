@@ -1,9 +1,9 @@
 import { Controller, Delete, Res } from "@nestjs/common";
-import { UserService } from "src/domain/user.service";
-import { HttpStatusCode } from "src/helpers/httpStatusCode";
+import { UserService } from "../domain/user.service";
+import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { Response } from "express";
-import { PostService } from "src/domain/post.service";
-import { BlogService } from "src/domain/blog.service";
+import { PostService } from "../domain/post.service";
+import { BlogService } from "../domain/blog.service";
 
 @Controller('testing/all-data')
 export class TestingController {

@@ -2,9 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { add } from "date-fns";
 import { Model } from "mongoose";
-import { User, UserDocument, UserInputModel, UserViewModel } from "src/models/User";
+import { User, UserDocument, UserInputModel, UserViewModel } from "../models/User";
 import { v4 as uuidv4 } from 'uuid'
-import { generateHash } from "src/helpers/generateHash";
+import { generateHash } from "../helpers/generateHash";
 
 @Injectable()
 export class UserService {
