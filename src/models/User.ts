@@ -6,6 +6,8 @@ export type UserDocument = HydratedDocument<User>;
 @Schema()
 export class User {
   @Prop()
+  id!: string
+  @Prop()
   login!: string
   @Prop()
   password!: string
@@ -54,7 +56,3 @@ export class UserInputModel {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
-UserSchema.virtual('id').get(function () {
-  return this._id.toString();
-})

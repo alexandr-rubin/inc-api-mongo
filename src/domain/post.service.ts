@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { Post, PostDocument, PostInputModel, PostViewModel } from "../models/Post";
 import { BlogQueryRepository } from "../queryRepositories/blog.query-repository";
 
@@ -11,11 +11,11 @@ export class PostService {
   async addPost(post: PostInputModel): Promise<PostViewModel>{
     const blog = await this.blogQueryRepository.getBlogById(post.blogId)
 
-    const newPost = new this.postModel({...post, blogName: blog.name, createdAt: new Date().toISOString(),
+    const newPost = new this.postModel({id: new mongoose.Types.ObjectId().toString(), ...post, blogName: blog.name, createdAt: new Date().toISOString(),
     extendedLikesInfo: { likesCount: 0, dislikesCount: 0}})
     const save = (await newPost.save()).toJSON()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { __v, _id, ...result } = {id: save._id.toString(), ...save, extendedLikesInfo: { likesCount: 0, dislikesCount: 0, myStatus: 'None', newestLikes: [/*{ addedAt: '', login: '', userId: ''}*/]}}
+    const { __v, _id, ...result } = {...save, extendedLikesInfo: { likesCount: 0, dislikesCount: 0, myStatus: 'None', newestLikes: [/*{ addedAt: '', login: '', userId: ''}*/]}}
     return result
   }
 

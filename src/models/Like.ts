@@ -6,6 +6,8 @@ export type CommentLikeDocument = HydratedDocument<CommentLike>;
 @Schema()
 export class CommentLike {
   @Prop()
+  id!: string
+  @Prop()
   commentId!: string
   @Prop()
   userId!: string
@@ -19,6 +21,8 @@ export type PostLikeDocument = HydratedDocument<PosttLike>;
 
 @Schema()
 export class PosttLike {
+  @Prop()
+  id!: string
   @Prop()
   postId!: string
   @Prop()

@@ -10,10 +10,10 @@ import { createPaginationQuery, createPaginationResult } from "../helpers/pagina
 export class UserQueryRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>){}
   async getUsers(params: QueryParamsModel): Promise<Paginator<User>> {
-    // queryRepo
+    //
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
-    // fix any
+    //
     const search : any = {}
     if(query.searchLoginTerm != null){
         search.login = {$regex: query.searchLoginTerm, $options: 'i'}
@@ -25,7 +25,7 @@ export class UserQueryRepository {
     const users = await this.userModel.find({$or: searchTermsArray.length === 0 ? [{}] : searchTermsArray}, { password: false, confirmationEmail: false, confirmationPassword: false, __v: false })
     .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
     .skip(skip).limit(query.pageSize).lean()
-    // map or create id
+    //
     const transformedUsers = users.map((user) => {
       const { _id, ...rest } = user
       const id = _id.toString()

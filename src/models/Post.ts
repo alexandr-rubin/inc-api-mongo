@@ -6,6 +6,8 @@ export type PostDocument = HydratedDocument<Post>;
 @Schema()
 export class Post {
   @Prop()
+  id!: string
+  @Prop()
   title!: string
   @Prop()
   shortDescription!: string
@@ -46,6 +48,8 @@ export class NewestLikes {
 }
 
 export class PostViewModel {
+  @Prop()
+  id!: string
   @Prop()
   title!: string
   @Prop()

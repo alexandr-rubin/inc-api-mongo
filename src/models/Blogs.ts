@@ -6,6 +6,8 @@ export type BlogDocument = HydratedDocument<Blog>;
 @Schema()
 export class Blog {
   @Prop()
+  id!: string
+  @Prop()
   name!: string
   @Prop()
   description!: string
