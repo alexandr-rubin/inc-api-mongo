@@ -15,23 +15,30 @@ export class BlogQueryRepository {
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
     //
-    const blogs = await this.blogModel.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}, { __v: false, _id: false })
+    const blogs = await this.blogModel.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}, { __v: false })
     .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
     .skip(skip).limit(query.pageSize).lean()
+    //
+    const transformedBlogs = blogs.map((blog) => {
+      const { _id, ...rest } = blog
+      const id = _id.toString()
+      return { id, ...rest }
+    })
 
     const count = await this.blogModel.countDocuments(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}})
-    const result = createPaginationResult(count, query, blogs)
+    const result = createPaginationResult(count, query, transformedBlogs)
     
     return result
   }
 
   async getBlogById(blogId: string): Promise<BlogViewModel | null> {
-    const blog = await this.blogModel.findById(blogId, { __v: false, _id: false })
+    const blog = await this.blogModel.findById(blogId, { __v: false })
     if (!blog){
       return null
     }
-
-    return blog
+    const { _id, ...rest } = blog.toJSON()
+    const id = _id.toString()
+    return { id, ...rest }
   }
 
   async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<Post> | null>{
@@ -41,12 +48,17 @@ export class BlogQueryRepository {
     }
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
-    const posts = await this.postModel.find(query.searchNameTerm === null ? {blogId: blogId} : {blogId: blogId, name: {$regex: query.searchNameTerm, $options: 'i'}}, { __v: false, _id: false })
+    const posts = await this.postModel.find(query.searchNameTerm === null ? {blogId: blogId} : {blogId: blogId, name: {$regex: query.searchNameTerm, $options: 'i'}}).select('-__v')
     .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
     .skip(skip)
     .limit(query.pageSize).lean()
     const count = await this.postModel.countDocuments({blogId: blogId})
-    const result = createPaginationResult(count, query, posts)
+    const transformedPosts = posts.map((post) => {
+      const { _id, ...rest } = post
+      const id = _id.toString()
+      return { id, ...rest }
+    })
+    const result = createPaginationResult(count, query, transformedPosts)
     return await this.postQueryRepository.editPostToViewModel(result, userId)
 }
 }

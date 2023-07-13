@@ -15,12 +15,18 @@ export class PostQueryRepository {
     // fix
     const query = createPaginationQuery(params)
         const skip = (query.pageNumber - 1) * query.pageSize
-        const posts = await this.postModel.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}, { __v: false, _id: false })
+        const posts = await this.postModel.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}).select('-__v')
         .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
         .skip(skip).limit(query.pageSize).lean()
         const count = await this.postModel.countDocuments(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}})
         //
-        const result = createPaginationResult(count, query, posts)
+        const transformedPosts = posts.map((post) => {
+          const { _id, ...rest } = post
+          const id = _id.toString()
+          return { id, ...rest }
+        })
+
+        const result = createPaginationResult(count, query, transformedPosts)
 
         return await this.editPostToViewModel(result, userId)
   }
@@ -33,11 +39,12 @@ export class PostQueryRepository {
           return null
         }
         const objPost = post.toJSON()
-        const newestLikes = await this.postLikeModel.find({postId: postId, likeStatus: LikeStatuses.Like}, { __v: false, _id: false }).sort({ date: -1, login: -1 }).limit(3).lean()
+        const newestLikes = await this.postLikeModel.find({postId: postId, likeStatus: LikeStatuses.Like}, { __v: false }).sort({ date: -1, login: -1 }).limit(3).lean()
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _id, __v, ...rest } = {...objPost, extendedLikesInfo: {likesCount: post.extendedLikesInfo.likesCount, dislikesCount: post.extendedLikesInfo.dislikesCount, 
         myStatus: likeStatus, newestLikes: newestLikes }}
-        return rest
+        const id = _id.toString()
+        return { id, ...rest }
   }
 
   public async editPostToViewModel(post: Paginator<Post>, userId: string): Promise<Paginator<PostViewModel>>  {
@@ -47,7 +54,7 @@ export class PostQueryRepository {
           myStatus: LikeStatuses.None.toString(), newestLikes: [] }
     }))}
     for(let i = 0; i < newArray.items.length; i++){
-        const newestLikes = await this.postLikeModel.find({createdAt: newArray.items[i].createdAt, likeStatus: LikeStatuses.Like}, { __v: false, _id: false, postId: false, likeStatus: false }).sort({ addedAt: -1 }).limit(3).lean()
+        const newestLikes = await this.postLikeModel.find({createdAt: newArray.items[i].createdAt, likeStatus: LikeStatuses.Like}).sort({ addedAt: -1 }).select('-_id -__v -id -postId -likeStatus').limit(3).lean()
         if(newestLikes){
             newArray.items[i].extendedLikesInfo.newestLikes = newestLikes
         }

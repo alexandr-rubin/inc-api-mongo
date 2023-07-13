@@ -12,12 +12,13 @@ export class CommentQueryRepository {
   async getCommentById(commentId: string, userId: string): Promise<CommentViewModel | null> {
     const like = await this.commentLikeModel.findOne({commentId: commentId , userId: userId}).lean()
     const likeStatus = like === null ? LikeStatuses.None : like.likeStatus
-    const comment = await this.commentModel.findById(commentId, { __v: false, postId: false, _id: false }).lean()
+    const comment = await this.commentModel.findById(commentId, { __v: false, postId: false }).lean()
     if (!comment){
       return null
     }
     // 
-    const result = {...comment, likesInfo: {likesCount: comment.likesInfo.likesCount, dislikesCount: comment.likesInfo.dislikesCount, myStatus: likeStatus}}
-    return result
+    const { _id, ...rest } = {...comment, likesInfo: {likesCount: comment.likesInfo.likesCount, dislikesCount: comment.likesInfo.dislikesCount, myStatus: likeStatus}}
+    const id = _id.toString()
+    return { id, ...rest }
   }
 }
