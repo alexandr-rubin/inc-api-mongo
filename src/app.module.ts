@@ -21,6 +21,8 @@ import { CommentController } from './controllers/comments.controller';
 import { CommentQueryRepository } from './queryRepositories/comment.query-repository';
 import { ConfigModule } from '@nestjs/config';
 import * as dotenv from 'dotenv'
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 dotenv.config()
 
@@ -29,6 +31,10 @@ const MONGODB_URI = process.env.MONGODB_URI ||  'mongodb://localhost:27017/testD
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'swagger-static'),
+      serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/swagger',
+    }),
     ConfigModule.forRoot(),
     MongooseModule.forRoot(MONGODB_URI),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
