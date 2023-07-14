@@ -14,7 +14,6 @@ import { BlogQueryRepository } from './queryRepositories/blog.query-repository';
 import { PostService } from './domain/post.service';
 import { PostsController } from './controllers/posts.controller';
 import { Post, PostSchema } from './models/Post';
-import { CommentLike, CommentLikeSchema, PostLikeSchema, PosttLike } from './models/Like';
 import { PostQueryRepository } from './queryRepositories/post.query-repository';
 import { Comment, CommentSchema } from './models/Comment';
 import { CommentController } from './controllers/comments.controller';
@@ -40,8 +39,6 @@ const MONGODB_URI = process.env.MONGODB_URI ||  'mongodb://localhost:27017/testD
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
-    MongooseModule.forFeature([{ name: PosttLike.name, schema: PostLikeSchema }]),
-    MongooseModule.forFeature([{ name: CommentLike.name, schema: CommentLikeSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }])
   ],
   controllers: [AppController, UsersController, TestingController, BlogsController, PostsController, CommentController],

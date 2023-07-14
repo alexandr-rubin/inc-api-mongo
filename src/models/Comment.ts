@@ -15,13 +15,22 @@ export class Comment {
   @Prop()
   createdAt!: string
   @Prop({type: {
-    likesCount: Number,
-    dislikesCount: Number,
-    myStatus: String
+    likesCount: Number, 
+    dislikesCount: Number
   }})
+  likesAndDislikesCount!: { likesCount: number, dislikesCount: number }
   @Prop()
-  postId!: string
-  likesInfo: {likesCount: number, dislikesCount: number, myStatus: string}
+  likesAndDislikes!: [CommentLike]
+}
+
+@Schema()
+export class CommentLike {
+  @Prop()
+  commentId!: string
+  @Prop()
+  userId!: string
+  @Prop()
+  likeStatus!: string
 }
 
 export class CommentViewModel {

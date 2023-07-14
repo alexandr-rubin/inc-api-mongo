@@ -3,7 +3,6 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Blog, BlogDocument, BlogInputModel, BlogViewModel } from "../models/Blogs";
 import { Post, PostDocument, PostInputModel, PostViewModel } from "../models/Post";
-import { BlogQueryRepository } from "../queryRepositories/blog.query-repository";
 
 @Injectable()
 export class BlogService {
@@ -23,10 +22,10 @@ export class BlogService {
       return null
     }
     const newPost = new this.postModel({...post, blogId: blogId, blogName: blog.name, createdAt: new Date().toISOString(),
-    extendedLikesInfo: { likesCount: 0, dislikesCount: 0}})
+    likesAndDislikesCount: { likesCount: 0, dislikesCount: 0}, likesAndDislikes: [] })
     const save = (await newPost.save()).toJSON()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { __v, _id, ...result } = {id: save._id.toString(), ...save, extendedLikesInfo: { likesCount: 0, dislikesCount: 0, myStatus: 'None', newestLikes: [/*{ addedAt: '', login: '', userId: ''}*/]}}
+    const { __v, _id, likesAndDislikesCount, likesAndDislikes, ...result } = {id: save._id.toString(), ...save, extendedLikesInfo: { likesCount: 0, dislikesCount: 0, myStatus: 'None', newestLikes: [/*{ addedAt: '', login: '', userId: ''}*/]}}
     return result
   }
 

@@ -5,7 +5,7 @@ import { Paginator } from "../models/Paginator";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { createPaginationQuery, createPaginationResult } from "../helpers/pagination";
 import { Blog, BlogDocument, BlogViewModel } from "../models/Blogs";
-import { Post, PostDocument } from "../models/Post";
+import { Post, PostDocument, PostViewModel } from "../models/Post";
 import { PostQueryRepository } from "./post.query-repository";
 
 @Injectable()
@@ -41,7 +41,7 @@ export class BlogQueryRepository {
     return { id, ...rest }
   }
 
-  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<Post> | null>{
+  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel> | null>{
     const isFinded = await this.getBlogById(blogId) === null
     if(isFinded){
         return null

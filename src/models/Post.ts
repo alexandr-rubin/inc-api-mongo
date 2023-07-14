@@ -22,8 +22,22 @@ export class Post {
     likesCount: Number, 
     dislikesCount: Number
   }})
-  extendedLikesInfo: {likesCount: number, dislikesCount: number}
+  likesAndDislikesCount!: { likesCount: number, dislikesCount: number }
+  @Prop()
+  likesAndDislikes!: [PostLike]
 }
+
+export class PostLike {
+  @Prop()
+  userId!: string
+  @Prop()
+  login!: string
+  @Prop()
+  addedAt!: string
+  @Prop()
+  likeStatus!: string
+}
+
 
 export class PostInputModel {
   @Prop()
