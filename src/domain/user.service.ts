@@ -21,7 +21,7 @@ export class UserService {
       confirmationPassword: { confirmationCode: uuidv4(), expirationDate: expirationDate }
     })
     const save = (await newUser.save()).toJSON()
-    // fix
+    //
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { confirmationEmail, confirmationPassword, password,__v, _id, ...result} = {...save, id: save._id.toString()}
     return result

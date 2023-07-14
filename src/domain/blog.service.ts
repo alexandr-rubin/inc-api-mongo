@@ -7,7 +7,7 @@ import { BlogQueryRepository } from "../queryRepositories/blog.query-repository"
 
 @Injectable()
 export class BlogService {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>, @InjectModel(Post.name) private postModel: Model<PostDocument>, private blogQueryRepository: BlogQueryRepository){}
+  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>, @InjectModel(Post.name) private postModel: Model<PostDocument>){}
 
   async addBlog(blog: BlogInputModel): Promise<BlogViewModel>{
     const newBlog = new this.blogModel({...blog, createdAt: new Date().toISOString(), isMembership: false})
@@ -18,7 +18,7 @@ export class BlogService {
   }
 
   async addPostForSpecificBlog(blogId: string, post: PostInputModel): Promise<PostViewModel | null>{
-    const blog = await this.blogQueryRepository.getBlogById(blogId)
+    const blog = await this.blogModel.findById(blogId, { __v: false })
     if(!blog){
       return null
     }

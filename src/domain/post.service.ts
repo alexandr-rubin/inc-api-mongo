@@ -3,14 +3,14 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Post, PostDocument, PostInputModel, PostViewModel } from "../models/Post";
 import { BlogQueryRepository } from "../queryRepositories/blog.query-repository";
+import { Blog, BlogDocument } from "src/models/Blogs";
 
 @Injectable()
 export class PostService {
-  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>, protected blogQueryRepository: BlogQueryRepository){}
+  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>, @InjectModel(Blog.name) private blogModel: Model<BlogDocument>){}
 
   async addPost(post: PostInputModel): Promise<PostViewModel>{
-    const blog = await this.blogQueryRepository.getBlogById(post.blogId)
-
+    const blog = await this.blogModel.findById(post.blogId, { __v: false })
     const newPost = new this.postModel({...post, blogName: blog.name, createdAt: new Date().toISOString(),
     extendedLikesInfo: { likesCount: 0, dislikesCount: 0}})
     const save = (await newPost.save()).toJSON()
