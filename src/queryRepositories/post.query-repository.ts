@@ -6,43 +6,45 @@ import { QueryParamsModel } from "../models/PaginationQuery";
 import { createPaginationQuery, createPaginationResult } from "../helpers/pagination";
 import { Post, PostDocument, PostViewModel } from "../models/Post";
 import { LikeStatuses } from "../helpers/likeStatuses";
+import { Comment, CommentDocument, CommentViewModel } from "src/models/Comment";
+import { WithId } from 'mongodb' 
 
 @Injectable()
 export class PostQueryRepository {
-  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>){}
+  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>, @InjectModel(Comment.name) private commentModel: Model<CommentDocument>){}
   async getPosts(params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel>> {
     // fix
     const query = createPaginationQuery(params)
-        const skip = (query.pageNumber - 1) * query.pageSize
-        const posts = await this.postModel.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}).select('-__v')
-        .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
-        .skip(skip).limit(query.pageSize).lean()
-        const count = await this.postModel.countDocuments(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}})
-        //
-        const transformedPosts = posts.map((post) => {
-          const { _id, ...rest } = post
-          const id = _id.toString()
-          return { id, ...rest }
-        })
-        const result = createPaginationResult(count, query, transformedPosts)
+    const skip = (query.pageNumber - 1) * query.pageSize
+    const posts = await this.postModel.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}).select('-__v')
+    .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
+    .skip(skip).limit(query.pageSize).lean()
+    const count = await this.postModel.countDocuments(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}})
+    //
+    const transformedPosts = posts.map((post) => {
+      const { _id, ...rest } = post
+      const id = _id.toString()
+      return { id, ...rest }
+    })
+    const result = createPaginationResult(count, query, transformedPosts)
 
-        return await this.editPostToViewModel(result, userId)
+    return await this.editPostToViewModel(result, userId)
   }
 
-  async getPostgById(postId: string): Promise<PostViewModel | null> {
-    const like = null/* await this.postLikeModel.findOne({postId: postId , userId: userId}).lean() */
-        const likeStatus = like === null ? LikeStatuses.None : like.likeStatus
-        const post = await this.postModel.findById(postId)
-        if(!post){
-          return null
-        }
-        const objPost = post.toJSON()
-        const newestLikes = (post.likesAndDislikes.filter((element) => element.likeStatus === 'Like')).slice(-3).map((element) => element)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { _id, __v, likesAndDislikesCount, likesAndDislikes, ...rest } = {...objPost, extendedLikesInfo: {likesCount: post.likesAndDislikesCount.likesCount, dislikesCount: post.likesAndDislikesCount.dislikesCount, 
-        myStatus: likeStatus, newestLikes: newestLikes }}
-        const id = _id.toString()
-        return { id, ...rest }
+  async getPostgById(postId: string, userId: string): Promise<PostViewModel | null> {
+    const post = await this.postModel.findById(postId, { __v: false })
+    const like = post.likesAndDislikes.find(like => like.userId === userId)
+    const likeStatus = like === undefined ? LikeStatuses.None : like.likeStatus
+    if(!post){
+      return null
+    }
+    const objPost = post.toJSON()
+    const newestLikes = (post.likesAndDislikes.filter((element) => element.likeStatus === 'Like')).slice(-3).map((element) => element)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _id, likesAndDislikesCount, likesAndDislikes, ...rest } = {...objPost, extendedLikesInfo: {likesCount: post.likesAndDislikesCount.likesCount, dislikesCount: post.likesAndDislikesCount.dislikesCount, 
+    myStatus: likeStatus, newestLikes: newestLikes }}
+    const id = _id.toString()
+    return { id, ...rest }
   }
 
   public async editPostToViewModel(post: Paginator<Post>, userId: string): Promise<Paginator<PostViewModel>>  {
@@ -72,5 +74,37 @@ export class PostQueryRepository {
       }
     }
     return newArray 
-}
+  }
+
+  async getCommentsForSpecifiedPost(postId: string, params: QueryParamsModel, userId: string): Promise<Paginator<CommentViewModel>>{
+    const isFinded = await this.postModel.findById(postId)
+    if(isFinded === null){
+        return null
+    }
+    const query = createPaginationQuery(params)
+    const skip = (query.pageNumber - 1) * query.pageSize
+    const comments = await this.commentModel.find({postId: postId}, {postId: false, __v: false})
+    .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
+    .skip(skip)
+    .limit(query.pageSize).lean()
+    const count = await this.commentModel.countDocuments({postId: postId})
+    const result = createPaginationResult(count, query, comments)
+
+    return await this.editCommentToViewModel(result, userId)
+  }
+
+  private async editCommentToViewModel(comment: Paginator<WithId<Comment>>, userId: string): Promise<Paginator<CommentViewModel>> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const newArray = {...comment, items: comment.items.map(({ _id, likesAndDislikesCount, likesAndDislikes, ...rest }) => ({
+        id: _id.toString(), ...rest, commentatorInfo: {userId: rest.commentatorInfo.userId, userLogin: rest.commentatorInfo.userLogin},
+        likesInfo: { likesCount: likesAndDislikesCount.likesCount,  dislikesCount: likesAndDislikesCount.dislikesCount, myStatus: LikeStatuses.None.toString() }
+    }))}
+    for(let i = 0; i < newArray.items.length; i++){
+        const status = comment.items[i].likesAndDislikes.find(element => element.userId === userId)
+        if(status){
+            newArray.items[i].likesInfo.myStatus = status.likeStatus
+        }
+    }
+    return newArray
+  }
 }

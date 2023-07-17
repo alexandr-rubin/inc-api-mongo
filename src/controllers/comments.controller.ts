@@ -1,11 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Put, Res } from "@nestjs/common";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { Response } from "express";
 import { CommentQueryRepository } from "../queryRepositories/comment.query-repository";
+import { CommentService } from "src/domain/comment.service";
+import { CommentInputModel } from "src/models/Comment";
 
 @Controller('comments')
 export class CommentController {
-  constructor(private readonly commentQueryRepository: CommentQueryRepository){}
+  constructor(private readonly commentQueryRepository: CommentQueryRepository, private readonly commentService: CommentService){}
   @Get(':id')
   async getCommentById(@Param('id') id: string, @Res() res: Response) {
     const result = await this.commentQueryRepository.getCommentById(id, '')
@@ -14,5 +16,27 @@ export class CommentController {
     }
 
     return res.status(HttpStatusCode.OK_200).send(result)
+  }
+
+  @Delete(':commentId')
+  async deleteCommentById(@Param('commentId') commentId: string, @Res() res: Response) {
+    const isDeleted = await this.commentService.deleteCommentById(commentId)
+    if(!isDeleted)
+    {
+      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
+    }
+
+    return res.sendStatus(HttpStatusCode.NO_CONTENT_204)  
+  }
+
+  @Put(':commentId')
+  async updateCommentById(@Param('commentId') commentId: string, @Body() comment: CommentInputModel, @Res() res: Response) {
+    const isUpdated = await this.commentService.updateCommentById(commentId, comment)
+    if(!isUpdated)
+    {
+      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
+    }
+
+    return res.sendStatus(HttpStatusCode.NO_CONTENT_204) 
   }
 }

@@ -14,13 +14,15 @@ export class Comment {
   commentatorInfo!: {userId: string, userLogin: string}
   @Prop()
   createdAt!: string
+  @Prop()
+  postId!: string
   @Prop({type: {
     likesCount: Number, 
     dislikesCount: Number
   }})
   likesAndDislikesCount!: { likesCount: number, dislikesCount: number }
-  @Prop()
-  likesAndDislikes!: [CommentLike]
+  @Prop({ default: () => [] })
+  likesAndDislikes!: CommentLike[]
 }
 
 @Schema()
@@ -51,6 +53,11 @@ export class CommentViewModel {
     myStatus: String
   }})
   likesInfo: {likesCount: number, dislikesCount: number, myStatus: string}
+}
+
+export class CommentInputModel {
+  @Prop()
+  content!: string
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment)

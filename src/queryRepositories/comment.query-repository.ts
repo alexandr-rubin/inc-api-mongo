@@ -12,7 +12,7 @@ export class CommentQueryRepository {
     const comment = await this.commentModel.findById(commentId, { __v: false, postId: false }).lean()
     const like = comment.likesAndDislikes.find(like => like.userId === userId)
     // const like = await this.commentLikeModel.findOne({commentId: commentId , userId: userId}).lean()
-    const likeStatus = like === null ? LikeStatuses.None : like.likeStatus
+    const likeStatus = like === undefined ? LikeStatuses.None : like.likeStatus
     if (!comment){
       return null
     }

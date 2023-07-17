@@ -4,6 +4,8 @@ import { Model } from "mongoose";
 import { Post, PostDocument, PostInputModel, PostViewModel } from "../models/Post";
 import { Blog, BlogDocument } from "src/models/Blogs";
 import { PostRepository } from "src/repositories/post.repository";
+import { Comment, CommentViewModel } from "src/models/Comment";
+import { LikeStatuses } from "src/helpers/likeStatuses";
 
 @Injectable()
 export class PostService {
@@ -34,4 +36,16 @@ export class PostService {
     const result = await this.postModel.deleteMany({})
     return !!result
   }
+
+  async createComment(userId: string, userLogin: string, content: string, pId: string): Promise<CommentViewModel | null> {
+    const comment: Comment = {content: content, commentatorInfo: {userId: userId, userLogin: userLogin}, createdAt: new Date().toISOString(), postId: pId,
+    likesAndDislikesCount: {likesCount: 0, dislikesCount: 0}, likesAndDislikes: []}
+
+    const savedComment = (await this.postRepository.createComment(comment)).toJSON()
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {postId, _id, __v, likesAndDislikesCount, likesAndDislikes, ...result} = ({id: savedComment._id, ...savedComment, commentatorInfo: {userId: savedComment.commentatorInfo.userId, userLogin: savedComment.commentatorInfo.userLogin}, likesInfo: {likesCount: savedComment.likesAndDislikesCount.likesCount, 
+    dislikesCount: savedComment.likesAndDislikesCount.dislikesCount , myStatus: LikeStatuses.None}})
+
+    return result
+}
 }

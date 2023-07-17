@@ -323,6 +323,54 @@ window.onload = function() {
           }
         }
       },
+      "/posts/{postId}/comments": {
+        "post": {
+          "operationId": "PostsController_createComment",
+          "parameters": [
+            {
+              "name": "postId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentInputModel"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          }
+        },
+        "get": {
+          "operationId": "PostsController_getCommentForSpecifedPost",
+          "parameters": [
+            {
+              "name": "postId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        }
+      },
       "/comments/{id}": {
         "get": {
           "operationId": "CommentController_getCommentById",
@@ -336,6 +384,54 @@ window.onload = function() {
               }
             }
           ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/comments/{commentId}": {
+        "delete": {
+          "operationId": "CommentController_deleteCommentById",
+          "parameters": [
+            {
+              "name": "commentId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        },
+        "put": {
+          "operationId": "CommentController_updateCommentById",
+          "parameters": [
+            {
+              "name": "commentId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentInputModel"
+                }
+              }
+            }
+          },
           "responses": {
             "200": {
               "description": ""
@@ -368,6 +464,10 @@ window.onload = function() {
           "properties": {}
         },
         "PostInputModel": {
+          "type": "object",
+          "properties": {}
+        },
+        "CommentInputModel": {
           "type": "object",
           "properties": {}
         }
