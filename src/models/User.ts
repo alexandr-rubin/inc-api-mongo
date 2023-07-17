@@ -25,11 +25,11 @@ export class User {
   }
   @Prop({type: {
     confirmationCode: String, 
-    expirationDate: Date
+    expirationDate: String
   }})
   confirmationPassword! : {
     confirmationCode: string, 
-    expirationDate: Date
+    expirationDate: string
   }
 }
 

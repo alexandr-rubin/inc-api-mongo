@@ -23,8 +23,8 @@ export class Post {
     dislikesCount: Number
   }})
   likesAndDislikesCount!: { likesCount: number, dislikesCount: number }
-  @Prop()
-  likesAndDislikes!: [PostLike]
+  @Prop({ default: () => [] })
+  likesAndDislikes!: PostLike[]
 }
 
 export class PostLike {

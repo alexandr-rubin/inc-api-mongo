@@ -22,6 +22,9 @@ import { ConfigModule } from '@nestjs/config';
 import * as dotenv from 'dotenv'
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { UserRepository } from './repositories/user.repository';
+import { PostRepository } from './repositories/post.repository';
+import { BlogRepository } from './repositories/blog.repository';
 
 dotenv.config()
 
@@ -43,6 +46,6 @@ const MONGODB_URI = process.env.MONGODB_URI ||  'mongodb://localhost:27017/testD
   ],
   controllers: [AppController, UsersController, TestingController, BlogsController, PostsController, CommentController],
   providers: [AppService, UserService, BlogService, UserQueryRepository, BlogQueryRepository, PostService,
-    PostQueryRepository, CommentQueryRepository],
+    PostQueryRepository, CommentQueryRepository, UserRepository,  PostRepository, BlogRepository],
 })
 export class AppModule {}
