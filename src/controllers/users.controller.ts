@@ -5,6 +5,7 @@ import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { Response } from "express";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { UserQueryRepository } from "../queryRepositories/user.query-repository";
+import { IdValidationPipe } from "src/validation/pipes/id-custom-validation.pipe";
 
 @Controller('users')
 export class UsersController {
@@ -20,7 +21,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  async deleteUserById(@Param('id') id: string, @Res() res: Response) {
+  async deleteUserById(@Param('id', IdValidationPipe) id: string, @Res() res: Response) {
     const isDeleted = await this.userService.deleteUserById(id)
     if(!isDeleted)
     {

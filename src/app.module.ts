@@ -27,11 +27,10 @@ import { PostRepository } from './repositories/post.repository';
 import { BlogRepository } from './repositories/blog.repository';
 import { CommentService } from './domain/comment.service';
 import { BlogExistValidator } from './validation/BlogExistValidator';
-import { BlogIdValidationPipe } from './validation/blog-custom-validation.pipe';
 import { PostExistValidator } from './validation/PostExistValidator';
-import { PostIdValidationPipe } from './validation/post-custom-validation.pipe';
 import { CommentExistValidator } from './validation/CommentExistValidator';
-import { CommentIdValidationPipe } from './validation/comment-custom-validation.pipe';
+import { IdValidationPipe } from './validation/pipes/id-custom-validation.pipe';
+import { UserExistValidator } from './validation/UserExistValidator';
 
 dotenv.config()
 
@@ -54,6 +53,7 @@ const MONGODB_URI = process.env.MONGODB_URI ||  'mongodb://localhost:27017/testD
   controllers: [AppController, UsersController, TestingController, BlogsController, PostsController, CommentController],
   providers: [AppService, UserService, BlogService, UserQueryRepository, BlogQueryRepository, PostService,
     PostQueryRepository, CommentQueryRepository, UserRepository,  PostRepository, BlogRepository, CommentService, 
-    BlogExistValidator, BlogIdValidationPipe, PostExistValidator, PostIdValidationPipe, CommentExistValidator, CommentIdValidationPipe],
+    BlogExistValidator, PostExistValidator, CommentExistValidator, 
+    IdValidationPipe, UserExistValidator],
 })
 export class AppModule {}

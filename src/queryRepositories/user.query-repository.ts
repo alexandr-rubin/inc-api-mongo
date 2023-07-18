@@ -37,4 +37,12 @@ export class UserQueryRepository {
     
     return result
   }
+
+  async getUsergByIdNoView(userId: string): Promise<User | null> {
+    const user = await this.userModel.findById(userId, { __v: false }).lean()
+    if(!user){
+      return null
+    }
+    return user
+  }
 }

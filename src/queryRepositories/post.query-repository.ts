@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Paginator } from "../models/Paginator";
@@ -31,12 +31,12 @@ export class PostQueryRepository {
     return await this.editPostToViewModel(result, userId)
   }
 
-  async getPostgById(postId: string, userId: string): Promise<PostViewModel> {
+  async getPostgById(postId: string, userId: string): Promise<PostViewModel | null> {
     const post = await this.postModel.findById(postId, { __v: false })
     const like = post.likesAndDislikes.find(like => like.userId === userId)
     const likeStatus = like === undefined ? LikeStatuses.None : like.likeStatus
     if(!post){
-      throw new NotFoundException(`Post with id "${postId}" does not exist.`)
+      return null
     }
     const objPost = post.toJSON()
     const newestLikes = (post.likesAndDislikes.filter((element) => element.likeStatus === 'Like')).slice(-3).map((element) => element)
@@ -76,10 +76,10 @@ export class PostQueryRepository {
     return newArray 
   }
 
-  async getCommentsForSpecifiedPost(postId: string, params: QueryParamsModel, userId: string): Promise<Paginator<CommentViewModel>>{
+  async getCommentsForSpecifiedPost(postId: string, params: QueryParamsModel, userId: string): Promise<Paginator<CommentViewModel> | null>{
     const isFinded = await this.postModel.findById(postId)
     if(isFinded === null){
-      throw new NotFoundException(`Post with id "${postId}" does not exist.`)
+      return null
     }
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
@@ -108,10 +108,10 @@ export class PostQueryRepository {
     return newArray
   }
 
-  async getPostgByIdNoView(postId: string): Promise<Post> {
+  async getPostgByIdNoView(postId: string): Promise<Post | null> {
     const post = await this.postModel.findById(postId, { __v: false }).lean()
     if(!post){
-      throw new NotFoundException(`Post with id "${postId}" does not exist.`)
+      return null
     }
     return post
   }

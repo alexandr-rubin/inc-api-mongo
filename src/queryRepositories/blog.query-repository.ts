@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Paginator } from "../models/Paginator";
@@ -34,17 +34,17 @@ export class BlogQueryRepository {
   async getBlogById(blogId: string): Promise<BlogViewModel | null> {
     const blog = await this.blogModel.findById(blogId, { __v: false })
     if (!blog){
-      throw new NotFoundException(`Blog with id "${blogId}" does not exist.`)
+      return null
     }
     const { _id, ...rest } = blog.toJSON()
     const id = _id.toString()
     return { id, ...rest }
   }
 
-  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel>>{
+  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel> | null>{
     const isFinded = await this.getBlogById(blogId) === null
     if(isFinded){
-      throw new NotFoundException(`Blog with id "${blogId}" does not exist.`)
+      return null
     }
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize

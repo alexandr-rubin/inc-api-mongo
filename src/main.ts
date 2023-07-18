@@ -4,8 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { createWriteStream } from 'fs';
 import { get } from 'http';
 import { ValidationPipe } from '@nestjs/common';
-import { validationExceptionFactory } from './custom-exception-factory';
-import { HttpExceptionFilter } from './exception.filter';
+import { validationExceptionFactory } from './validation/Factories/custom-exception-factory';
+import { HttpExceptionFilter } from './validation/filters/exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
