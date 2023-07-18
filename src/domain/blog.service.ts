@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Blog, BlogDocument, BlogInputModel, BlogViewModel } from "../models/Blogs";
-import { Post, PostDocument, PostInputModel, PostViewModel } from "../models/Post";
+import { Post, PostDocument, PostForSpecBlogInputModel, PostViewModel } from "../models/Post";
 import { BlogRepository } from "src/repositories/blog.repository";
 
 @Injectable()
@@ -18,10 +18,10 @@ export class BlogService {
     return result
   }
 
-  async addPostForSpecificBlog(blogId: string, post: PostInputModel): Promise<PostViewModel | null>{
+  async addPostForSpecificBlog(blogId: string, post: PostForSpecBlogInputModel): Promise<PostViewModel>{
     const blog = await this.blogModel.findById(blogId, { __v: false })
     if(!blog){
-      return null
+      throw new NotFoundException(`Blog with id "${blogId}" does not exist.`)
     }
     const newPost = new this.postModel({...post, blogId: blogId, blogName: blog.name, createdAt: new Date().toISOString(),
     likesAndDislikesCount: { likesCount: 0, dislikesCount: 0}, likesAndDislikes: [] })
@@ -33,11 +33,17 @@ export class BlogService {
 
   async deleteBlogById(id: string): Promise<boolean> {
     const result = await this.blogModel.findByIdAndDelete(id)
+    if(!result){
+      throw new NotFoundException(`Blog with id "${id}" does not exist.`)
+    }
     return !!result
   }
 
   async updateBlogById(id: string, blog: BlogInputModel): Promise<boolean> {
     const result = await this.blogModel.findByIdAndUpdate(id, blog)
+    if(!result){
+      throw new NotFoundException(`Blog with id "${id}" does not exist.`)
+    }
     return !!result
   }
 

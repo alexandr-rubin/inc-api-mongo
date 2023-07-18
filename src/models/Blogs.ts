@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsString, Matches, MaxLength } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
 
 export type BlogDocument = HydratedDocument<Blog>;
@@ -18,10 +19,19 @@ export class Blog {
 }
 
 export class BlogInputModel {
+  @IsString()
+  @MaxLength(15)
   @Prop()
   name!: string
+  @IsString()
+  @MaxLength(500)
   @Prop()
   description!: string
+  @IsString()
+  @MaxLength(100)
+  @Matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/, {
+    message: 'Invalid website URL format',
+  })
   @Prop()
   websiteUrl!: string
 }

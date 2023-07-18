@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsString, MaxLength } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
 
 export type PostDocument = HydratedDocument<Post>;
@@ -40,14 +41,36 @@ export class PostLike {
 
 
 export class PostInputModel {
+  @IsString()
+  @MaxLength(30)
   @Prop()
   title!: string
+  @IsString()
+  @MaxLength(100)
   @Prop()
   shortDescription!: string
+  @IsString()
+  @MaxLength(1000)
   @Prop()
   content!: string
+  @IsString()
   @Prop()
   blogId!: string
+}
+
+export class PostForSpecBlogInputModel {
+  @IsString()
+  @MaxLength(30)
+  @Prop()
+  title!: string
+  @IsString()
+  @MaxLength(100)
+  @Prop()
+  shortDescription!: string
+  @IsString()
+  @MaxLength(1000)
+  @Prop()
+  content!: string
 }
 
 export class NewestLikes {

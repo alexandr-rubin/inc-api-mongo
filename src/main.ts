@@ -3,6 +3,9 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { createWriteStream } from 'fs';
 import { get } from 'http';
+import { ValidationPipe } from '@nestjs/common';
+import { validationExceptionFactory } from './custom-exception-factory';
+import { HttpExceptionFilter } from './exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,7 +21,12 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
-  
+  app.useGlobalPipes(new ValidationPipe({
+    stopAtFirstError: true,
+    exceptionFactory: validationExceptionFactory
+  }))
+  app.useGlobalFilters(new HttpExceptionFilter())
+
   await app.listen(3000);
 
   // get the swagger json file (if app is running in development mode)

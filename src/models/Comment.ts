@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { IsString, Length } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
 
 export type CommentDocument = HydratedDocument<Comment>;
@@ -56,6 +57,8 @@ export class CommentViewModel {
 }
 
 export class CommentInputModel {
+  @IsString()
+  @Length(20, 300)
   @Prop()
   content!: string
 }

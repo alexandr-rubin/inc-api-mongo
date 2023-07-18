@@ -6,6 +6,7 @@ import { PostService } from "../domain/post.service";
 import { PostQueryRepository } from "../queryRepositories/post.query-repository";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { CommentInputModel } from "src/models/Comment";
+import { PostIdValidationPipe } from "src/validation/post-custom-validation.pipe";
 
 @Controller('posts')
 export class PostsController {
@@ -21,46 +22,35 @@ export class PostsController {
     return await this.postService.addPost(post)
   }
 
-  @Delete(':id')
-  async deletePostById(@Param('id') id: string, @Res() res: Response) {
-    const isDeleted = await this.postService.deletePostById(id)
-    if(!isDeleted)
-    {
-      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
-    }
+  @Delete(':postId')
+  async deletePostById(@Param('postId', PostIdValidationPipe) id: string, @Res() res: Response) {
+    await this.postService.deletePostById(id)
 
     return res.sendStatus(HttpStatusCode.NO_CONTENT_204)  
   }
 
-  @Get(':id')
-  async getPostById(@Param('id') id: string, @Res() res: Response) {
+  @Get(':postId')
+  async getPostById(@Param('postId', PostIdValidationPipe) id: string, @Res() res: Response) {
     const result = await this.postQueryRepository.getPostgById(id, '')
-    if(!result){
-      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
-    }
 
     return res.status(HttpStatusCode.OK_200).send(result)
   }
 
-  @Put(':id')
-  async updatePostById(@Param('id') id: string, @Body() post: PostInputModel, @Res() res: Response) {
-    const isUpdated = await this.postService.updatePostById(id, post)
-    if(!isUpdated)
-    {
-      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
-    }
+  @Put(':postId')
+  async updatePostById(@Param('postId', PostIdValidationPipe) id: string, @Body() post: PostInputModel, @Res() res: Response) {
+    await this.postService.updatePostById(id, post)
 
     return res.sendStatus(HttpStatusCode.NO_CONTENT_204) 
   }
 
   //add comment valid
   @Post(':postId/comments')
-  async createComment(@Param('postId') postId: string, @Body() content: CommentInputModel) {
+  async createComment(@Param('postId', PostIdValidationPipe) postId: string, @Body() content: CommentInputModel) {
     return await this.postService.createComment('id', 'login', content.content, postId)
   }
 
   @Get(':postId/comments')
-  async getCommentForSpecifedPost(@Param('postId') postId: string, @Query() params: QueryParamsModel) {
+  async getCommentForSpecifedPost(@Param('postId', PostIdValidationPipe) postId: string, @Query() params: QueryParamsModel) {
     return await this.postQueryRepository.getCommentsForSpecifiedPost(postId, params, 'userId')
   }
 }

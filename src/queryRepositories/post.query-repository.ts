@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Paginator } from "../models/Paginator";
@@ -31,12 +31,12 @@ export class PostQueryRepository {
     return await this.editPostToViewModel(result, userId)
   }
 
-  async getPostgById(postId: string, userId: string): Promise<PostViewModel | null> {
+  async getPostgById(postId: string, userId: string): Promise<PostViewModel> {
     const post = await this.postModel.findById(postId, { __v: false })
     const like = post.likesAndDislikes.find(like => like.userId === userId)
     const likeStatus = like === undefined ? LikeStatuses.None : like.likeStatus
     if(!post){
-      return null
+      throw new NotFoundException(`Post with id "${postId}" does not exist.`)
     }
     const objPost = post.toJSON()
     const newestLikes = (post.likesAndDislikes.filter((element) => element.likeStatus === 'Like')).slice(-3).map((element) => element)
@@ -79,7 +79,7 @@ export class PostQueryRepository {
   async getCommentsForSpecifiedPost(postId: string, params: QueryParamsModel, userId: string): Promise<Paginator<CommentViewModel>>{
     const isFinded = await this.postModel.findById(postId)
     if(isFinded === null){
-        return null
+      throw new NotFoundException(`Post with id "${postId}" does not exist.`)
     }
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
@@ -106,5 +106,13 @@ export class PostQueryRepository {
         }
     }
     return newArray
+  }
+
+  async getPostgByIdNoView(postId: string): Promise<Post> {
+    const post = await this.postModel.findById(postId, { __v: false }).lean()
+    if(!post){
+      throw new NotFoundException(`Post with id "${postId}" does not exist.`)
+    }
+    return post
   }
 }
