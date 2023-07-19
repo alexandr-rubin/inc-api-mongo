@@ -6,7 +6,7 @@ import { BlogInputModel } from "../models/Blogs";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { BlogQueryRepository } from "../queryRepositories/blog.query-repository";
 import { PostForSpecBlogInputModel } from "../models/Post";
-import { IdValidationPipe } from "src/validation/pipes/id-custom-validation.pipe";
+import { IdValidationPipe } from "src/validation/pipes/params-id-custom-validation.pipe";
 
 @Controller('blogs')
 export class BlogsController {

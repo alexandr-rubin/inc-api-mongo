@@ -16,7 +16,7 @@ export class PostService {
     const blog = await this.blogModel.findById(post.blogId, { __v: false })
     const newPost: Post = {...post, blogName: blog.name, createdAt: new Date().toISOString(),
     likesAndDislikesCount: { likesCount: 0, dislikesCount: 0}, likesAndDislikes: []}
-    const savedPost = (await this.postRepository.addPost(newPost)).toJSON()
+    const savedPost = await this.postRepository.addPost(newPost)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { __v, _id, likesAndDislikesCount, likesAndDislikes, ...result } = {id: savedPost._id.toString(), ...savedPost, extendedLikesInfo: { likesCount: 0, dislikesCount: 0, myStatus: 'None', newestLikes: [/*{ addedAt: '', login: '', userId: ''}*/]}}
     return result

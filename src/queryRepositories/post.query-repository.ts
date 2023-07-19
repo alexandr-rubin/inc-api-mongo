@@ -3,7 +3,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Paginator } from "../models/Paginator";
 import { QueryParamsModel } from "../models/PaginationQuery";
-import { createPaginationQuery, createPaginationResult } from "../helpers/pagination";
+import { createPaginationQuery } from "../helpers/pagination";
 import { Post, PostDocument, PostViewModel } from "../models/Post";
 import { LikeStatuses } from "../helpers/likeStatuses";
 import { Comment, CommentDocument, CommentViewModel } from "src/models/Comment";
@@ -16,7 +16,7 @@ export class PostQueryRepository {
     // fix
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
-    const posts = await this.postModel.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}).select('-__v')
+    const posts = await this.postModel.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}, {__v: false})
     .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
     .skip(skip).limit(query.pageSize).lean()
     const count = await this.postModel.countDocuments(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}})
@@ -26,7 +26,7 @@ export class PostQueryRepository {
       const id = _id.toString()
       return { id, ...rest }
     })
-    const result = createPaginationResult(count, query, transformedPosts)
+    const result = Paginator.createPaginationResult(count, query, transformedPosts)
 
     return await this.editPostToViewModel(result, userId)
   }
@@ -88,7 +88,7 @@ export class PostQueryRepository {
     .skip(skip)
     .limit(query.pageSize).lean()
     const count = await this.commentModel.countDocuments({postId: postId})
-    const result = createPaginationResult(count, query, comments)
+    const result = Paginator.createPaginationResult(count, query, comments)
 
     return await this.editCommentToViewModel(result, userId)
   }

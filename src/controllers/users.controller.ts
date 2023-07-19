@@ -5,7 +5,7 @@ import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { Response } from "express";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { UserQueryRepository } from "../queryRepositories/user.query-repository";
-import { IdValidationPipe } from "src/validation/pipes/id-custom-validation.pipe";
+import { IdValidationPipe } from "src/validation/pipes/params-id-custom-validation.pipe";
 
 @Controller('users')
 export class UsersController {

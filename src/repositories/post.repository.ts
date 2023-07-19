@@ -11,10 +11,10 @@ export class PostRepository {
   @InjectModel(Comment.name) private commentModel: Model<CommentDocument>){}
 
   // типизация
-  async addPost(post: Post){
+  async addPost(post: Post): Promise<PostDocument>{
     const newPost = new this.postModel(post)
-    await newPost.save()
-    return newPost
+    const save = (await newPost.save()).toJSON()
+    return save
   }
 
   async createComment(comment: Comment){

@@ -4,7 +4,7 @@ import { Model } from "mongoose";
 import { User, UserDocument } from "../models/User";
 import { Paginator } from "../models/Paginator";
 import { QueryParamsModel } from "../models/PaginationQuery";
-import { createPaginationQuery, createPaginationResult } from "../helpers/pagination";
+import { createPaginationQuery } from "../helpers/pagination";
 
 @Injectable()
 export class UserQueryRepository {
@@ -33,7 +33,7 @@ export class UserQueryRepository {
     })
 
     const count = await this.userModel.countDocuments({$or: searchTermsArray.length === 0 ? [{}] : searchTermsArray})
-    const result = createPaginationResult(count, query, transformedUsers)
+    const result = Paginator.createPaginationResult(count, query, transformedUsers)
     
     return result
   }

@@ -4,7 +4,7 @@ import { Response } from "express";
 import { CommentQueryRepository } from "../queryRepositories/comment.query-repository";
 import { CommentService } from "src/domain/comment.service";
 import { CommentInputModel } from "src/models/Comment";
-import { IdValidationPipe } from "src/validation/pipes/id-custom-validation.pipe";
+import { IdValidationPipe } from "src/validation/pipes/params-id-custom-validation.pipe";
 
 @Controller('comments')
 export class CommentController {

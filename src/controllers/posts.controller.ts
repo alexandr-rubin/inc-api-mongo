@@ -6,7 +6,8 @@ import { PostService } from "../domain/post.service";
 import { PostQueryRepository } from "../queryRepositories/post.query-repository";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { CommentInputModel } from "src/models/Comment";
-import { IdValidationPipe } from "src/validation/pipes/id-custom-validation.pipe";
+import { IdValidationPipe } from "src/validation/pipes/params-id-custom-validation.pipe";
+import { BlogIdValidationPipe } from "src/validation/pipes/body-blog-id-validation.pipe";
 
 @Controller('posts')
 export class PostsController {
@@ -18,7 +19,7 @@ export class PostsController {
   }
 
   @Post()
-  async createPost(@Body() post: PostInputModel) {
+  async createPost(@Body(BlogIdValidationPipe) post: PostInputModel) {
     return await this.postService.addPost(post)
   }
 

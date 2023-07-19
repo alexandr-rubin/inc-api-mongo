@@ -29,7 +29,7 @@ import { CommentService } from './domain/comment.service';
 import { BlogExistValidator } from './validation/BlogExistValidator';
 import { PostExistValidator } from './validation/PostExistValidator';
 import { CommentExistValidator } from './validation/CommentExistValidator';
-import { IdValidationPipe } from './validation/pipes/id-custom-validation.pipe';
+import { IdValidationPipe } from './validation/pipes/params-id-custom-validation.pipe';
 import { UserExistValidator } from './validation/UserExistValidator';
 
 dotenv.config()
