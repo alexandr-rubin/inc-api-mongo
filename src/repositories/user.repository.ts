@@ -6,10 +6,9 @@ import { User, UserDocument } from "../models/User";
 @Injectable()
 export class UserRepository {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>){}
-  // типизация
-  async createUser(newUser: User) {
+  async createUser(newUser: User): Promise<UserDocument> {
     const user = new this.userModel(newUser)
-    await user.save()
-    return user
+    const save = (await user.save()).toJSON()
+    return save
   }
 }

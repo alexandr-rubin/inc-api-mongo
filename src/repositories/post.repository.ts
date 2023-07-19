@@ -10,7 +10,6 @@ export class PostRepository {
   constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>, @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
   @InjectModel(Comment.name) private commentModel: Model<CommentDocument>){}
 
-  // типизация
   async addPost(post: Post): Promise<PostDocument>{
     const newPost = new this.postModel(post)
     const save = (await newPost.save()).toJSON()
