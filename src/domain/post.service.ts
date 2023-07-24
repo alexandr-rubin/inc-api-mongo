@@ -23,18 +23,18 @@ export class PostService {
   }
 
   async deletePostById(id: string): Promise<boolean> {
-    const result = await this.postModel.findByIdAndDelete(id)
-    return !!result
+    const result = await this.postRepository.deletePostById(id)
+    return result
   }
 
   async updatePostById(id: string, post: PostInputModel): Promise<boolean> {
-    const result = await this.postModel.findByIdAndUpdate(id, post)
-    return !!result
+    const result = await this.postRepository.updatePostById(id, post)
+    return result
   }
 
   async deletePostsTesting(): Promise<boolean> {
-    const result = await this.postModel.deleteMany({})
-    return !!result
+    const result = await this.postRepository.deletePostsTesting()
+    return result
   }
 
   async createComment(userId: string, userLogin: string, content: string, pId: string): Promise<CommentViewModel | null> {

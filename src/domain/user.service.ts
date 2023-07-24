@@ -19,12 +19,12 @@ export class UserService {
   }
   //
   async deleteUserById(id: string): Promise<boolean> {
-    const result = await this.userModel.findByIdAndDelete(id)
-    return !!result
+    const result = await this.userRepository.deleteUserById(id)
+    return result
   }
   //
   async deleteUsersTesting(): Promise<boolean> {
-    const result = await this.userModel.deleteMany({})
-    return !!result
+    const result = await this.userRepository.deleteUsersTesting()
+    return result
   }
 }

@@ -31,6 +31,9 @@ import { PostExistValidator } from './validation/PostExistValidator';
 import { CommentExistValidator } from './validation/CommentExistValidator';
 import { IdValidationPipe } from './validation/pipes/params-id-custom-validation.pipe';
 import { UserExistValidator } from './validation/UserExistValidator';
+import { AuthorizationController } from './controllers/authorization.controller';
+import { AuthorizationService } from './domain/authorization.service';
+import { CommentRepository } from './repositories/comment.repository';
 
 dotenv.config()
 
@@ -50,10 +53,11 @@ const MONGODB_URI = process.env.MONGODB_URI ||  'mongodb://localhost:27017/testD
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }])
   ],
-  controllers: [AppController, UsersController, TestingController, BlogsController, PostsController, CommentController],
+  controllers: [AppController, UsersController, TestingController, BlogsController, PostsController, CommentController,
+    AuthorizationController],
   providers: [AppService, UserService, BlogService, UserQueryRepository, BlogQueryRepository, PostService,
     PostQueryRepository, CommentQueryRepository, UserRepository,  PostRepository, BlogRepository, CommentService, 
     BlogExistValidator, PostExistValidator, CommentExistValidator, 
-    IdValidationPipe, UserExistValidator],
+    IdValidationPipe, UserExistValidator, AuthorizationService, CommentRepository],
 })
 export class AppModule {}

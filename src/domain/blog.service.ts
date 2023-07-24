@@ -32,17 +32,17 @@ export class BlogService {
   }
 
   async deleteBlogById(id: string): Promise<boolean> {
-    const result = await this.blogModel.findByIdAndDelete(id)
-    return !!result
+    const result = await this.blogRepository.deleteBlogById(id)
+    return result
   }
 
   async updateBlogById(id: string, blog: BlogInputModel): Promise<boolean> {
-    const result = await this.blogModel.findByIdAndUpdate(id, blog)
-    return !!result
+    const result = await this.blogRepository.updateBlogById(id, blog)
+    return result
   }
 
   async deleteBlogsTesting(): Promise<boolean> {
-    const result = await this.blogModel.deleteMany({})
+    const result = await this.blogRepository.deleteBlogsTesting()
     return !!result
   }
 }

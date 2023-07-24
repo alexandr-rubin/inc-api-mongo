@@ -11,4 +11,14 @@ export class UserRepository {
     const save = (await user.save()).toJSON()
     return save
   }
+
+  async deleteUserById(id: string): Promise<boolean> {
+    const result = await this.userModel.findByIdAndDelete(id)
+    return !!result
+  }
+  //
+  async deleteUsersTesting(): Promise<boolean> {
+    const result = await this.userModel.deleteMany({})
+    return !!result
+  }
 }

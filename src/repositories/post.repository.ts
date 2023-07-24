@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Post, PostDocument } from "../models/Post";
+import { Post, PostDocument, PostInputModel } from "../models/Post";
 import { Blog, BlogDocument } from "src/models/Blogs";
 import { Comment, CommentDocument } from "src/models/Comment";
 
@@ -20,5 +20,20 @@ export class PostRepository {
     const newComment = new this.commentModel(comment)
     await newComment.save()
     return newComment
+  }
+
+  async deletePostById(id: string): Promise<boolean> {
+    const result = await this.postModel.findByIdAndDelete(id)
+    return !!result
+  }
+
+  async updatePostById(id: string, post: PostInputModel): Promise<boolean> {
+    const result = await this.postModel.findByIdAndUpdate(id, post)
+    return !!result
+  }
+
+  async deletePostsTesting(): Promise<boolean> {
+    const result = await this.postModel.deleteMany({})
+    return !!result
   }
 }
