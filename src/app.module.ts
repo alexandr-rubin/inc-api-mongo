@@ -34,6 +34,13 @@ import { UserExistValidator } from './validation/UserExistValidator';
 import { AuthorizationController } from './controllers/authorization.controller';
 import { AuthorizationService } from './domain/authorization.service';
 import { CommentRepository } from './repositories/comment.repository';
+import { AuthorizationRepository } from './repositories/authorization.repository';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { EmailAdapter } from './adapters/email.adapter';
+import { EmailService } from './domain/email.service';
+import { EmailConfirmationCodeValidator } from './validation/EmailConfirmationCodeValidator';
+import { EmailConfirmationCodePipe } from './validation/pipes/email-confirmation-code.pipe';
 
 dotenv.config()
 
@@ -51,13 +58,34 @@ const MONGODB_URI = process.env.MONGODB_URI ||  'mongodb://localhost:27017/testD
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
-    MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }])
+    MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
+    MailerModule.forRoot({
+      transport: {
+        service: 'gmail',
+        auth: {
+          user: 'rubinyourhead@gmail.com',
+          pass: 'kixbxpkqgkdbabte',
+        },
+      },
+      defaults: {
+        from: 'homework <rubinyourhead@gmail.com>',
+      },
+      template: {
+        dir: __dirname + '/templates',
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
+    }),
   ],
   controllers: [AppController, UsersController, TestingController, BlogsController, PostsController, CommentController,
     AuthorizationController],
   providers: [AppService, UserService, BlogService, UserQueryRepository, BlogQueryRepository, PostService,
     PostQueryRepository, CommentQueryRepository, UserRepository,  PostRepository, BlogRepository, CommentService, 
-    BlogExistValidator, PostExistValidator, CommentExistValidator, 
-    IdValidationPipe, UserExistValidator, AuthorizationService, CommentRepository],
+    BlogExistValidator, PostExistValidator, CommentExistValidator, IdValidationPipe, UserExistValidator, 
+    AuthorizationService, CommentRepository, AuthorizationRepository, EmailAdapter, EmailService, 
+    EmailConfirmationCodeValidator, EmailConfirmationCodePipe],
 })
+
 export class AppModule {}

@@ -45,4 +45,17 @@ export class UserQueryRepository {
     }
     return user
   }
+
+  async findUserByConfirmationEmailCode(code: string): Promise<UserDocument | null>{
+    const user = await this.userModel.findOne({'confirmationEmail.confirmationCode': code})
+    return user
+  }
+
+  async getUsergByEmail(email: string): Promise<UserDocument | null> {
+    const user = await this.userModel.findOne({email: email})
+    if(!user){
+      return null
+    }
+    return user
+  }
 }
