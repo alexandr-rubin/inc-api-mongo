@@ -5,7 +5,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class EmailAdapter {
   constructor(private readonly mailerService: MailerService) {}
 
-  async sendEmail(email: string, code: string, subject: string) {
+  async sendEmail(email: string, subject: string, html: string) {
     try {
       await this.mailerService
       .sendMail({
@@ -14,7 +14,7 @@ export class EmailAdapter {
         subject: subject,
         text: 'welcome',
         // const
-        html: `<a href='https://incubator-homework-nest.vercel.app/confirm-email?code=${code}'>complete registration</a>`,
+        html: html,
       })
 
       console.log("Message sent");

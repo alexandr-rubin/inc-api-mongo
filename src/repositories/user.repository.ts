@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User, UserDocument } from "../models/User";
-import { add } from "date-fns";
+import { genExpirationDate } from "src/helpers/genCodeExpirationDate";
 
 @Injectable()
 export class UserRepository {
@@ -28,8 +28,8 @@ export class UserRepository {
     return !!result
   }
 
-  async updateConfirmationCode(id: string, code: string): Promise<boolean> {
-    const result = await this.userModel.findByIdAndUpdate(id, {'confirmationEmail.confirmationCode': code, 'confirmationEmail.expirationDate': add(new Date(), { hours: 1, minutes: 3})})
+  async updateConfirmationCode(id: string, code: string): Promise<boolean> {// genExp dep
+    const result = await this.userModel.findByIdAndUpdate(id, {'confirmationEmail.confirmationCode': code, 'confirmationEmail.expirationDate': genExpirationDate(1, 3)})
     return !!result
 }
 }

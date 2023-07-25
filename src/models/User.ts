@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsString, Length, Matches } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
-import { add } from "date-fns";
 import { generateHash } from 'src/helpers/generateHash';
 import { v4 as uuidv4 } from 'uuid'
+import { genExpirationDate } from 'src/helpers/genCodeExpirationDate';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -38,10 +38,7 @@ export class User {
 
   public static async createUser(userDto: UserInputModel, isConfirmed: boolean): Promise<User> {
     const passwordHash = await generateHash(userDto.password)
-    const expirationDate = add(new Date(), {
-      hours: 1,
-      minutes: 3
-    })
+    const expirationDate = genExpirationDate(1, 3)
     const newUser: User = {...userDto, password: passwordHash, createdAt: new Date().toISOString(), 
       confirmationEmail: { confirmationCode: uuidv4(), expirationDate: expirationDate.toISOString(), isConfirmed: isConfirmed},
       confirmationPassword: { confirmationCode: uuidv4(), expirationDate: expirationDate.toISOString() }
