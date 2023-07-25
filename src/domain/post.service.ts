@@ -43,7 +43,10 @@ export class PostService {
 
     const savedComment = (await this.postRepository.createComment(comment)).toJSON()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {postId, _id, __v, likesAndDislikesCount, likesAndDislikes, ...result} = ({id: savedComment._id, ...savedComment, commentatorInfo: {userId: savedComment.commentatorInfo.userId, userLogin: savedComment.commentatorInfo.userLogin}, likesInfo: {likesCount: savedComment.likesAndDislikesCount.likesCount, 
+    const {postId, _id, __v, likesAndDislikesCount, likesAndDislikes, ...result} = 
+    ({id: savedComment._id, ...savedComment, commentatorInfo: 
+    {userId: savedComment.commentatorInfo.userId, userLogin: savedComment.commentatorInfo.userLogin}, 
+    likesInfo: {likesCount: savedComment.likesAndDislikesCount.likesCount, 
     dislikesCount: savedComment.likesAndDislikesCount.dislikesCount , myStatus: LikeStatuses.None}})
 
     return result

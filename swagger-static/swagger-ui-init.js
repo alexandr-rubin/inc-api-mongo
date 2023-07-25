@@ -489,6 +489,48 @@ window.onload = function() {
             }
           }
         }
+      },
+      "/auth/password-recovery": {
+        "post": {
+          "operationId": "AuthorizationController_passwordRecovery",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailValidation"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/auth/new-password": {
+        "post": {
+          "operationId": "AuthorizationController_newPassword",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewPasswordInputModelValidation"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          }
+        }
       }
     },
     "info": {
@@ -527,6 +569,10 @@ window.onload = function() {
           "properties": {}
         },
         "EmailValidation": {
+          "type": "object",
+          "properties": {}
+        },
+        "NewPasswordInputModelValidation": {
           "type": "object",
           "properties": {}
         }

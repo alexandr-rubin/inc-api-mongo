@@ -5,6 +5,8 @@ import { AuthorizationService } from "src/domain/authorization.service";
 import { Response } from "express";
 import { EmailConfirmationCodePipe } from "src/validation/pipes/email-confirmation-code.pipe";
 import { EmailValidation } from "src/validation/Email";
+import { NewPasswordInputModelValidation } from "src/validation/newPasswordInputModel";
+import { PasswordRecoveryCodeValidPipe } from "src/validation/pipes/password-recovery-code-valid.pipe";
 
 @Controller('auth')
 export class AuthorizationController {
@@ -34,5 +36,22 @@ export class AuthorizationController {
       return res.sendStatus(HttpStatusCode.BAD_REQUEST_400)
     }
     res.sendStatus(HttpStatusCode.NO_CONTENT_204)
+  }
+
+  @Post('/password-recovery')//add code validation
+  async passwordRecovery(@Body() email: EmailValidation, @Res() res: Response) {
+    //
+    await this.authorizationService.recoverPassword(email.email)
+    return res.sendStatus(HttpStatusCode.NO_CONTENT_204)
+  }
+
+  @Post('/new-password')//add code validation
+  async newPassword(@Body(PasswordRecoveryCodeValidPipe) newPasswordAndCode: NewPasswordInputModelValidation, @Res() res: Response) {
+    //
+    console.log('newPasswordAndCode')
+    console.log(newPasswordAndCode)
+    console.log('newPasswordAndCode')
+    await this.authorizationService.updatePassword(newPasswordAndCode.newPassword, newPasswordAndCode.recoveryCode)
+    return res.sendStatus(HttpStatusCode.NO_CONTENT_204)
   }
 }

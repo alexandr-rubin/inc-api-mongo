@@ -41,6 +41,8 @@ import { EmailAdapter } from './adapters/email.adapter';
 import { EmailService } from './domain/email.service';
 import { EmailConfirmationCodeValidator } from './validation/EmailConfirmationCodeValidator';
 import { EmailConfirmationCodePipe } from './validation/pipes/email-confirmation-code.pipe';
+import { PasswordRecoveryCodeExistValidator } from './validation/passwordRecCodeValid';
+import { PasswordRecoveryCodeValidPipe } from './validation/pipes/password-recovery-code-valid.pipe';
 
 dotenv.config()
 
@@ -85,7 +87,7 @@ const MONGODB_URI = process.env.MONGODB_URI ||  'mongodb://localhost:27017/testD
     PostQueryRepository, CommentQueryRepository, UserRepository,  PostRepository, BlogRepository, CommentService, 
     BlogExistValidator, PostExistValidator, CommentExistValidator, IdValidationPipe, UserExistValidator, 
     AuthorizationService, CommentRepository, AuthorizationRepository, EmailAdapter, EmailService, 
-    EmailConfirmationCodeValidator, EmailConfirmationCodePipe],
+    EmailConfirmationCodeValidator, EmailConfirmationCodePipe, PasswordRecoveryCodeExistValidator, PasswordRecoveryCodeValidPipe],
 })
 
 export class AppModule {}

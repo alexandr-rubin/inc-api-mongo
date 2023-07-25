@@ -31,5 +31,14 @@ export class UserRepository {
   async updateConfirmationCode(id: string, code: string): Promise<boolean> {// genExp dep
     const result = await this.userModel.findByIdAndUpdate(id, {'confirmationEmail.confirmationCode': code, 'confirmationEmail.expirationDate': genExpirationDate(1, 3)})
     return !!result
-}
+  }
+  async updateconfirmationPasswordData(email: string, code: string, expirationDate: Date): Promise<boolean> {
+    const result = await this.userModel.updateOne({email: email}, {'confirmationPassword.confirmationCode': code, 'confirmationPassword.expirationDate': expirationDate})
+    return result.modifiedCount === 1
+  } 
+
+  async updatePassword(password: string, code: string): Promise<boolean> {
+    const result = await this.userModel.updateOne({'confirmationPassword.confirmationCode': code}, {password: password})
+    return result.modifiedCount === 1
+  }
 }
