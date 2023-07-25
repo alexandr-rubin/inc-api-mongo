@@ -7,12 +7,13 @@ import { EmailConfirmationCodePipe } from "src/validation/pipes/email-confirmati
 import { EmailValidation } from "src/validation/Email";
 import { NewPasswordInputModelValidation } from "src/validation/newPasswordInputModel";
 import { PasswordRecoveryCodeValidPipe } from "src/validation/pipes/password-recovery-code-valid.pipe";
+import { EmailOrLoginExistsPipe } from "src/validation/pipes/email-login-exist.pipe";
 
 @Controller('auth')
 export class AuthorizationController {
   constructor(private readonly authorizationService: AuthorizationService){}
   @Post('/registration')
-  async createUser(@Body() user: UserInputModel, @Res() res: Response) {
+  async createUser(@Body(EmailOrLoginExistsPipe) user: UserInputModel, @Res() res: Response) {
     await this.authorizationService.createUser(user)
     // if(!newUser){
 

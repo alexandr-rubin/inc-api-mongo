@@ -63,4 +63,12 @@ export class UserQueryRepository {
     }
     return user
   }
+
+  async getUsergByLogin(login: string): Promise<UserDocument | null> {
+    const user = await this.userModel.findOne({login: login})
+    if(!user){
+      return null
+    }
+    return user
+  }
 }
