@@ -4,6 +4,7 @@ import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { AuthorizationService } from "src/domain/authorization.service";
 import { Response } from "express";
 import { EmailConfirmationCodePipe } from "src/validation/pipes/email-confirmation-code.pipe";
+import { EmailValidation } from "src/validation/Email";
 
 @Controller('auth')
 export class AuthorizationController {
@@ -27,7 +28,7 @@ export class AuthorizationController {
   }
 
   @Post('/registration-email-resending')//add code validation
-  async registrationEmailResending(@Body(EmailConfirmationCodePipe) email: {email: string}, @Res() res: Response) {
+  async registrationEmailResending(@Body(EmailConfirmationCodePipe) email: EmailValidation, @Res() res: Response) {
     const isConfirmed = await this.authorizationService.resendEmail(email.email)
     if(!isConfirmed){
       return res.sendStatus(HttpStatusCode.BAD_REQUEST_400)

@@ -473,6 +473,16 @@ window.onload = function() {
         "post": {
           "operationId": "AuthorizationController_registrationEmailResending",
           "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmailValidation"
+                }
+              }
+            }
+          },
           "responses": {
             "201": {
               "description": ""
@@ -513,6 +523,10 @@ window.onload = function() {
           "properties": {}
         },
         "CommentInputModel": {
+          "type": "object",
+          "properties": {}
+        },
+        "EmailValidation": {
           "type": "object",
           "properties": {}
         }
