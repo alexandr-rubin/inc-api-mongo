@@ -48,9 +48,6 @@ export class AuthorizationController {
   @Post('/new-password')//add code validation
   async newPassword(@Body(PasswordRecoveryCodeValidPipe) newPasswordAndCode: NewPasswordInputModelValidation, @Res() res: Response) {
     //
-    console.log('newPasswordAndCode')
-    console.log(newPasswordAndCode)
-    console.log('newPasswordAndCode')
     await this.authorizationService.updatePassword(newPasswordAndCode.newPassword, newPasswordAndCode.recoveryCode)
     return res.sendStatus(HttpStatusCode.NO_CONTENT_204)
   }
