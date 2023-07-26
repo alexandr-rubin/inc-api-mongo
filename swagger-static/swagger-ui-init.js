@@ -437,6 +437,27 @@ window.onload = function() {
           }
         }
       },
+      "/auth/login": {
+        "post": {
+          "operationId": "AuthorizationController_login",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginValidation"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          }
+        }
+      },
       "/auth/registration": {
         "post": {
           "operationId": "AuthorizationController_createUser",
@@ -565,6 +586,10 @@ window.onload = function() {
           "properties": {}
         },
         "PostForSpecBlogInputModel": {
+          "type": "object",
+          "properties": {}
+        },
+        "LoginValidation": {
           "type": "object",
           "properties": {}
         },

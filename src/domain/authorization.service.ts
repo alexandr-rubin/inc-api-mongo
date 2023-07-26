@@ -8,11 +8,19 @@ import { UserQueryRepository } from "src/queryRepositories/user.query-repository
 import { v4 as uuidv4 } from 'uuid'
 import { genExpirationDate } from "src/helpers/genCodeExpirationDate";
 import { generateHash } from "src/helpers/generateHash";
+import { LoginValidation } from "src/validation/login";
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt'
+import * as dotenv from 'dotenv'
+//////////////////
+dotenv.config()
+
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
 
 @Injectable()
 export class AuthorizationService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>, private userRepository: UserRepository,
-  private emailService: EmailService, private readonly userQueryRepository: UserQueryRepository){}
+  private emailService: EmailService, private readonly userQueryRepository: UserQueryRepository, private jwtService: JwtService){}
 
   async createUser(userDto: UserInputModel): Promise<User> {
     const newUser: User = await User.createUser(userDto, false)
@@ -80,5 +88,40 @@ export class AuthorizationService {
     }
 
     return true
+  }
+
+  async verifyUser(loginData: LoginValidation): Promise<string | null> {
+    const user = await this.userRepository.verifyUser(loginData)
+    if(user){
+      try {
+        const isMatch = await bcrypt.compare(loginData.password, user.password)
+        if(isMatch){
+          return user._id.toString()
+        }
+        return null
+      } catch (error) {
+        console.error('Error comparing passwords:', error);
+        return null
+      }
+      
+    }
+    
+    return null
+  }
+
+  /////
+  async createJWT(userId: string, deviceId: string, issuedAt: string){
+    const accessTokenPayload = { userId: userId, JWT_SECRET_KEY }
+    const refreshTokenPayload = { deviceId: deviceId, userId: userId, issuedAt: issuedAt }
+    return {
+      accessToken: await this.jwtService.signAsync(accessTokenPayload),
+      refreshToken: await this.jwtService.signAsync(refreshTokenPayload, { expiresIn: '20s' })
+    };
+  }
+
+  async signIn(userId: string){
+    const deviceId = uuidv4()
+    const issuedAt = new Date().toISOString()
+    return await this.createJWT(userId, deviceId, issuedAt)
   }
 }
