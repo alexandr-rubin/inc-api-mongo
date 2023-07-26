@@ -4,13 +4,13 @@ import { Response } from "express";
 import { CommentQueryRepository } from "../queryRepositories/comment.query-repository";
 import { CommentService } from "src/domain/comment.service";
 import { CommentInputModel } from "src/models/Comment";
-import { IdValidationPipe } from "src/validation/pipes/params-id-custom-validation.pipe";
+import { CommentIdValidationPipe } from "src/validation/pipes/comment-Id-validation.pipe";
 
 @Controller('comments')
 export class CommentController {
   constructor(private readonly commentQueryRepository: CommentQueryRepository, private readonly commentService: CommentService){}
   @Get(':commentId')
-  async getCommentById(@Param('commentId', IdValidationPipe) id: string, @Res() res: Response) {
+  async getCommentById(@Param('commentId', CommentIdValidationPipe) id: string, @Res() res: Response) {
     const result = await this.commentQueryRepository.getCommentById(id, '')
     if(!result){
       return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
@@ -20,7 +20,7 @@ export class CommentController {
   }
 
   @Delete(':commentId')
-  async deleteCommentById(@Param('commentId', IdValidationPipe) commentId: string, @Res() res: Response) {
+  async deleteCommentById(@Param('commentId', CommentIdValidationPipe) commentId: string, @Res() res: Response) {
     const isDeleted = await this.commentService.deleteCommentById(commentId)
     if(!isDeleted)
     {
@@ -31,7 +31,7 @@ export class CommentController {
   }
 
   @Put(':commentId')
-  async updateCommentById(@Param('commentId', IdValidationPipe) commentId: string, @Body() comment: CommentInputModel, @Res() res: Response) {
+  async updateCommentById(@Param('commentId', CommentIdValidationPipe) commentId: string, @Body() comment: CommentInputModel, @Res() res: Response) {
     const isUpdated = await this.commentService.updateCommentById(commentId, comment)
     if(!isUpdated)
     {

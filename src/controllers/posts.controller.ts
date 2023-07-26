@@ -6,8 +6,8 @@ import { PostService } from "../domain/post.service";
 import { PostQueryRepository } from "../queryRepositories/post.query-repository";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { CommentInputModel } from "src/models/Comment";
-import { IdValidationPipe } from "src/validation/pipes/params-id-custom-validation.pipe";
-import { BlogIdValidationPipe } from "src/validation/pipes/body-blog-id-validation.pipe";
+import { BlogIdForPostValidationPipe } from "src/validation/pipes/body-blog-id-validation.pipe";
+import { PostIdValidationPipe } from "src/validation/pipes/post-Id-validation.pipe";
 
 @Controller('posts')
 export class PostsController {
@@ -19,12 +19,12 @@ export class PostsController {
   }
 
   @Post()
-  async createPost(@Body(BlogIdValidationPipe) post: PostInputModel) {
+  async createPost(@Body(BlogIdForPostValidationPipe) post: PostInputModel) {
     return await this.postService.addPost(post)
   }
 
   @Delete(':postId')
-  async deletePostById(@Param('postId', IdValidationPipe) id: string, @Res() res: Response) {
+  async deletePostById(@Param('postId', PostIdValidationPipe) id: string, @Res() res: Response) {
     const isDeleted = await this.postService.deletePostById(id)
     if(!isDeleted)
     {
@@ -35,7 +35,7 @@ export class PostsController {
   }
 
   @Get(':postId')
-  async getPostById(@Param('postId', IdValidationPipe) id: string, @Res() res: Response) {
+  async getPostById(@Param('postId', PostIdValidationPipe) id: string, @Res() res: Response) {
     const result = await this.postQueryRepository.getPostgById(id, '')
     if(!result){
       return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
@@ -45,7 +45,7 @@ export class PostsController {
   }
 
   @Put(':postId')
-  async updatePostById(@Param('postId', IdValidationPipe) id: string, @Body() post: PostInputModel, @Res() res: Response) {
+  async updatePostById(@Param('postId', PostIdValidationPipe) id: string, @Body() post: PostInputModel, @Res() res: Response) {
     const isUpdated = await this.postService.updatePostById(id, post)
     if(!isUpdated)
     {
@@ -57,12 +57,12 @@ export class PostsController {
 
   //add comment valid
   @Post(':postId/comments')
-  async createComment(@Param('postId', IdValidationPipe) postId: string, @Body() content: CommentInputModel) {
+  async createComment(@Param('postId', PostIdValidationPipe) postId: string, @Body() content: CommentInputModel) {
     return await this.postService.createComment('id', 'login', content.content, postId)
   }
 
   @Get(':postId/comments')
-  async getCommentForSpecifedPost(@Param('postId', IdValidationPipe) postId: string, @Query() params: QueryParamsModel) {
+  async getCommentForSpecifedPost(@Param('postId', PostIdValidationPipe) postId: string, @Query() params: QueryParamsModel) {
     return await this.postQueryRepository.getCommentsForSpecifiedPost(postId, params, 'userId')
   }
 }

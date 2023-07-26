@@ -5,7 +5,7 @@ import { BlogExistValidator } from '../BlogExistValidator';
 import { PostInputModel } from 'src/models/Post';
 
 @Injectable()
-export class BlogIdValidationPipe implements PipeTransform {
+export class BlogIdForPostValidationPipe implements PipeTransform {
   constructor(private readonly blogExistValidator: BlogExistValidator) {}
 
   async transform(value: any): Promise<PostInputModel> {

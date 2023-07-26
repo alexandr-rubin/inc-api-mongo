@@ -22,6 +22,17 @@ window.onload = function() {
           }
         }
       },
+      "/testing/all-data": {
+        "delete": {
+          "operationId": "TestingController_deleteAllDataTesting",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        }
+      },
       "/users": {
         "get": {
           "operationId": "UsersController_getUsers",
@@ -65,161 +76,6 @@ window.onload = function() {
               }
             }
           ],
-          "responses": {
-            "200": {
-              "description": ""
-            }
-          }
-        }
-      },
-      "/testing/all-data": {
-        "delete": {
-          "operationId": "TestingController_deleteAllDataTesting",
-          "parameters": [],
-          "responses": {
-            "200": {
-              "description": ""
-            }
-          }
-        }
-      },
-      "/blogs": {
-        "get": {
-          "operationId": "BlogsController_getUsers",
-          "parameters": [],
-          "responses": {
-            "200": {
-              "description": ""
-            }
-          }
-        },
-        "post": {
-          "operationId": "BlogsController_createBlog",
-          "parameters": [],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BlogInputModel"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": ""
-            }
-          }
-        }
-      },
-      "/blogs/{blogId}/posts": {
-        "post": {
-          "operationId": "BlogsController_createPostForSecificBlog",
-          "parameters": [
-            {
-              "name": "blogId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostForSpecBlogInputModel"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": ""
-            }
-          }
-        },
-        "get": {
-          "operationId": "BlogsController_getPostsForSpecifiBlog",
-          "parameters": [
-            {
-              "name": "blogId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": ""
-            }
-          }
-        }
-      },
-      "/blogs/{blogId}": {
-        "delete": {
-          "operationId": "BlogsController_deleteBlogById",
-          "parameters": [
-            {
-              "name": "blogId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": ""
-            }
-          }
-        },
-        "get": {
-          "operationId": "BlogsController_getBlogById",
-          "parameters": [
-            {
-              "name": "blogId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": ""
-            }
-          }
-        },
-        "put": {
-          "operationId": "BlogsController_updateBlogById",
-          "parameters": [
-            {
-              "name": "blogId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BlogInputModel"
-                }
-              }
-            }
-          },
           "responses": {
             "200": {
               "description": ""
@@ -364,6 +220,150 @@ window.onload = function() {
               }
             }
           ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/blogs": {
+        "get": {
+          "operationId": "BlogsController_getUsers",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        },
+        "post": {
+          "operationId": "BlogsController_createBlog",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogInputModel"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/blogs/{blogId}/posts": {
+        "post": {
+          "operationId": "BlogsController_createPostForSecificBlog",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostForSpecBlogInputModel"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          }
+        },
+        "get": {
+          "operationId": "BlogsController_getPostsForSpecifiBlog",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/blogs/{blogId}": {
+        "delete": {
+          "operationId": "BlogsController_deleteBlogById",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        },
+        "get": {
+          "operationId": "BlogsController_getBlogById",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        },
+        "put": {
+          "operationId": "BlogsController_updateBlogById",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogInputModel"
+                }
+              }
+            }
+          },
           "responses": {
             "200": {
               "description": ""
@@ -552,19 +552,19 @@ window.onload = function() {
           "type": "object",
           "properties": {}
         },
-        "BlogInputModel": {
-          "type": "object",
-          "properties": {}
-        },
-        "PostForSpecBlogInputModel": {
-          "type": "object",
-          "properties": {}
-        },
         "PostInputModel": {
           "type": "object",
           "properties": {}
         },
         "CommentInputModel": {
+          "type": "object",
+          "properties": {}
+        },
+        "BlogInputModel": {
+          "type": "object",
+          "properties": {}
+        },
+        "PostForSpecBlogInputModel": {
           "type": "object",
           "properties": {}
         },

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Post, PostDocument, PostInputModel, PostViewModel } from "../models/Post";
+import { Post, PostInputModel, PostViewModel } from "../models/Post";
 import { Blog, BlogDocument } from "src/models/Blogs";
 import { PostRepository } from "src/repositories/post.repository";
 import { Comment, CommentViewModel } from "src/models/Comment";
@@ -9,7 +9,7 @@ import { LikeStatuses } from "src/helpers/likeStatuses";
 
 @Injectable()
 export class PostService {
-  constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>, @InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
+  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
   private postRepository: PostRepository){}
 
   async addPost(post: PostInputModel): Promise<PostViewModel>{
