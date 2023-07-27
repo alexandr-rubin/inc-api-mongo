@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Blog, BlogDocument, BlogInputModel, BlogViewModel } from "../models/Blogs";
@@ -21,7 +21,7 @@ export class BlogService {
   async addPostForSpecificBlog(blogId: string, post: PostForSpecBlogInputModel): Promise<PostViewModel>{
     const blog = await this.blogModel.findById(blogId, { __v: false })
     if(!blog){
-      return null
+      throw new NotFoundException()
     }
     const newPost = new this.postModel({...post, blogId: blogId, blogName: blog.name, createdAt: new Date().toISOString(),
     likesAndDislikesCount: { likesCount: 0, dislikesCount: 0}, likesAndDislikes: [] })
@@ -33,12 +33,19 @@ export class BlogService {
 
   async deleteBlogById(id: string): Promise<boolean> {
     const result = await this.blogRepository.deleteBlogById(id)
+    if(!result){
+      throw new NotFoundException()
+    }
+    
     return result
   }
 
   async updateBlogById(id: string, blog: BlogInputModel): Promise<boolean> {
-    const result = await this.blogRepository.updateBlogById(id, blog)
-    return result
+    const isUpdated = await this.blogRepository.updateBlogById(id, blog)
+    if(!isUpdated){
+      throw new NotFoundException()
+    }
+    return isUpdated
   }
 
   async deleteBlogsTesting(): Promise<boolean> {

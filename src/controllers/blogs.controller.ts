@@ -1,6 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from "@nestjs/common";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
-import { Response } from "express";
 import { BlogService } from "../domain/blog.service";
 import { BlogInputModel } from "../models/Blogs";
 import { QueryParamsModel } from "../models/PaginationQuery";
@@ -21,57 +20,34 @@ export class BlogsController {
     return await this.blogService.addBlog(blog)
   }
 
+  @HttpCode(HttpStatusCode.CREATED_201)
   @Post(':blogId/posts')
-  async createPostForSecificBlog(@Param('blogId', BlogIdValidationPipe) blogId: string, @Body() post: PostForSpecBlogInputModel, @Res() res: Response) {
+  async createPostForSecificBlog(@Param('blogId', BlogIdValidationPipe) blogId: string, @Body() post: PostForSpecBlogInputModel) {
     const result = await this.postService.addPostForSpecificBlog(blogId, post)
-    if(!result){
-      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
-    }
 
-    return res.status(HttpStatusCode.CREATED_201).send(result)
+    return result
   }
 
+  @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete(':blogId')
-  async deleteBlogById(@Param('blogId', BlogIdValidationPipe) id: string, @Res() res: Response) {
-    const isDeleted = await this.blogService.deleteBlogById(id)
-    if(!isDeleted)
-    {
-      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
-    }
-
-    return res.sendStatus(HttpStatusCode.NO_CONTENT_204)  
+  async deleteBlogById(@Param('blogId', BlogIdValidationPipe) id: string) {
+    return await this.blogService.deleteBlogById(id)
   }
 
   @Get(':blogId')
-  async getBlogById(@Param('blogId', BlogIdValidationPipe) id: string, @Res() res: Response) {
-    const result = await this.blogQueryRepository.getBlogById(id)
-    if(!result){
-      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
-    }
-
-    return res.status(HttpStatusCode.OK_200).send(result)
+  async getBlogById(@Param('blogId', BlogIdValidationPipe) id: string) {
+    return await this.blogQueryRepository.getBlogById(id)
   }
 
+  @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put(':blogId')
-  async updateBlogById(@Param('blogId', BlogIdValidationPipe) id: string, @Body() blog: BlogInputModel, @Res() res: Response) {
-    const isUpdated = await this.blogService.updateBlogById(id, blog)
-    if(!isUpdated)
-    {
-      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
-    }
-
-    return res.sendStatus(HttpStatusCode.NO_CONTENT_204) 
+  async updateBlogById(@Param('blogId', BlogIdValidationPipe) id: string, @Body() blog: BlogInputModel) {
+    return await this.blogService.updateBlogById(id, blog)
   }
 
   @Get(':blogId/posts')
-  async getPostsForSpecifiBlog(@Query() params: QueryParamsModel, @Param('blogId', BlogIdValidationPipe) blogId: string, @Res() res: Response) {
+  async getPostsForSpecifiBlog(@Query() params: QueryParamsModel, @Param('blogId', BlogIdValidationPipe) blogId: string) {
     // add userID
-    const result = await this.blogQueryRepository.getPostsForSpecifiedBlog(blogId, params, '')
-    if(!result)
-    {
-      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
-    }
-
-    return res.status(HttpStatusCode.OK_200).send(result)
+    return await this.blogQueryRepository.getPostsForSpecifiedBlog(blogId, params, '')
   }
 }
