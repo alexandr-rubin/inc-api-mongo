@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User, UserDocument, UserInputModel } from "../models/User";
@@ -30,61 +30,61 @@ export class AuthorizationService {
     return createdUser
   }
 
-  async confrmEmail(code: string): Promise<boolean>{
+  async confrmEmail(code: string): Promise<User>{
     const user = await this.userQueryRepository.findUserByConfirmationEmailCode(code)
     //ныжны ли проверки если есть проверка в мидлваре
     if (!user)
-      return false
+      throw new BadRequestException()
     if (user.confirmationEmail.isConfirmed)
-      return false
+      throw new BadRequestException()
     if(new Date(user.confirmationEmail.expirationDate) < new Date()){
-      return false
+      throw new BadRequestException()
     }
-    
-    const isUpdated = await this.userRepository.updateConfirmation(user._id.toString())
-    return isUpdated
+    user.confirmationEmail.isConfirmed = true
+    const updatedUser = await this.userRepository.updateConfirmation(user)
+    return updatedUser
   }
-  async resendEmail(email: string): Promise<boolean>{
+  async resendEmail(email: string): Promise<User>{
     const user = await this.userQueryRepository.getUsergByEmail(email)
     // middlware
     if (!user)
-        return false
+      throw new BadRequestException()
     if (user.confirmationEmail.isConfirmed === false)
-        return false
+      throw new BadRequestException()
     if(new Date(user.confirmationEmail.expirationDate) < new Date()){
-        return false
+      throw new BadRequestException()
     }
     const code = uuidv4()
-    const isUpdated = await this.userRepository.updateConfirmationCode(user._id.toString(), code)
+    user.confirmationEmail.confirmationCode = code
+    user.confirmationEmail.expirationDate = genExpirationDate(1, 3).toISOString()
+    const updatedUser = await this.userRepository.updateConfirmationCode(user)
     await this.emailService.sendRegistrationConfirmationEmail(email, code)
-    return isUpdated
+    return updatedUser
   }
 
-  async recoverPassword(email: string): Promise<boolean> {
+  async recoverPassword(email: string): Promise<User> {
     const user = await this.userQueryRepository.getUsergByEmail(email)
     if(!user){
-        return false
+      return
     }
 
     const code = uuidv4()
     const expirationDate = genExpirationDate(1, 3)
 
-    const isUpdated = await this.userRepository.updateconfirmationPasswordData(email, code, expirationDate)
-
-    if(!isUpdated){
-        return false
-    }
+    user.confirmationPassword.confirmationCode = code
+    user.confirmationPassword.expirationDate = expirationDate.toISOString()
+    const updatedUser = await this.userRepository.updateconfirmationPasswordData(user)
     
     await this.emailService.sendPasswordRecoverEmail(email, code)
 
-    return true
+    return updatedUser
   }
 
   async updatePassword(password: string, code: string): Promise<boolean>{
     const passwordHash = await generateHash(password)
     const isUpdated = await this.userRepository.updatePassword(passwordHash, code)
     if(!isUpdated){
-        return false
+      throw new BadRequestException()
     }
 
     return true
@@ -98,15 +98,15 @@ export class AuthorizationService {
         if(isMatch){
           return user._id.toString()
         }
-        return null
+        throw new UnauthorizedException()
       } catch (error) {
         console.error('Error comparing passwords:', error);
-        return null
+        throw new UnauthorizedException()
       }
       
     }
     
-    return null
+    throw new UnauthorizedException()
   }
 
   /////

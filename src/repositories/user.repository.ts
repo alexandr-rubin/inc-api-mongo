@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User, UserDocument } from "../models/User";
-import { genExpirationDate } from "src/helpers/genCodeExpirationDate";
 import { LoginValidation } from "src/validation/login";
 
 @Injectable()
@@ -24,18 +23,18 @@ export class UserRepository {
     return !!result
   }
 
-  async updateConfirmation(id: string): Promise<boolean> {
-    const result = await this.userModel.findByIdAndUpdate(id, {'confirmationEmail.isConfirmed': true})
-    return !!result
+  async updateConfirmation(user: UserDocument): Promise<User> {
+    const result = await user.save()
+    return result.toJSON()
   }
 
-  async updateConfirmationCode(id: string, code: string): Promise<boolean> {// genExp dep
-    const result = await this.userModel.findByIdAndUpdate(id, {'confirmationEmail.confirmationCode': code, 'confirmationEmail.expirationDate': genExpirationDate(1, 3)})
-    return !!result
+  async updateConfirmationCode(user: UserDocument): Promise<User> {
+    const result = await user.save()
+    return result.toJSON()
   }
-  async updateconfirmationPasswordData(email: string, code: string, expirationDate: Date): Promise<boolean> {
-    const result = await this.userModel.updateOne({email: email}, {'confirmationPassword.confirmationCode': code, 'confirmationPassword.expirationDate': expirationDate})
-    return result.modifiedCount === 1
+  async updateconfirmationPasswordData(user: UserDocument): Promise<User> {
+    const result = await user.save()
+    return result.toJSON()
   } 
 
   async updatePassword(password: string, code: string): Promise<boolean> {

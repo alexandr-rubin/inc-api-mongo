@@ -473,7 +473,7 @@ window.onload = function() {
             }
           },
           "responses": {
-            "201": {
+            "204": {
               "description": ""
             }
           }
@@ -484,7 +484,7 @@ window.onload = function() {
           "operationId": "AuthorizationController_registrationConfirmation",
           "parameters": [],
           "responses": {
-            "201": {
+            "204": {
               "description": ""
             }
           }
@@ -505,7 +505,7 @@ window.onload = function() {
             }
           },
           "responses": {
-            "201": {
+            "204": {
               "description": ""
             }
           }
@@ -526,7 +526,7 @@ window.onload = function() {
             }
           },
           "responses": {
-            "201": {
+            "204": {
               "description": ""
             }
           }
@@ -547,7 +547,7 @@ window.onload = function() {
             }
           },
           "responses": {
-            "201": {
+            "204": {
               "description": ""
             }
           }
