@@ -90,7 +90,7 @@ export class AuthorizationService {
     return true
   }
 
-  async verifyUser(loginData: LoginValidation): Promise<string | null> {
+  async verifyUser(loginData: LoginValidation): Promise<string> {
     const user = await this.userRepository.verifyUser(loginData)
     if(user){
       try {

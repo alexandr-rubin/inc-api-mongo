@@ -27,7 +27,7 @@ export class BlogQueryRepository {
     return result
   }
 
-  async getBlogById(blogId: string): Promise<BlogViewModel | null> {
+  async getBlogById(blogId: string): Promise<BlogViewModel> {
     const blog = await this.blogModel.findById(blogId, { __v: false })
     if (!blog){
       throw new NotFoundException()
@@ -37,7 +37,7 @@ export class BlogQueryRepository {
     return { id, ...rest }
   }
 
-  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel> | null>{
+  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel>>{
     const blog = await this.getBlogById(blogId)
     if(!blog){
       throw new NotFoundException()

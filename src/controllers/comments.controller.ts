@@ -1,6 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Put, Res } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Param, Put } from "@nestjs/common";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
-import { Response } from "express";
 import { CommentQueryRepository } from "../queryRepositories/comment.query-repository";
 import { CommentService } from "src/domain/comment.service";
 import { CommentInputModel } from "src/models/Comment";
@@ -10,34 +9,20 @@ import { CommentIdValidationPipe } from "src/validation/pipes/comment-Id-validat
 export class CommentController {
   constructor(private readonly commentQueryRepository: CommentQueryRepository, private readonly commentService: CommentService){}
   @Get(':commentId')
-  async getCommentById(@Param('commentId', CommentIdValidationPipe) id: string, @Res() res: Response) {
-    const result = await this.commentQueryRepository.getCommentById(id, '')
-    if(!result){
-      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
-    }
-
-    return res.status(HttpStatusCode.OK_200).send(result)
+  async getCommentById(@Param('commentId', CommentIdValidationPipe) id: string) {
+    // userID
+    return await this.commentQueryRepository.getCommentById(id, '')
   }
 
+  @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete(':commentId')
-  async deleteCommentById(@Param('commentId', CommentIdValidationPipe) commentId: string, @Res() res: Response) {
-    const isDeleted = await this.commentService.deleteCommentById(commentId)
-    if(!isDeleted)
-    {
-      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
-    }
-
-    return res.sendStatus(HttpStatusCode.NO_CONTENT_204)  
+  async deleteCommentById(@Param('commentId', CommentIdValidationPipe) commentId: string) {
+    return await this.commentService.deleteCommentById(commentId)
   }
 
+  @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put(':commentId')
-  async updateCommentById(@Param('commentId', CommentIdValidationPipe) commentId: string, @Body() comment: CommentInputModel, @Res() res: Response) {
-    const isUpdated = await this.commentService.updateCommentById(commentId, comment)
-    if(!isUpdated)
-    {
-      return res.sendStatus(HttpStatusCode.NOT_FOUND_404)
-    }
-
-    return res.sendStatus(HttpStatusCode.NO_CONTENT_204) 
+  async updateCommentById(@Param('commentId', CommentIdValidationPipe) commentId: string, @Body() comment: CommentInputModel) {
+    return await this.commentService.updateCommentById(commentId, comment) 
   }
 }
