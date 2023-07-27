@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Paginator } from "../models/Paginator";
@@ -33,11 +33,11 @@ export class PostQueryRepository {
 
   async getPostgById(postId: string, userId: string): Promise<PostViewModel | null> {
     const post = await this.postModel.findById(postId, { __v: false })
+    if(!post){
+      throw new NotFoundException()
+    }
     const like = post.likesAndDislikes.find(like => like.userId === userId)
     const likeStatus = like === undefined ? LikeStatuses.None : like.likeStatus
-    if(!post){
-      return null
-    }
     const objPost = post.toJSON()
     const newestLikes = (post.likesAndDislikes.filter((element) => element.likeStatus === 'Like')).slice(-3).map((element) => element)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -78,8 +78,8 @@ export class PostQueryRepository {
 
   async getCommentsForSpecifiedPost(postId: string, params: QueryParamsModel, userId: string): Promise<Paginator<CommentViewModel> | null>{
     const isFinded = await this.postModel.findById(postId)
-    if(isFinded === null){
-      return null
+    if(!isFinded){
+      throw new NotFoundException()
     }
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize

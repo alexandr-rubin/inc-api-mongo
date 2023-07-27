@@ -15,6 +15,7 @@ export class BlogsController {
     return await this.blogQueryRepository.getBlogs(params)
   }
 
+  @HttpCode(HttpStatusCode.CREATED_201)
   @Post()
   async createBlog(@Body() blog: BlogInputModel) {
     return await this.blogService.addBlog(blog)

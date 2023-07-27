@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Post, PostInputModel, PostViewModel } from "../models/Post";
@@ -23,13 +23,19 @@ export class PostService {
   }
 
   async deletePostById(id: string): Promise<boolean> {
-    const result = await this.postRepository.deletePostById(id)
-    return result
+    const isDeleted = await this.postRepository.deletePostById(id)
+    if(!isDeleted){
+      throw new NotFoundException()
+    }
+    return isDeleted
   }
 
   async updatePostById(id: string, post: PostInputModel): Promise<boolean> {
-    const result = await this.postRepository.updatePostById(id, post)
-    return result
+    const isUpdated = await this.postRepository.updatePostById(id, post)
+    if(!isUpdated){
+      throw new NotFoundException()
+    }
+    return isUpdated
   }
 
   async deletePostsTesting(): Promise<boolean> {

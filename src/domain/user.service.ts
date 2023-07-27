@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User, UserDocument, UserInputModel, UserViewModel } from "../models/User";
@@ -19,8 +19,11 @@ export class UserService {
   }
   //
   async deleteUserById(id: string): Promise<boolean> {
-    const result = await this.userRepository.deleteUserById(id)
-    return result
+    const isDeleted = await this.userRepository.deleteUserById(id)
+    if(!isDeleted){
+      throw new NotFoundException()
+    }
+    return isDeleted
   }
   //
   async deleteUsersTesting(): Promise<boolean> {
