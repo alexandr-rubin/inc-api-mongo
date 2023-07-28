@@ -11,12 +11,11 @@ import { EmailOrLoginExistsPipe } from "src/validation/pipes/email-login-exist.p
 import { Public } from "src/decorators/public.decorator";
 import { LoginValidation } from "src/validation/login";
 import { LoginValidationPipe } from "src/validation/pipes/login-validation.pipe";
-import { UserQueryRepository } from "src/queryRepositories/user.query-repository";
 import { AccessTokenVrifyModel } from "src/models/Auth";
 
 @Controller('auth')
 export class AuthorizationController {
-  constructor(private readonly authorizationService: AuthorizationService, private readonly userQueryRepository: UserQueryRepository){}
+  constructor(private readonly authorizationService: AuthorizationService){}
   @Public()
   @Post('/login')
   async login(@Body(LoginValidationPipe) loginData: LoginValidation, @Res() res: Response) {
@@ -70,10 +69,10 @@ export class AuthorizationController {
 
   @Get('/me')
   async getCurrentUser(@Req() req: AccessTokenVrifyModel) {
-    const user = await this.userQueryRepository.getUsergByIdNoView(req.user.userId)
+    ////////////
     return {
-      email: user.email,
-      login: user.login,
+      email: req.user.email,
+      login: req.user.login,
       userId: req.user.userId
     }
   }

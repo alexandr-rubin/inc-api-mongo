@@ -108,8 +108,8 @@ export class PostQueryRepository {
     return newArray
   }
 
-  async getPostgByIdNoView(postId: string): Promise<Post | null> {
-    const post = await this.postModel.findById(postId, { __v: false }).lean()
+  async getPostgByIdNoView(postId: string): Promise<PostDocument | null> {
+    const post = await this.postModel.findById(postId)
     if(!post){
       return null
     }

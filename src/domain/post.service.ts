@@ -1,19 +1,18 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
 import { Post, PostInputModel, PostViewModel } from "../models/Post";
-import { Blog, BlogDocument } from "src/models/Blogs";
 import { PostRepository } from "src/repositories/post.repository";
 import { Comment, CommentViewModel } from "src/models/Comment";
 import { LikeStatuses } from "src/helpers/likeStatuses";
+import { BlogQueryRepository } from "src/queryRepositories/blog.query-repository";
+import { PostQueryRepository } from "src/queryRepositories/post.query-repository";
 
 @Injectable()
-export class PostService {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>,
-  private postRepository: PostRepository){}
+export class PostService {///////////
+  constructor(private postRepository: PostRepository, private blogQueryRepository: BlogQueryRepository, private postQueryRepository: PostQueryRepository){}
 
   async addPost(post: PostInputModel): Promise<PostViewModel>{
-    const blog = await this.blogModel.findById(post.blogId, { __v: false })
+    //
+    const blog = await this.blogQueryRepository.getBlogById(post.blogId)
     const newPost: Post = {...post, blogName: blog.name, createdAt: new Date().toISOString(),
     likesAndDislikesCount: { likesCount: 0, dislikesCount: 0}, likesAndDislikes: []}
     const savedPost = await this.postRepository.addPost(newPost)
@@ -56,5 +55,36 @@ export class PostService {
     dislikesCount: savedComment.likesAndDislikesCount.dislikesCount , myStatus: LikeStatuses.None}})
 
     return result
-}
+  }
+
+  async updatePostLikeStatus(postId: string, likeStatus: string, userId:string, login: string): Promise<boolean> {
+    const post = await this.postQueryRepository.getPostgByIdNoView(postId)
+    if(!post){
+      throw new NotFoundException()
+    }
+
+    const like = post.likesAndDislikes.find(likeOrDislike => likeOrDislike.userId === userId)
+
+    if(!like){
+      if(likeStatus === LikeStatuses.None){
+        return true
+      }
+      post.likesAndDislikes.push({userId: userId, login: login, addedAt: new Date().toISOString(), likeStatus: likeStatus})
+      await this.postRepository.updateFirstLike(likeStatus, post)
+      return true
+    }
+    if(like.likeStatus === likeStatus){
+      return true
+    }
+    if(likeStatus === LikeStatuses.None){
+      await this.postRepository.updateNoneLikeStatus(like.likeStatus, likeStatus, postId, userId)
+      return true
+    }
+    if(like.likeStatus !== likeStatus){
+      await this.postRepository.updateLikeStatus(like.likeStatus, likeStatus, postId, userId)
+      return true
+    }
+
+    return true
+  }
 }

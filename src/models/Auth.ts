@@ -1,9 +1,8 @@
 export class AccessTokenVrifyModel {
     user: {
+        email: string
+        login: string
         userId: string
-        JWT_SECRET_KEY: string
-        iat: string
-        exp: string
     }
 }
 

@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from 'src/decorators/public.decorator';
 import * as dotenv from 'dotenv'
+import { UserQueryRepository } from 'src/queryRepositories/user.query-repository';
 //////////////////
 dotenv.config()
 
@@ -16,7 +17,7 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService, private reflector: Reflector) {}
+  constructor(private jwtService: JwtService, private reflector: Reflector, private readonly userQueryRepository: UserQueryRepository) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -39,7 +40,8 @@ export class AuthGuard implements CanActivate {
       });
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
-      request['user'] = payload;
+      const user = await this.userQueryRepository.getUsergByIdNoView(payload.userId)
+      request['user'] = {userId: payload.userId, ...user};
     } catch {
       throw new UnauthorizedException();
     }

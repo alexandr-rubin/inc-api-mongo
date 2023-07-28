@@ -227,6 +227,26 @@ window.onload = function() {
           }
         }
       },
+      "/posts/{postId}/like-status": {
+        "put": {
+          "operationId": "PostsController_updateLikeStatus",
+          "parameters": [
+            {
+              "name": "postId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          }
+        }
+      },
       "/blogs": {
         "get": {
           "operationId": "BlogsController_getUsers",
