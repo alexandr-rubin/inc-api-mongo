@@ -9,29 +9,19 @@ import { BlogIdForPostValidationPipe } from "src/validation/pipes/body-blog-id-v
 import { PostIdValidationPipe } from "src/validation/pipes/post-Id-validation.pipe";
 import { AccessTokenVrifyModel } from "src/models/Auth";
 import { Request } from 'express'
-import { JwtService } from "@nestjs/jwt";
-import * as dotenv from 'dotenv'
 import { Public } from "src/decorators/public.decorator";
-
-dotenv.config()
-
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
+import { JwtAuthService } from "src/domain/JWT.service";
 
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postService: PostService, private readonly postQueryRepository: PostQueryRepository, private jwtService: JwtService){}
+  constructor(private readonly postService: PostService, private readonly postQueryRepository: PostQueryRepository, private readonly jwtAuthService: JwtAuthService){}
   @Public()
   @Get()
   async getUsers(@Query() params: QueryParamsModel, @Req() req: Request) {
     let userId = ''
-    const auth = req.headers.authorization
-    if(auth){
-        const token = auth.split(' ')[1]
-        //FIX
-        const verifyedToken = await this.jwtService.verifyAsync(token, {
-          secret: JWT_SECRET_KEY,
-        })
-        userId = verifyedToken.userId
+    const bearer = req.headers.authorization
+    if(bearer){
+      userId = await this.jwtAuthService.verifyToken(bearer)
     }
     // add userID
     return await this.postQueryRepository.getPosts(params, userId)
@@ -53,14 +43,9 @@ export class PostsController {
   @Get(':postId')
   async getPostById(@Param('postId', PostIdValidationPipe) id: string, @Req() req: Request) {
     let userId = ''
-    const auth = req.headers.authorization
-    if(auth){
-        const token = auth.split(' ')[1]
-        //FIX
-        const verifyedToken = await this.jwtService.verifyAsync(token, {
-          secret: JWT_SECRET_KEY,
-        })
-        userId = verifyedToken.userId
+    const bearer = req.headers.authorization
+    if(bearer){
+      userId = await this.jwtAuthService.verifyToken(bearer)
     }
     // userID
     return await this.postQueryRepository.getPostgById(id, userId)
@@ -75,22 +60,17 @@ export class PostsController {
   //add comment valid
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post(':postId/comments')
-  async createComment(@Param('postId', PostIdValidationPipe) postId: string, @Body() content: CommentInputModel) {
-    return await this.postService.createComment('id', 'login', content.content, postId)
+  async createComment(@Param('postId', PostIdValidationPipe) postId: string, @Body() content: CommentInputModel, @Req() req: AccessTokenVrifyModel) {
+    return await this.postService.createComment(req.user.userId, req.user.login, content.content, postId)
   }
 
   @Public()
   @Get(':postId/comments')
   async getCommentForSpecifedPost(@Param('postId', PostIdValidationPipe) postId: string, @Query() params: QueryParamsModel,@Req() req: Request) {
     let userId = ''
-    const auth = req.headers.authorization
-    if(auth){
-        const token = auth.split(' ')[1]
-        //FIX
-        const verifyedToken = await this.jwtService.verifyAsync(token, {
-          secret: JWT_SECRET_KEY,
-        })
-        userId = verifyedToken.userId
+    const bearer = req.headers.authorization
+    if(bearer){
+      userId = await this.jwtAuthService.verifyToken(bearer)
     }
     // userId
     return await this.postQueryRepository.getCommentsForSpecifiedPost(postId, params, userId)

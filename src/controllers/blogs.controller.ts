@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req } from "@nestjs/common";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { BlogService } from "../domain/blog.service";
 import { BlogInputModel } from "../models/Blogs";
@@ -6,10 +6,14 @@ import { QueryParamsModel } from "../models/PaginationQuery";
 import { BlogQueryRepository } from "../queryRepositories/blog.query-repository";
 import { PostForSpecBlogInputModel } from "../models/Post";
 import { BlogIdValidationPipe } from "src/validation/pipes/blog-Id-validation.pipe";
+import { Public } from "src/decorators/public.decorator";
+import { Request } from 'express'
+import { JwtAuthService } from "src/domain/JWT.service";
 
 @Controller('blogs')
 export class BlogsController {
-  constructor(private readonly blogService: BlogService,  private readonly postService: BlogService,private readonly blogQueryRepository: BlogQueryRepository){}
+  constructor(private readonly blogService: BlogService,  private readonly postService: BlogService,private readonly blogQueryRepository: BlogQueryRepository,
+    private readonly jwtAuthService: JwtAuthService){}
   @Get()
   async getUsers(@Query() params: QueryParamsModel) {
     return await this.blogQueryRepository.getBlogs(params)
@@ -46,9 +50,14 @@ export class BlogsController {
     return await this.blogService.updateBlogById(id, blog)
   }
 
+  @Public()
   @Get(':blogId/posts')
-  async getPostsForSpecifiBlog(@Query() params: QueryParamsModel, @Param('blogId', BlogIdValidationPipe) blogId: string) {
-    // add userID
-    return await this.blogQueryRepository.getPostsForSpecifiedBlog(blogId, params, '')
+  async getPostsForSpecifiBlog(@Query() params: QueryParamsModel, @Param('blogId', BlogIdValidationPipe) blogId: string, @Req() req: Request) {
+    let userId = ''
+    const bearer = req.headers.authorization
+    if(bearer){
+      userId = await this.jwtAuthService.verifyToken(bearer)
+    }
+    return await this.blogQueryRepository.getPostsForSpecifiedBlog(blogId, params, userId)
   }
 }

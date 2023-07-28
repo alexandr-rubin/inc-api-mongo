@@ -29,9 +29,9 @@ export class Comment {
 @Schema()
 export class CommentLike {
   @Prop()
-  commentId!: string
-  @Prop()
   userId!: string
+  @Prop()
+  addedAt!: string
   @Prop()
   likeStatus!: string
 }

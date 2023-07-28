@@ -8,6 +8,7 @@ import { PostRepository } from 'src/repositories/post.repository';
 import { PostExistValidator } from 'src/validation/PostExistValidator';
 import { BlogsModule } from './blogs.module';
 import { CommentsModule } from './comments.module';
+import { JwtAuthService } from 'src/domain/JWT.service';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { CommentsModule } from './comments.module';
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
 ],
   controllers: [PostsController],
-  providers: [PostService, PostQueryRepository, PostRepository, PostExistValidator],
+  providers: [PostService, PostQueryRepository, PostRepository, PostExistValidator, JwtAuthService],
   exports: [PostService, PostQueryRepository, PostRepository, PostExistValidator, MongooseModule],
 })
 export class PostsModule {}

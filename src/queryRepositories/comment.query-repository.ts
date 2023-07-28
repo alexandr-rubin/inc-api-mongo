@@ -22,8 +22,8 @@ export class CommentQueryRepository {
     const id = _id.toString()
     return { id, ...rest }
   }
-  async getCommentByIdNoView(commentId: string): Promise<Comment | null> {
-    const comment = await this.commentModel.findById(commentId, { __v: false, postId: false }).lean()
+  async getCommentByIdNoView(commentId: string): Promise<CommentDocument | null> {
+    const comment = await this.commentModel.findById(commentId)
     if (!comment){
       return null
     }

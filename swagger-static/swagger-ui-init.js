@@ -457,6 +457,26 @@ window.onload = function() {
           }
         }
       },
+      "/comments/{commentId}/like-status": {
+        "put": {
+          "operationId": "CommentController_updateLikeStatus",
+          "parameters": [
+            {
+              "name": "commentId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          }
+        }
+      },
       "/auth/login": {
         "post": {
           "operationId": "AuthorizationController_login",

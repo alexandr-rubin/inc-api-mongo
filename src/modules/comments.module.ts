@@ -6,13 +6,14 @@ import { CommentService } from 'src/domain/comment.service';
 import { CommentQueryRepository } from 'src/queryRepositories/comment.query-repository';
 import { CommentRepository } from 'src/repositories/comment.repository';
 import { CommentExistValidator } from 'src/validation/CommentExistValidator';
+import { JwtAuthService } from 'src/domain/JWT.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
 ],
   controllers: [CommentController],
-  providers: [CommentService, CommentQueryRepository, CommentRepository, CommentExistValidator],
+  providers: [CommentService, CommentQueryRepository, CommentRepository, CommentExistValidator, JwtAuthService],
   exports: [CommentService, CommentQueryRepository, CommentRepository, CommentExistValidator, MongooseModule],
 })
 export class CommentsModule {}

@@ -8,6 +8,7 @@ import { BlogRepository } from 'src/repositories/blog.repository';
 import { BlogExistValidator } from 'src/validation/BlogExistValidator';
 import { PostsModule } from './posts.module';
 import { BlogIdForPostValidationPipe } from 'src/validation/pipes/body-blog-id-validation.pipe';
+import { JwtAuthService } from 'src/domain/JWT.service';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { BlogIdForPostValidationPipe } from 'src/validation/pipes/body-blog-id-v
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
 ],
   controllers: [BlogsController],
-  providers: [BlogService, BlogQueryRepository, BlogRepository, BlogExistValidator, BlogIdForPostValidationPipe],
+  providers: [BlogService, BlogQueryRepository, BlogRepository, BlogExistValidator, BlogIdForPostValidationPipe, JwtAuthService],
   exports: [BlogService, BlogQueryRepository, BlogRepository, BlogExistValidator, BlogIdForPostValidationPipe, MongooseModule],
 })
 export class BlogsModule {}
