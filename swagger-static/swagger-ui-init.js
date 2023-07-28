@@ -552,6 +552,17 @@ window.onload = function() {
             }
           }
         }
+      },
+      "/auth/me": {
+        "get": {
+          "operationId": "AuthorizationController_getCurrentUser",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        }
       }
     },
     "info": {
