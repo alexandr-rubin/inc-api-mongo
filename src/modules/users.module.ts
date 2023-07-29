@@ -6,14 +6,13 @@ import { User, UserSchema } from '../models/User';
 import { UserQueryRepository } from '../queryRepositories/user.query-repository';
 import { UserRepository } from '../repositories/user.repository';
 import { UserExistValidator } from '../validation/UserExistValidator';
-import { BasicAuthGuard } from '../guards/basic-auth.guard';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
 ],
   controllers: [UsersController],
-  providers: [UserService, UserQueryRepository, UserRepository, UserExistValidator, BasicAuthGuard],
+  providers: [UserService, UserQueryRepository, UserRepository, UserExistValidator],
   exports: [UserService, UserQueryRepository, UserRepository, UserExistValidator,   MongooseModule],
 })
 export class UsersModule {}
