@@ -6,7 +6,7 @@ import { User, UserSchema } from '../models/User';
 import { UserQueryRepository } from '../queryRepositories/user.query-repository';
 import { UserRepository } from '../repositories/user.repository';
 import { UserExistValidator } from '../validation/UserExistValidator';
-import { BasicAuthGuard } from 'src/guards/basic-auth.guard';
+import { BasicAuthGuard } from '../guards/basic-auth.guard';
 
 @Module({
   imports: [

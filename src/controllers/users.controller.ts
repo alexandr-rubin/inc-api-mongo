@@ -5,9 +5,9 @@ import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { UserQueryRepository } from "../queryRepositories/user.query-repository";
 import { UserIdValidationPipe } from "../validation/pipes/user-Id-validation.pipe";
-import { Public } from "src/decorators/public.decorator";
-import { BasicAuthGuard } from "src/guards/basic-auth.guard";
-import { EmailOrLoginExistsPipe } from "src/validation/pipes/email-login-exist.pipe";
+import { Public } from "../decorators/public.decorator";
+import { BasicAuthGuard } from "../guards/basic-auth.guard";
+import { EmailOrLoginExistsPipe } from "../validation/pipes/email-login-exist.pipe";
 
 @Controller('users')
 export class UsersController {
