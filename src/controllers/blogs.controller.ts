@@ -14,6 +14,7 @@ import { JwtAuthService } from "../domain/JWT.service";
 export class BlogsController {
   constructor(private readonly blogService: BlogService,  private readonly postService: BlogService,private readonly blogQueryRepository: BlogQueryRepository,
     private readonly jwtAuthService: JwtAuthService){}
+  @Public()
   @Get()
   async getUsers(@Query() params: QueryParamsModel) {
     return await this.blogQueryRepository.getBlogs(params)
@@ -39,6 +40,7 @@ export class BlogsController {
     return await this.blogService.deleteBlogById(id)
   }
 
+  @Public()
   @Get(':blogId')
   async getBlogById(@Param('blogId', BlogIdValidationPipe) id: string) {
     return await this.blogQueryRepository.getBlogById(id)
