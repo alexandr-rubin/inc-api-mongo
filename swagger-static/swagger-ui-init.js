@@ -498,6 +498,28 @@ window.onload = function() {
           }
         }
       },
+      "/auth/refresh-token": {
+        "post": {
+          "operationId": "AuthorizationController_updateTokens",
+          "parameters": [],
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/auth/logout": {
+        "post": {
+          "operationId": "AuthorizationController_logout",
+          "parameters": [],
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          }
+        }
+      },
       "/auth/registration": {
         "post": {
           "operationId": "AuthorizationController_createUser",
@@ -599,6 +621,48 @@ window.onload = function() {
           "parameters": [],
           "responses": {
             "200": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/security": {
+        "get": {
+          "operationId": "SecurityController_getActiveDevices",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/security/devices": {
+        "delete": {
+          "operationId": "SecurityController_deleteDevices",
+          "parameters": [],
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/security/devices/{deviceId}": {
+        "delete": {
+          "operationId": "SecurityController_deleteSpecificDevice",
+          "parameters": [
+            {
+              "name": "deviceId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
               "description": ""
             }
           }

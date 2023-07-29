@@ -12,6 +12,13 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { LoginValidation } from 'src/validation/login';
 import { LoginValidationPipe } from 'src/validation/pipes/login-validation.pipe';
+import { Device, DeviceSchema } from 'src/models/Device';
+import { MongooseModule } from '@nestjs/mongoose';
+import { SecurityController } from 'src/controllers/security.controller';
+import { SecurityService } from 'src/domain/security.service';
+import { SecurityRepository } from 'src/repositories/security.repository';
+import { SecurityQueryRepository } from 'src/queryRepositories/security.query-repository';
+import { RefreshTokenGuard } from 'src/guards/refreshToken.guard';
 /////////////
 dotenv.config()
 
@@ -24,16 +31,17 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
     JwtModule.register({
       global: true,
       secret: JWT_SECRET_KEY,
-      signOptions: { expiresIn: '10h' },
+      signOptions: { expiresIn: '5m' },
     }),
+    MongooseModule.forFeature([{ name: Device.name, schema: DeviceSchema }]),
   ],
-  controllers: [AuthorizationController],
+  controllers: [AuthorizationController, SecurityController],
   providers: [AuthorizationService, AuthorizationRepository, PasswordRecoveryCodeExistValidator, PasswordRecoveryCodeValidPipe,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-  LoginValidation, LoginValidationPipe],
+  LoginValidation, LoginValidationPipe, SecurityService, SecurityRepository, SecurityQueryRepository, RefreshTokenGuard],
   exports: [AuthorizationService]
 })
 export class AuthModule {}

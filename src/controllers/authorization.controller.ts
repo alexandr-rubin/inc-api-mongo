@@ -1,8 +1,8 @@
-import { Body, Controller, Get, HttpCode, Post, Req, Res } from "@nestjs/common";
+import { Body, Controller, Get, Headers, HttpCode, Ip, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { UserInputModel } from "src/models/User";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { AuthorizationService } from "src/domain/authorization.service";
-import { Response } from "express";
+import { Request, Response } from "express";
 import { EmailConfirmationCodePipe } from "src/validation/pipes/email-confirmation-code.pipe";
 import { EmailValidation } from "src/validation/Email";
 import { NewPasswordInputModelValidation } from "src/validation/newPasswordInputModel";
@@ -12,16 +12,19 @@ import { Public } from "src/decorators/public.decorator";
 import { LoginValidation } from "src/validation/login";
 import { LoginValidationPipe } from "src/validation/pipes/login-validation.pipe";
 import { AccessTokenVrifyModel } from "src/models/Auth";
+import { RefreshTokenGuard } from "src/guards/refreshToken.guard";
 
 @Controller('auth')
 export class AuthorizationController {
   constructor(private readonly authorizationService: AuthorizationService){}
   @Public()
   @Post('/login')
-  async login(@Body(LoginValidationPipe) loginData: LoginValidation, @Res() res: Response) {
+  async login(@Headers() headers, @Ip() ip, @Body(LoginValidationPipe) loginData: LoginValidation, @Res() res: Response) {
     const userId = await this.authorizationService.verifyUser(loginData)
 
-    const tokens = await this.authorizationService.signIn(userId)
+    const userAgent = headers['user-agent']
+    const clientIP = ip
+    const tokens = await this.authorizationService.signIn(userId, userAgent, clientIP)
 
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
@@ -29,6 +32,32 @@ export class AuthorizationController {
     })
 
     res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
+  }
+
+  @Public()
+  @UseGuards(RefreshTokenGuard)
+  @Post('/refresh-token')
+  async updateTokens(@Headers() headers, @Ip() ip, @Res() res: Response, @Req() req: Request) {
+    const oldToken = req.cookies.refreshToken
+    const userAgent = headers['user-agent']
+    const clientIP = ip
+    const tokens = await this.authorizationService.updateDevice(oldToken, clientIP, userAgent)
+
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: true,
+    })
+
+    return {accessToken: tokens.accessToken}
+  }
+
+  @Public()
+  @UseGuards(RefreshTokenGuard)
+  @HttpCode(HttpStatusCode.NO_CONTENT_204)
+  @Post('/logout')
+  async logout(@Req() req: Request) {
+    const oldToken = req.cookies.refreshToken
+    return await this.authorizationService.logoutDevice(oldToken)
   }
 
   @Public()

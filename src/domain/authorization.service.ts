@@ -1,7 +1,5 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { User, UserDocument, UserInputModel } from "../models/User";
+import { User, UserInputModel } from "../models/User";
 import { UserRepository } from "src/repositories/user.repository";
 import { EmailService } from "./email.service";
 import { UserQueryRepository } from "src/queryRepositories/user.query-repository";
@@ -12,6 +10,9 @@ import { LoginValidation } from "src/validation/login";
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
 import * as dotenv from 'dotenv'
+import { Device } from "src/models/Device";
+import { AuthorizationRepository } from "src/repositories/authorization.repository";
+import { CreateJWT } from "src/models/JWTresponce";
 //////////////////
 dotenv.config()
 
@@ -19,8 +20,8 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
 
 @Injectable()
 export class AuthorizationService {
-  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>, private userRepository: UserRepository,
-  private emailService: EmailService, private readonly userQueryRepository: UserQueryRepository, private jwtService: JwtService){}
+  constructor(private userRepository: UserRepository, private emailService: EmailService, private readonly userQueryRepository: UserQueryRepository, 
+  private jwtService: JwtService, private authorizationRepository: AuthorizationRepository){}
 
   async createUser(userDto: UserInputModel): Promise<User> {
     const newUser: User = await User.createUser(userDto, false)
@@ -110,18 +111,64 @@ export class AuthorizationService {
   }
 
   /////
-  async createJWT(userId: string, deviceId: string, issuedAt: string){
+  async createJWT(userId: string, deviceId: string, issuedAt: string): Promise<CreateJWT> {
     const accessTokenPayload = { userId: userId, JWT_SECRET_KEY }
     const refreshTokenPayload = { deviceId: deviceId, userId: userId, issuedAt: issuedAt }
     return {
       accessToken: await this.jwtService.signAsync(accessTokenPayload),
-      refreshToken: await this.jwtService.signAsync(refreshTokenPayload, { expiresIn: '20s' })
+      refreshToken: await this.jwtService.signAsync(refreshTokenPayload, { expiresIn: '20m' })
     };
   }
 
-  async signIn(userId: string){
+  async signIn(userId: string, userAgent: string | undefined, clientIP: string){
+    if (!userAgent){
+      //
+      userAgent = 'default device name'
+    }
     const deviceId = uuidv4()
     const issuedAt = new Date().toISOString()
-    return await this.createJWT(userId, deviceId, issuedAt)
+    const tokens = await this.createJWT(userId, deviceId, issuedAt)
+    const decodedToken = await this.jwtService.verifyAsync(tokens.refreshToken)
+    const expirationDate = new Date(decodedToken.exp * 1000)
+    const device: Device = {issuedAt: issuedAt, expirationDate: expirationDate.toISOString(), IP: clientIP, deviceName: userAgent, deviceId: deviceId, userId: userId, isValid: true}
+    ////
+    await this.authorizationRepository.addDevice(device)
+
+    return tokens
+  }
+
+  async updateDevice(refreshToken: string, clientIP: string, userAgent: string | undefined): Promise<CreateJWT | null> {
+    const decodedToken: any = this.jwtService.verify(refreshToken)
+        if (!userAgent){
+            userAgent = 'default device name'
+        }
+        const deviceId = decodedToken.deviceId
+        const issuedAt = new Date().toISOString()
+        const userId = await this.jwtService.verifyAsync(refreshToken)
+        const tokens = await this.createJWT(userId, deviceId, issuedAt)
+        const decodedNewToken = await this.jwtService.verifyAsync(tokens.refreshToken)
+        const expirationDate = new Date(decodedNewToken.exp * 1000)
+        const newDevice: Device = {issuedAt: issuedAt, expirationDate: expirationDate.toISOString(), IP: clientIP, deviceName: userAgent, deviceId: deviceId, userId: userId, isValid: true}
+        const isUpdated = await this.authorizationRepository.updateDevice(newDevice)
+        if(!isUpdated){
+          return null
+        }
+        return tokens
+  }
+
+  async logoutDevice(refreshToken: string): Promise<Device>{
+    ////
+    const decodedToken = await this.jwtService.verifyAsync(refreshToken)
+    const isLogedout = await this.authorizationRepository.logoutDevice(decodedToken.deviceId)
+    return isLogedout
+  }
+
+  async getUserIdByToken(token: string) {
+    try {
+      const result = await this.jwtService.verifyAsync(token)
+      return result.userId
+    } catch (err) {
+      return null
+    }
   }
 }
