@@ -49,11 +49,11 @@ export class AuthorizationService {
     const user = await this.userQueryRepository.getUsergByEmail(email)
     // middlware
     if (!user)
-      throw new BadRequestException('User not found')
+      throw new BadRequestException('User not found.')
     if (user.confirmationEmail.isConfirmed)
-      throw new BadRequestException('User is confirmed')
+      throw new BadRequestException('User is confirmed.')
     if(new Date(user.confirmationEmail.expirationDate) < new Date()){
-      throw new BadRequestException('Token is expired')
+      throw new BadRequestException('Token is expired.')
     }
     const code = uuidv4()
     user.confirmationEmail.confirmationCode = code
