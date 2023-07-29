@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { SecurityRepository } from "src/repositories/security.repository";
+import { SecurityRepository } from "../repositories/security.repository";
 
 @Injectable()
 export class SecurityService {

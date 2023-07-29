@@ -1,5 +1,5 @@
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
-import { BlogQueryRepository } from 'src/queryRepositories/blog.query-repository';
+import { BlogQueryRepository } from '../queryRepositories/blog.query-repository';
 
 @ValidatorConstraint({ async: true })
 export class BlogExistValidator implements ValidatorConstraintInterface {

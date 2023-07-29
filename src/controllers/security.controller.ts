@@ -1,9 +1,9 @@
 import { Controller, Delete, Get, HttpCode, Param, Req, UseGuards } from "@nestjs/common";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
-import { SecurityQueryRepository } from "src/queryRepositories/security.query-repository";
+import { SecurityQueryRepository } from "../queryRepositories/security.query-repository";
 import { Request } from "express";
-import { SecurityService } from "src/domain/security.service";
-import { RefreshTokenGuard } from "src/guards/refreshToken.guard";
+import { SecurityService } from "../domain/security.service";
+import { RefreshTokenGuard } from "../guards/refreshToken.guard";
 
 @Controller('security')
 export class SecurityController {

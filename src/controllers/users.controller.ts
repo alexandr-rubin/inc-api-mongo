@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query } from "@nestjs/common";
-import { UserInputModel } from "src/models/User";
-import { UserService } from "src/domain/user.service";
+import { UserInputModel } from "../models/User";
+import { UserService } from "../domain/user.service";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { UserQueryRepository } from "../queryRepositories/user.query-repository";
-import { UserIdValidationPipe } from "src/validation/pipes/user-Id-validation.pipe";
+import { UserIdValidationPipe } from "../validation/pipes/user-Id-validation.pipe";
 
 @Controller('users')
 export class UsersController {

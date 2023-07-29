@@ -2,7 +2,7 @@ import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
 import { BlogExistValidator } from '../BlogExistValidator';
-import { PostInputModel } from 'src/models/Post';
+import { PostInputModel } from '../../models/Post';
 
 @Injectable()
 export class BlogIdForPostValidationPipe implements PipeTransform {

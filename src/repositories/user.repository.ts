@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { User, UserDocument } from "../models/User";
-import { LoginValidation } from "src/validation/login";
+import { LoginValidation } from "../validation/login";
 
 @Injectable()
 export class UserRepository {

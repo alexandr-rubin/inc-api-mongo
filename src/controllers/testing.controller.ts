@@ -4,8 +4,8 @@ import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { Response } from "express";
 import { PostService } from "../domain/post.service";
 import { BlogService } from "../domain/blog.service";
-import { CommentService } from "src/domain/comment.service";
-import { Public } from "src/decorators/public.decorator";
+import { CommentService } from "../domain/comment.service";
+import { Public } from "../decorators/public.decorator";
 
 @Controller('testing/all-data')
 export class TestingController {

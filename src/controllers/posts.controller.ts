@@ -4,13 +4,13 @@ import { PostInputModel } from "../models/Post";
 import { PostService } from "../domain/post.service";
 import { PostQueryRepository } from "../queryRepositories/post.query-repository";
 import { QueryParamsModel } from "../models/PaginationQuery";
-import { CommentInputModel } from "src/models/Comment";
-import { BlogIdForPostValidationPipe } from "src/validation/pipes/body-blog-id-validation.pipe";
-import { PostIdValidationPipe } from "src/validation/pipes/post-Id-validation.pipe";
-import { AccessTokenVrifyModel } from "src/models/Auth";
+import { CommentInputModel } from "../models/Comment";
+import { BlogIdForPostValidationPipe } from "../validation/pipes/body-blog-id-validation.pipe";
+import { PostIdValidationPipe } from "../validation/pipes/post-Id-validation.pipe";
+import { AccessTokenVrifyModel } from "../models/Auth";
 import { Request } from 'express'
-import { Public } from "src/decorators/public.decorator";
-import { JwtAuthService } from "src/domain/JWT.service";
+import { Public } from "../decorators/public.decorator";
+import { JwtAuthService } from "../domain/JWT.service";
 
 @Controller('posts')
 export class PostsController {

@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Device, DeviceDocument } from "src/models/Device";
+import { Device, DeviceDocument } from "../models/Device";
 
 @Injectable()
 export class SecurityRepository {

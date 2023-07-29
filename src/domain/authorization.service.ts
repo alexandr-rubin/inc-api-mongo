@@ -1,18 +1,18 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { User, UserInputModel } from "../models/User";
-import { UserRepository } from "src/repositories/user.repository";
+import { UserRepository } from "../repositories/user.repository";
 import { EmailService } from "./email.service";
-import { UserQueryRepository } from "src/queryRepositories/user.query-repository";
+import { UserQueryRepository } from "../queryRepositories/user.query-repository";
 import { v4 as uuidv4 } from 'uuid'
-import { genExpirationDate } from "src/helpers/genCodeExpirationDate";
-import { generateHash } from "src/helpers/generateHash";
-import { LoginValidation } from "src/validation/login";
+import { genExpirationDate } from "../helpers/genCodeExpirationDate";
+import { generateHash } from "../helpers/generateHash";
+import { LoginValidation } from "../validation/login";
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
 import * as dotenv from 'dotenv'
-import { Device } from "src/models/Device";
-import { AuthorizationRepository } from "src/repositories/authorization.repository";
-import { CreateJWT } from "src/models/JWTresponce";
+import { Device } from "../models/Device";
+import { AuthorizationRepository } from "../repositories/authorization.repository";
+import { CreateJWT } from "../models/JWTresponce";
 //////////////////
 dotenv.config()
 

@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Post, PostInputModel, PostViewModel } from "../models/Post";
-import { PostRepository } from "src/repositories/post.repository";
+import { PostRepository } from "../repositories/post.repository";
 import { Comment, CommentViewModel } from "src/models/Comment";
-import { LikeStatuses } from "src/helpers/likeStatuses";
-import { BlogQueryRepository } from "src/queryRepositories/blog.query-repository";
-import { PostQueryRepository } from "src/queryRepositories/post.query-repository";
+import { LikeStatuses } from "../helpers/likeStatuses";
+import { BlogQueryRepository } from "../queryRepositories/blog.query-repository";
+import { PostQueryRepository } from "../queryRepositories/post.query-repository";
 
 @Injectable()
 export class PostService {///////////

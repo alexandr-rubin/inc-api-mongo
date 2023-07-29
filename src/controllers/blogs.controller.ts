@@ -5,10 +5,10 @@ import { BlogInputModel } from "../models/Blogs";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { BlogQueryRepository } from "../queryRepositories/blog.query-repository";
 import { PostForSpecBlogInputModel } from "../models/Post";
-import { BlogIdValidationPipe } from "src/validation/pipes/blog-Id-validation.pipe";
-import { Public } from "src/decorators/public.decorator";
+import { BlogIdValidationPipe } from "../validation/pipes/blog-Id-validation.pipe";
+import { Public } from "../decorators/public.decorator";
 import { Request } from 'express'
-import { JwtAuthService } from "src/domain/JWT.service";
+import { JwtAuthService } from "../domain/JWT.service";
 
 @Controller('blogs')
 export class BlogsController {

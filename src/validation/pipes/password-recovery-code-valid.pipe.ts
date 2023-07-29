@@ -1,6 +1,6 @@
 // password-recovery-code-exist.pipe.ts
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common';
-import { UserQueryRepository } from 'src/queryRepositories/user.query-repository';
+import { UserQueryRepository } from '../../queryRepositories/user.query-repository';
 import { PasswordRecoveryCodeExistValidator } from '../passwordRecCodeValid';
 import { NewPasswordInputModelValidation } from '../newPasswordInputModel';
 

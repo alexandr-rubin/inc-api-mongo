@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { PostsController } from 'src/controllers/posts.controller';
-import { PostService } from 'src/domain/post.service';
-import { Post, PostSchema } from 'src/models/Post';
-import { PostQueryRepository } from 'src/queryRepositories/post.query-repository';
-import { PostRepository } from 'src/repositories/post.repository';
-import { PostExistValidator } from 'src/validation/PostExistValidator';
+import { PostsController } from '../controllers/posts.controller';
+import { PostService } from '../domain/post.service';
+import { Post, PostSchema } from '../models/Post';
+import { PostQueryRepository } from '../queryRepositories/post.query-repository';
+import { PostRepository } from '../repositories/post.repository';
+import { PostExistValidator } from '../validation/PostExistValidator';
 import { BlogsModule } from './blogs.module';
 import { CommentsModule } from './comments.module';
-import { JwtAuthService } from 'src/domain/JWT.service';
+import { JwtAuthService } from '../domain/JWT.service';
 
 @Module({
   imports: [

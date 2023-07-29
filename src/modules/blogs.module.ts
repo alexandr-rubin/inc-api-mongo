@@ -1,14 +1,14 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { BlogsController } from 'src/controllers/blogs.controller';
-import { BlogService } from 'src/domain/blog.service';
-import { Blog, BlogSchema } from 'src/models/Blogs';
-import { BlogQueryRepository } from 'src/queryRepositories/blog.query-repository';
-import { BlogRepository } from 'src/repositories/blog.repository';
-import { BlogExistValidator } from 'src/validation/BlogExistValidator';
+import { BlogsController } from '../controllers/blogs.controller';
+import { BlogService } from '../domain/blog.service';
+import { Blog, BlogSchema } from '../models/Blogs';
+import { BlogQueryRepository } from '../queryRepositories/blog.query-repository';
+import { BlogRepository } from '../repositories/blog.repository';
+import { BlogExistValidator } from '../validation/BlogExistValidator';
 import { PostsModule } from './posts.module';
-import { BlogIdForPostValidationPipe } from 'src/validation/pipes/body-blog-id-validation.pipe';
-import { JwtAuthService } from 'src/domain/JWT.service';
+import { BlogIdForPostValidationPipe } from '../validation/pipes/body-blog-id-validation.pipe';
+import { JwtAuthService } from '../domain/JWT.service';
 
 @Module({
   imports: [

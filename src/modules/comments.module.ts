@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Comment, CommentSchema } from 'src/models/Comment';
-import { CommentController } from 'src/controllers/comments.controller';
-import { CommentService } from 'src/domain/comment.service';
-import { CommentQueryRepository } from 'src/queryRepositories/comment.query-repository';
-import { CommentRepository } from 'src/repositories/comment.repository';
-import { CommentExistValidator } from 'src/validation/CommentExistValidator';
-import { JwtAuthService } from 'src/domain/JWT.service';
+import { Comment, CommentSchema } from '../models/Comment';
+import { CommentController } from '../controllers/comments.controller';
+import { CommentService } from '../domain/comment.service';
+import { CommentQueryRepository } from '../queryRepositories/comment.query-repository';
+import { CommentRepository } from '../repositories/comment.repository';
+import { CommentExistValidator } from '../validation/CommentExistValidator';
+import { JwtAuthService } from '../domain/JWT.service';
 
 @Module({
   imports: [

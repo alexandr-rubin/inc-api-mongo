@@ -1,6 +1,6 @@
 import { PipeTransform, Injectable } from '@nestjs/common';
-import { UserInputModel } from 'src/models/User';
-import { UserQueryRepository } from 'src/queryRepositories/user.query-repository';
+import { UserInputModel } from '../../models/User';
+import { UserQueryRepository } from '../../queryRepositories/user.query-repository';
 import { validationExceptionFactory } from '../Factories/custom-exception-factory';
 
 @Injectable()

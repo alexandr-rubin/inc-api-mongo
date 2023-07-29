@@ -1,18 +1,18 @@
 import { Body, Controller, Get, Headers, HttpCode, Ip, Post, Req, Res, UseGuards } from "@nestjs/common";
-import { UserInputModel } from "src/models/User";
+import { UserInputModel } from "../models/User";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
-import { AuthorizationService } from "src/domain/authorization.service";
+import { AuthorizationService } from "../domain/authorization.service";
 import { Request, Response } from "express";
-import { EmailConfirmationCodePipe } from "src/validation/pipes/email-confirmation-code.pipe";
-import { EmailValidation } from "src/validation/Email";
-import { NewPasswordInputModelValidation } from "src/validation/newPasswordInputModel";
-import { PasswordRecoveryCodeValidPipe } from "src/validation/pipes/password-recovery-code-valid.pipe";
-import { EmailOrLoginExistsPipe } from "src/validation/pipes/email-login-exist.pipe";
-import { Public } from "src/decorators/public.decorator";
-import { LoginValidation } from "src/validation/login";
-import { LoginValidationPipe } from "src/validation/pipes/login-validation.pipe";
-import { AccessTokenVrifyModel } from "src/models/Auth";
-import { RefreshTokenGuard } from "src/guards/refreshToken.guard";
+import { EmailConfirmationCodePipe } from "../validation/pipes/email-confirmation-code.pipe";
+import { EmailValidation } from "../validation/Email";
+import { NewPasswordInputModelValidation } from "../validation/newPasswordInputModel";
+import { PasswordRecoveryCodeValidPipe } from "../validation/pipes/password-recovery-code-valid.pipe";
+import { EmailOrLoginExistsPipe } from "../validation/pipes/email-login-exist.pipe";
+import { Public } from "../decorators/public.decorator";
+import { LoginValidation } from "../validation/login";
+import { LoginValidationPipe } from "../validation/pipes/login-validation.pipe";
+import { AccessTokenVrifyModel } from "../models/Auth";
+import { RefreshTokenGuard } from "../guards/refreshToken.guard";
 
 @Controller('auth')
 export class AuthorizationController {

@@ -6,7 +6,7 @@ import { QueryParamsModel } from "../models/PaginationQuery";
 import { createPaginationQuery } from "../helpers/pagination";
 import { Post, PostDocument, PostViewModel } from "../models/Post";
 import { LikeStatuses } from "../helpers/likeStatuses";
-import { Comment, CommentDocument, CommentViewModel } from "src/models/Comment";
+import { Comment, CommentDocument, CommentViewModel } from "../models/Comment";
 import { WithId } from 'mongodb' 
 
 @Injectable()

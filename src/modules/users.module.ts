@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UsersController } from 'src/controllers/users.controller';
-import { UserService } from 'src/domain/user.service';
-import { User, UserSchema } from 'src/models/User';
-import { UserQueryRepository } from 'src/queryRepositories/user.query-repository';
-import { UserRepository } from 'src/repositories/user.repository';
-import { UserExistValidator } from 'src/validation/UserExistValidator';
+import { UsersController } from '../controllers/users.controller';
+import { UserService } from '../domain/user.service';
+import { User, UserSchema } from '../models/User';
+import { UserQueryRepository } from '../queryRepositories/user.query-repository';
+import { UserRepository } from '../repositories/user.repository';
+import { UserExistValidator } from '../validation/UserExistValidator';
 
 @Module({
   imports: [

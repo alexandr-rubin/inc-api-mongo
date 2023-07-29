@@ -1,5 +1,5 @@
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
-import { UserQueryRepository } from 'src/queryRepositories/user.query-repository';
+import { UserQueryRepository } from '../queryRepositories/user.query-repository';
 
 @ValidatorConstraint({ async: true })
 export class UserExistValidator implements ValidatorConstraintInterface {

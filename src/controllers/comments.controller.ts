@@ -1,13 +1,13 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Put, Req } from "@nestjs/common";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { CommentQueryRepository } from "../queryRepositories/comment.query-repository";
-import { CommentService } from "src/domain/comment.service";
-import { CommentInputModel } from "src/models/Comment";
-import { CommentIdValidationPipe } from "src/validation/pipes/comment-Id-validation.pipe";
-import { Public } from "src/decorators/public.decorator";
+import { CommentService } from "../domain/comment.service";
+import { CommentInputModel } from "../models/Comment";
+import { CommentIdValidationPipe } from "../validation/pipes/comment-Id-validation.pipe";
+import { Public } from "../decorators/public.decorator";
 import { Request } from 'express'
-import { AccessTokenVrifyModel } from "src/models/Auth";
-import { JwtAuthService } from "src/domain/JWT.service";
+import { AccessTokenVrifyModel } from "../models/Auth";
+import { JwtAuthService } from "../domain/JWT.service";
 
 @Controller('comments')
 export class CommentController {

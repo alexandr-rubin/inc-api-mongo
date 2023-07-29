@@ -1,24 +1,24 @@
 import { Module } from '@nestjs/common';
-import { AuthorizationController } from 'src/controllers/authorization.controller';
-import { AuthorizationService } from 'src/domain/authorization.service';
-import { AuthorizationRepository } from 'src/repositories/authorization.repository';
-import { PasswordRecoveryCodeExistValidator } from 'src/validation/passwordRecCodeValid';
-import { PasswordRecoveryCodeValidPipe } from 'src/validation/pipes/password-recovery-code-valid.pipe';
+import { AuthorizationController } from '../controllers/authorization.controller';
+import { AuthorizationService } from '../domain/authorization.service';
+import { AuthorizationRepository } from '../repositories/authorization.repository';
+import { PasswordRecoveryCodeExistValidator } from '../validation/passwordRecCodeValid';
+import { PasswordRecoveryCodeValidPipe } from '../validation/pipes/password-recovery-code-valid.pipe';
 import { UsersModule } from './users.module';
 import { EmailModule } from './email.module';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv'
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
-import { LoginValidation } from 'src/validation/login';
-import { LoginValidationPipe } from 'src/validation/pipes/login-validation.pipe';
-import { Device, DeviceSchema } from 'src/models/Device';
+import { LoginValidation } from '../validation/login';
+import { LoginValidationPipe } from '../validation/pipes/login-validation.pipe';
+import { Device, DeviceSchema } from '../models/Device';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SecurityController } from 'src/controllers/security.controller';
-import { SecurityService } from 'src/domain/security.service';
-import { SecurityRepository } from 'src/repositories/security.repository';
-import { SecurityQueryRepository } from 'src/queryRepositories/security.query-repository';
-import { RefreshTokenGuard } from 'src/guards/refreshToken.guard';
+import { SecurityController } from '../controllers/security.controller';
+import { SecurityService } from '../domain/security.service';
+import { SecurityRepository } from '../repositories/security.repository';
+import { SecurityQueryRepository } from '../queryRepositories/security.query-repository';
+import { RefreshTokenGuard } from '../guards/refreshToken.guard';
 /////////////
 dotenv.config()
 
