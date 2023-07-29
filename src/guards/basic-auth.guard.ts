@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable,  UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable,  UnauthorizedException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class BasicAuthGuard implements CanActivate {
     const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
 
     if (credentials !== 'admin:qwerty') {
-      throw new ForbiddenException()
+      throw new UnauthorizedException()
     }
 
     return true;
