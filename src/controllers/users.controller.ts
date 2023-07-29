@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { UserInputModel } from "../models/User";
 import { UserService } from "../domain/user.service";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
@@ -6,6 +6,8 @@ import { QueryParamsModel } from "../models/PaginationQuery";
 import { UserQueryRepository } from "../queryRepositories/user.query-repository";
 import { UserIdValidationPipe } from "../validation/pipes/user-Id-validation.pipe";
 import { Public } from "src/decorators/public.decorator";
+import { BasicAuthGuard } from "src/guards/basic-auth.guard";
+import { EmailOrLoginExistsPipe } from "src/validation/pipes/email-login-exist.pipe";
 
 @Controller('users')
 export class UsersController {
@@ -15,10 +17,12 @@ export class UsersController {
   async getUsers(@Query() params: QueryParamsModel) {
     return await this.userQueryRepository.getUsers(params)
   }
-
+  
+  @Public()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post()
-  async createUser(@Body() user: UserInputModel) {
+  async createUser(@Body(EmailOrLoginExistsPipe) user: UserInputModel) {
     return await this.userService.createUser(user)
   }
 
