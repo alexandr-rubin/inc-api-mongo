@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable,  UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -12,13 +12,16 @@ export class BasicAuthGuard implements CanActivate {
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Basic ')) {
-      return false;
+      throw new UnauthorizedException()
     }
 
     const base64Credentials = authHeader.split(' ')[1];
     const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
 
-    // Replace 'admin:qwerty' with your actual valid credentials
-    return credentials === 'admin:qwerty';
+    if (credentials !== 'admin:qwerty') {
+      throw new ForbiddenException()
+    }
+
+    return true;
   }
 }
