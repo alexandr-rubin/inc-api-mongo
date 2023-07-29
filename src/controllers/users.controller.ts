@@ -16,12 +16,14 @@ export class UsersController {
     return await this.userQueryRepository.getUsers(params)
   }
   
+  @Public()
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post()
   async createUser(@Body() user: UserInputModel) {
     return await this.userService.createUser(user)
   }
 
+  @Public()
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete(':id')
   async deleteUserById(@Param('id', UserIdValidationPipe) id: string) {
