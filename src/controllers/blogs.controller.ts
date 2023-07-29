@@ -20,12 +20,14 @@ export class BlogsController {
     return await this.blogQueryRepository.getBlogs(params)
   }
 
+  @Public()
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post()
   async createBlog(@Body() blog: BlogInputModel) {
     return await this.blogService.addBlog(blog)
   }
 
+  @Public()
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post(':blogId/posts')
   async createPostForSecificBlog(@Param('blogId', BlogIdValidationPipe) blogId: string, @Body() post: PostForSpecBlogInputModel) {
