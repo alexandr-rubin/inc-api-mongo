@@ -27,6 +27,7 @@ export class UsersController {
   }
 
   @Public()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete(':id')
   async deleteUserById(@Param('id', UserIdValidationPipe) id: string) {
