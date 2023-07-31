@@ -12,6 +12,7 @@ import { Request } from 'express'
 import { Public } from "../decorators/public.decorator";
 import { JwtAuthService } from "../domain/JWT.service";
 import { BasicAuthGuard } from "../guards/basic-auth.guard";
+import { likeStatusValidation } from "src/validation/likeStatus";
 
 @Controller('posts')
 export class PostsController {
@@ -85,7 +86,7 @@ export class PostsController {
 
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put('/:postId/like-status')
-  async updateLikeStatus(@Param('postId', PostIdValidationPipe) postId: string, @Body() likeStatus: {likeStatus: string}, @Req() req: AccessTokenVrifyModel) {
+  async updateLikeStatus(@Param('postId', PostIdValidationPipe) postId: string, @Body() likeStatus: likeStatusValidation, @Req() req: AccessTokenVrifyModel) {
     return await this.postService.updatePostLikeStatus(postId, likeStatus.likeStatus, req.user.userId, req.user.login)
   }
 }
