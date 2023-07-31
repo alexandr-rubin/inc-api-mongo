@@ -11,7 +11,12 @@ export class CommentService {
   constructor(@InjectModel(Comment.name) private commentModel: Model<CommentDocument>, private commentRepository: CommentRepository,
   private commentQueryRepository: CommentQueryRepository){}
 
-  async deleteCommentById(id: string): Promise<boolean> {
+  async deleteCommentById(id: string, userId: string): Promise<boolean> {
+    const comment = await this.commentQueryRepository.getCommentByIdNoView(id)
+    if(comment && comment.commentatorInfo.userId !== userId){
+      throw new ForbiddenException()
+    }
+    
     const isDeleted = await this.commentRepository.deleteCommentById(id)
     if(!isDeleted){
       throw new NotFoundException()

@@ -26,8 +26,13 @@ export class CommentController {
 
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete(':commentId')
-  async deleteCommentById(@Param('commentId', CommentIdValidationPipe) commentId: string) {
-    return await this.commentService.deleteCommentById(commentId)
+  async deleteCommentById(@Param('commentId', CommentIdValidationPipe) commentId: string, @Req() req: Request) {
+    let userId = ''
+    const bearer = req.headers.authorization
+    if(bearer){
+      userId = await this.jwtAuthService.verifyToken(bearer)
+    }
+    return await this.commentService.deleteCommentById(commentId, userId)
   }
 
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
