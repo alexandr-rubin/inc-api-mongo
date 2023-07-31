@@ -19,6 +19,7 @@ import { SecurityService } from '../domain/security.service';
 import { SecurityRepository } from '../repositories/security.repository';
 import { SecurityQueryRepository } from '../queryRepositories/security.query-repository';
 import { RefreshTokenGuard } from '../guards/refreshToken.guard';
+import { BasicAuthGuard } from '../guards/basic-auth.guard';
 /////////////
 dotenv.config()
 
@@ -41,7 +42,7 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-  LoginValidation, LoginValidationPipe, SecurityService, SecurityRepository, SecurityQueryRepository, RefreshTokenGuard],
+  LoginValidation, LoginValidationPipe, SecurityService, SecurityRepository, SecurityQueryRepository, RefreshTokenGuard, BasicAuthGuard],
   exports: [AuthorizationService]
 })
 export class AuthModule {}

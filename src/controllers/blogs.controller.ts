@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { BlogService } from "../domain/blog.service";
 import { BlogInputModel } from "../models/Blogs";
@@ -9,18 +9,22 @@ import { BlogIdValidationPipe } from "../validation/pipes/blog-Id-validation.pip
 import { Public } from "../decorators/public.decorator";
 import { Request } from 'express'
 import { JwtAuthService } from "../domain/JWT.service";
+import { BasicAuthGuard } from "../guards/basic-auth.guard";
 
 @Controller('blogs')
 export class BlogsController {
   constructor(private readonly blogService: BlogService,  private readonly postService: BlogService,private readonly blogQueryRepository: BlogQueryRepository,
-    private readonly jwtAuthService: JwtAuthService){}
+  private readonly jwtAuthService: JwtAuthService){}
+
   @Public()
+  @UseGuards(BasicAuthGuard)
   @Get()
   async getUsers(@Query() params: QueryParamsModel) {
     return await this.blogQueryRepository.getBlogs(params)
   }
 
   @Public()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post()
   async createBlog(@Body() blog: BlogInputModel) {
@@ -36,6 +40,8 @@ export class BlogsController {
     return result
   }
 
+  @Public()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete(':blogId')
   async deleteBlogById(@Param('blogId', BlogIdValidationPipe) id: string) {
@@ -48,6 +54,8 @@ export class BlogsController {
     return await this.blogQueryRepository.getBlogById(id)
   }
 
+  @Public()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put(':blogId')
   async updateBlogById(@Param('blogId', BlogIdValidationPipe) id: string, @Body() blog: BlogInputModel) {

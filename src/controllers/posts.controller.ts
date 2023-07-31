@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { PostInputModel } from "../models/Post";
 import { PostService } from "../domain/post.service";
@@ -11,6 +11,7 @@ import { AccessTokenVrifyModel } from "../models/Auth";
 import { Request } from 'express'
 import { Public } from "../decorators/public.decorator";
 import { JwtAuthService } from "../domain/JWT.service";
+import { BasicAuthGuard } from "../guards/basic-auth.guard";
 
 @Controller('posts')
 export class PostsController {
@@ -27,12 +28,16 @@ export class PostsController {
     return await this.postQueryRepository.getPosts(params, userId)
   }
 
+  @Public()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post()
   async createPost(@Body(BlogIdForPostValidationPipe) post: PostInputModel) {
     return await this.postService.addPost(post)
   }
 
+  @Public()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete(':postId')
   async deletePostById(@Param('postId', PostIdValidationPipe) id: string) {
@@ -51,6 +56,8 @@ export class PostsController {
     return await this.postQueryRepository.getPostgById(id, userId)
   }
 
+  @Public()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put(':postId')
   async updatePostById(@Param('postId', PostIdValidationPipe) id: string, @Body() post: PostInputModel) {
@@ -76,6 +83,7 @@ export class PostsController {
     return await this.postQueryRepository.getCommentsForSpecifiedPost(postId, params, userId)
   }
 
+  @Public()
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put('/:postId/like-status')
   async updateLikeStatus(@Param('postId', PostIdValidationPipe) postId: string, @Body() likeStatus: {likeStatus: string}, @Req() req: AccessTokenVrifyModel) {

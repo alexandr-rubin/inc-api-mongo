@@ -7,6 +7,7 @@ import { EmailConfirmationCodeValidator } from '../validation/EmailConfirmationC
 import { EmailConfirmationCodePipe } from '../validation/pipes/email-confirmation-code.pipe';
 import { EmailOrLoginExistsPipe } from '../validation/pipes/email-login-exist.pipe';
 import { UsersModule } from './users.module';
+import { BasicAuthGuard } from '../guards/basic-auth.guard';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { UsersModule } from './users.module';
       },
     }),
   ],
-  providers: [EmailAdapter, EmailService, EmailConfirmationCodeValidator, EmailConfirmationCodePipe, EmailOrLoginExistsPipe],
+  providers: [EmailAdapter, EmailService, EmailConfirmationCodeValidator, EmailConfirmationCodePipe, EmailOrLoginExistsPipe, BasicAuthGuard],
   exports: [EmailAdapter, EmailService, EmailConfirmationCodeValidator, EmailConfirmationCodePipe, EmailOrLoginExistsPipe, MailerModule],
 })
 export class EmailModule {}
