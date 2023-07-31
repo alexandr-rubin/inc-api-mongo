@@ -1,5 +1,5 @@
 import { IsEnum, IsString, Matches } from "class-validator";
-import { LikeStatuses } from "src/helpers/likeStatuses";
+import { LikeStatuses } from "../helpers/likeStatuses";
 
 export class likeStatusValidation {
   @IsString()   
