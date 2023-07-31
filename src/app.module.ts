@@ -6,8 +6,7 @@ import { TestingController } from './controllers/testing.controller';
 import { ConfigModule } from '@nestjs/config';
 import * as dotenv from 'dotenv'
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';  
-import { IsBlogIdValidConstraint } from './decorators/IsBlogIdValid';
+import { join } from 'path';
 import { Post, PostSchema } from './models/Post';
 import { BlogsController } from './controllers/blogs.controller';
 import { JwtAuthService } from './domain/JWT.service';
@@ -58,6 +57,7 @@ import { LoginValidationPipe } from './validation/pipes/login-validation.pipe';
 import { PasswordRecoveryCodeValidPipe } from './validation/pipes/password-recovery-code-valid.pipe';
 import { AuthGuard } from './guards/auth.guard';
 import { CommentController } from './controllers/comments.controller';
+import { IsBlogIdValidConstraint } from './decorators/isBlogIdValid';
 
 dotenv.config()
 
