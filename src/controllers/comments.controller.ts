@@ -8,6 +8,7 @@ import { Public } from "../decorators/public.decorator";
 import { Request } from 'express'
 import { AccessTokenVrifyModel } from "../models/Auth";
 import { JwtAuthService } from "../domain/JWT.service";
+import { likeStatusValidation } from "src/validation/likeStatus";
 
 @Controller('comments')
 export class CommentController {
@@ -42,7 +43,7 @@ export class CommentController {
 
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put('/:commentId/like-status')
-  async updateLikeStatus(@Param('commentId', CommentIdValidationPipe) commentId: string, @Body() likeStatus: {likeStatus: string}, @Req() req: AccessTokenVrifyModel) {
+  async updateLikeStatus(@Param('commentId', CommentIdValidationPipe) commentId: string, @Body() likeStatus: likeStatusValidation, @Req() req: AccessTokenVrifyModel) {
     return await this.commentService.updatePostLikeStatus(commentId, likeStatus.likeStatus, req.user.userId)
   }
 }

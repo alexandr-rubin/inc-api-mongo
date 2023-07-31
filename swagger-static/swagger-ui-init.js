@@ -480,6 +480,16 @@ window.onload = function() {
               }
             }
           ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/likeStatusValidation"
+                }
+              }
+            }
+          },
           "responses": {
             "204": {
               "description": ""
