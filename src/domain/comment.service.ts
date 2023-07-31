@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { LikeStatuses } from "../helpers/likeStatuses";
@@ -19,7 +19,11 @@ export class CommentService {
     return isDeleted
   }
 
-  async updateCommentById(id: string, post: CommentInputModel): Promise<boolean> {
+  async updateCommentById(id: string, post: CommentInputModel, userId: string): Promise<boolean> {
+    const comment = await this.commentQueryRepository.getCommentByIdNoView(id)
+    if(comment && comment.commentatorInfo.userId !== userId){
+      throw new ForbiddenException()
+    }
     const isUpdated = await this.commentRepository.updateCommentById(id, post)
     if(!isUpdated){
       throw new NotFoundException()
