@@ -40,7 +40,13 @@ export class PostQueryRepository {
     const likeStatus = like === undefined ? LikeStatuses.None : like.likeStatus
     const objPost = post.toJSON()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const newestLikes = (post.likesAndDislikes.filter((element) => element.likeStatus === 'Like')).slice(-3).map((element) => element).map(({ likeStatus, ...rest }) => rest)
+    //const newestLikes = post.likesAndDislikes.filter((element) => element.likeStatus === 'Like').slice(-3).map((element) => element).map(({ likeStatus, ...rest }) => rest)
+    const newestLikes = post.likesAndDislikes
+    .filter((element) => element.likeStatus === 'Like')
+    .slice(-3)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .map(({ likeStatus, ...rest }) => rest)
+    .sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime())
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { _id, likesAndDislikesCount, likesAndDislikes, ...rest } = {...objPost, extendedLikesInfo: {likesCount: post.likesAndDislikesCount.likesCount, dislikesCount: post.likesAndDislikesCount.dislikesCount, 
     myStatus: likeStatus, newestLikes: newestLikes }}
@@ -71,6 +77,7 @@ export class PostQueryRepository {
       .slice(-3)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .map(({ likeStatus, ...rest }) => rest)
+      .sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime())
       newArray.items[i].extendedLikesInfo.newestLikes = newestLikes
       // const status = await this.postLikeModel.findOne({createdAt: newArray.items[i].createdAt, userId: userId})
       const status = post.items[i].likesAndDislikes.find(element => element.userId === userId)
