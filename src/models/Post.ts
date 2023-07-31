@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsString, Matches, MaxLength } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
-import { IsBlogIdValid } from 'src/decorators/IsBlogIdValid';
+import { IsBlogIdValid } from '../decorators/IsBlogIdValid';
 
 export type PostDocument = HydratedDocument<Post>;
 
