@@ -21,6 +21,7 @@ export class Blog {
 export class BlogInputModel {
   @IsString()
   @MaxLength(15)
+  @Matches(/[^ ]+/, { message: 'Name field should not contain only whitespaces' })
   @Prop()
   name!: string
   @IsString()

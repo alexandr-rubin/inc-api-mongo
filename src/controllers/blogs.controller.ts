@@ -17,7 +17,6 @@ export class BlogsController {
   private readonly jwtAuthService: JwtAuthService){}
 
   @Public()
-  @UseGuards(BasicAuthGuard)
   @Get()
   async getUsers(@Query() params: QueryParamsModel) {
     return await this.blogQueryRepository.getBlogs(params)
