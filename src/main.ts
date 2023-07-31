@@ -6,9 +6,12 @@ import { get } from 'http';
 import { ValidationPipe } from '@nestjs/common';
 import { validationExceptionFactory } from './validation/Factories/custom-exception-factory';
 import { HttpExceptionFilter } from './validation/filters/exception.filter';
+import {useContainer} from "class-validator";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  useContainer(app.select(AppModule), { fallbackOnErrors: true })
+  
   app.enableCors()
 
   const serverUrl = 'http://localhost:3000'

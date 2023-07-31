@@ -11,14 +11,15 @@ export class CommentQueryRepository {
   async getCommentById(commentId: string, userId: string): Promise<CommentViewModel> {
     const comment = await this.commentModel.findById(commentId, { __v: false, postId: false }).lean()
     if (!comment){
-      throw new NotFoundException()
+      throw new NotFoundException('Comment not found')
     }
     const like = comment.likesAndDislikes.find(like => like.userId === userId)
     // const like = await this.commentLikeModel.findOne({commentId: commentId , userId: userId}).lean()
     const likeStatus = like === undefined ? LikeStatuses.None : like.likeStatus
     // 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _id, likesAndDislikesCount, likesAndDislikes, ...rest } = {...comment, likesInfo: {likesCount: comment.likesAndDislikesCount.likesCount, dislikesCount: comment.likesAndDislikesCount.dislikesCount, myStatus: likeStatus}}
+    const { _id, likesAndDislikesCount, likesAndDislikes, ...rest } = {...comment, commentatorInfo: {userId: comment.commentatorInfo.userId, userLogin: comment.commentatorInfo.userLogin},
+    likesInfo: {likesCount: comment.likesAndDislikesCount.likesCount, dislikesCount: comment.likesAndDislikesCount.dislikesCount, myStatus: likeStatus}}
     const id = _id.toString()
     return { id, ...rest }
   }

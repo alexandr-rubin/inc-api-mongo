@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsString, MaxLength } from 'class-validator';
+import { IsString, Matches, MaxLength } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
+import { IsBlogIdValid } from 'src/decorators/IsBlogIdValid';
 
 export type PostDocument = HydratedDocument<Post>;
 
@@ -43,18 +44,18 @@ export class PostLike {
 export class PostInputModel {
   @IsString()
   @MaxLength(30)
-  @Prop()
+  @Matches(/[^ ]+/, { message: 'Name field should not contain only whitespaces' })
   title!: string
   @IsString()
   @MaxLength(100)
-  @Prop()
+  @Matches(/[^ ]+/, { message: 'Name field should not contain only whitespaces' })
   shortDescription!: string
   @IsString()
   @MaxLength(1000)
-  @Prop()
+  @Matches(/[^ ]+/, { message: 'Name field should not contain only whitespaces' })
   content!: string
   @IsString()
-  @Prop()
+  // @IsBlogIdValid()
   blogId!: string
 }
 

@@ -31,6 +31,7 @@ export class BlogsController {
   }
 
   @Public()
+  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post(':blogId/posts')
   async createPostForSecificBlog(@Param('blogId', BlogIdValidationPipe) blogId: string, @Body() post: PostForSpecBlogInputModel) {

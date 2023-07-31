@@ -20,7 +20,6 @@ export class CommentController {
     if(bearer){
       userId = await this.jwtAuthService.verifyToken(bearer)
     }
-    // userID
     return await this.commentQueryRepository.getCommentById(id, userId)
   }
 

@@ -37,6 +37,14 @@ export class BlogQueryRepository {
     return { id, ...rest }
   }
 
+  async getBlogByIdNoView(blogId: string): Promise<boolean> {
+    const blog = await this.blogModel.findById(blogId, { __v: false })
+    if (!blog){
+      return false
+    }
+    return true
+  }
+
   async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel>>{
     const blog = await this.getBlogById(blogId)
     if(!blog){

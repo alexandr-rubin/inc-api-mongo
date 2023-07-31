@@ -33,9 +33,9 @@ window.onload = function() {
           }
         }
       },
-      "/users": {
+      "/blogs": {
         "get": {
-          "operationId": "UsersController_getUsers",
+          "operationId": "BlogsController_getUsers",
           "parameters": [],
           "responses": {
             "200": {
@@ -44,14 +44,14 @@ window.onload = function() {
           }
         },
         "post": {
-          "operationId": "UsersController_createUser",
+          "operationId": "BlogsController_createBlog",
           "parameters": [],
           "requestBody": {
             "required": true,
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UserInputModel"
+                  "$ref": "#/components/schemas/BlogInputModel"
                 }
               }
             }
@@ -63,12 +63,12 @@ window.onload = function() {
           }
         }
       },
-      "/users/{id}": {
-        "delete": {
-          "operationId": "UsersController_deleteUserById",
+      "/blogs/{blogId}/posts": {
+        "post": {
+          "operationId": "BlogsController_createPostForSecificBlog",
           "parameters": [
             {
-              "name": "id",
+              "name": "blogId",
               "required": true,
               "in": "path",
               "schema": {
@@ -76,6 +76,100 @@ window.onload = function() {
               }
             }
           ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostForSpecBlogInputModel"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": ""
+            }
+          }
+        },
+        "get": {
+          "operationId": "BlogsController_getPostsForSpecifiBlog",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/blogs/{blogId}": {
+        "delete": {
+          "operationId": "BlogsController_deleteBlogById",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          }
+        },
+        "get": {
+          "operationId": "BlogsController_getBlogById",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        },
+        "put": {
+          "operationId": "BlogsController_updateBlogById",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogInputModel"
+                }
+              }
+            }
+          },
           "responses": {
             "204": {
               "description": ""
@@ -257,9 +351,9 @@ window.onload = function() {
           }
         }
       },
-      "/blogs": {
+      "/users": {
         "get": {
-          "operationId": "BlogsController_getUsers",
+          "operationId": "UsersController_getUsers",
           "parameters": [],
           "responses": {
             "200": {
@@ -268,14 +362,14 @@ window.onload = function() {
           }
         },
         "post": {
-          "operationId": "BlogsController_createBlog",
+          "operationId": "UsersController_createUser",
           "parameters": [],
           "requestBody": {
             "required": true,
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BlogInputModel"
+                  "$ref": "#/components/schemas/UserInputModel"
                 }
               }
             }
@@ -287,60 +381,12 @@ window.onload = function() {
           }
         }
       },
-      "/blogs/{blogId}/posts": {
-        "post": {
-          "operationId": "BlogsController_createPostForSecificBlog",
-          "parameters": [
-            {
-              "name": "blogId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PostForSpecBlogInputModel"
-                }
-              }
-            }
-          },
-          "responses": {
-            "201": {
-              "description": ""
-            }
-          }
-        },
-        "get": {
-          "operationId": "BlogsController_getPostsForSpecifiBlog",
-          "parameters": [
-            {
-              "name": "blogId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": ""
-            }
-          }
-        }
-      },
-      "/blogs/{blogId}": {
+      "/users/{id}": {
         "delete": {
-          "operationId": "BlogsController_deleteBlogById",
+          "operationId": "UsersController_deleteUserById",
           "parameters": [
             {
-              "name": "blogId",
+              "name": "id",
               "required": true,
               "in": "path",
               "schema": {
@@ -348,52 +394,6 @@ window.onload = function() {
               }
             }
           ],
-          "responses": {
-            "204": {
-              "description": ""
-            }
-          }
-        },
-        "get": {
-          "operationId": "BlogsController_getBlogById",
-          "parameters": [
-            {
-              "name": "blogId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": ""
-            }
-          }
-        },
-        "put": {
-          "operationId": "BlogsController_updateBlogById",
-          "parameters": [
-            {
-              "name": "blogId",
-              "required": true,
-              "in": "path",
-              "schema": {
-                "type": "string"
-              }
-            }
-          ],
-          "requestBody": {
-            "required": true,
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BlogInputModel"
-                }
-              }
-            }
-          },
           "responses": {
             "204": {
               "description": ""
@@ -694,7 +694,11 @@ window.onload = function() {
     "servers": [],
     "components": {
       "schemas": {
-        "UserInputModel": {
+        "BlogInputModel": {
+          "type": "object",
+          "properties": {}
+        },
+        "PostForSpecBlogInputModel": {
           "type": "object",
           "properties": {}
         },
@@ -710,11 +714,7 @@ window.onload = function() {
           "type": "object",
           "properties": {}
         },
-        "BlogInputModel": {
-          "type": "object",
-          "properties": {}
-        },
-        "PostForSpecBlogInputModel": {
+        "UserInputModel": {
           "type": "object",
           "properties": {}
         },
