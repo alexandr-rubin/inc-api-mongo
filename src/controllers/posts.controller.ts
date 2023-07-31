@@ -83,7 +83,6 @@ export class PostsController {
     return await this.postQueryRepository.getCommentsForSpecifiedPost(postId, params, userId)
   }
 
-  @Public()
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put('/:postId/like-status')
   async updateLikeStatus(@Param('postId', PostIdValidationPipe) postId: string, @Body() likeStatus: {likeStatus: string}, @Req() req: AccessTokenVrifyModel) {
