@@ -1,15 +1,12 @@
 import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
 import { LikeStatuses } from "../helpers/likeStatuses";
-import { Comment, CommentDocument, CommentInputModel } from "../models/Comment";
+import { CommentInputModel } from "../models/Comment";
 import { CommentQueryRepository } from "../queryRepositories/comment.query-repository";
 import { CommentRepository } from "../repositories/comment.repository";
 
 @Injectable()
 export class CommentService {
-  constructor(@InjectModel(Comment.name) private commentModel: Model<CommentDocument>, private commentRepository: CommentRepository,
-  private commentQueryRepository: CommentQueryRepository){}
+  constructor(private commentRepository: CommentRepository, private commentQueryRepository: CommentQueryRepository){}
 
   async deleteCommentById(id: string, userId: string): Promise<boolean> {
     const comment = await this.commentQueryRepository.getCommentByIdNoView(id)

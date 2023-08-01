@@ -5,12 +5,13 @@ import { Paginator } from "../models/Paginator";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { createPaginationQuery } from "../helpers/pagination";
 import { Blog, BlogDocument, BlogViewModel } from "../models/Blogs";
-import { Post, PostDocument, PostViewModel } from "../models/Post";
+import { PostViewModel } from "../models/Post";
 import { PostQueryRepository } from "./post.query-repository";
 
 @Injectable()
 export class BlogQueryRepository {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>, @InjectModel(Post.name) private postModel: Model<PostDocument>, private postQueryRepository: PostQueryRepository){}
+  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>, 
+  private postQueryRepository: PostQueryRepository){}
   async getBlogs(params: QueryParamsModel): Promise<Paginator<Blog>> {
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
@@ -50,15 +51,8 @@ export class BlogQueryRepository {
     if(!blog){
       throw new NotFoundException()
     }
-    const query = createPaginationQuery(params)
-    const skip = (query.pageNumber - 1) * query.pageSize
-    const posts = await this.postModel.find(query.searchNameTerm === null ? {blogId: blogId} : {blogId: blogId, name: {$regex: query.searchNameTerm, $options: 'i'}}, {__v: false})
-    .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
-    .skip(skip)
-    .limit(query.pageSize).lean()
-    const count = await this.postModel.countDocuments({blogId: blogId})
-    const transformedPosts = posts.map(({ _id, ...rest }) => ({ id: _id.toString(), ...rest }))
-    const result = Paginator.createPaginationResult(count, query, transformedPosts)
+    //////////
+    const result = await this.postQueryRepository.getPostsForSpecifiedBlog(blogId, params)
     return await this.postQueryRepository.editPostToViewModel(result, userId)
   }
 }

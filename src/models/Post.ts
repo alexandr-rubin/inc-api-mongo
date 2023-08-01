@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsString, Matches, MaxLength } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
+import { IsBlogIdValid } from '../decorators/isBlogIdValid';
 
 export type PostDocument = HydratedDocument<Post>;
 
@@ -54,7 +55,7 @@ export class PostInputModel {
   @Matches(/[^ ]+/, { message: 'Name field should not contain only whitespaces' })
   content!: string
   @IsString()
-  // @IsBlogIdValid()
+  //@IsBlogIdValid({message: 'Blog with id does not exist.'})
   blogId!: string
 }
 

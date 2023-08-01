@@ -11,11 +11,10 @@ import { Post, PostSchema } from './models/Post';
 import { BlogsController } from './controllers/blogs.controller';
 import { JwtAuthService } from './domain/JWT.service';
 import { BlogService } from './domain/blog.service';
-import { BasicAuthGuard } from './guards/basic-auth.guard';
 import { BlogQueryRepository } from './queryRepositories/blog.query-repository';
 import { BlogRepository } from './repositories/blog.repository';
 import { BlogExistValidator } from './validation/BlogExistValidator';
-import { BlogIdForPostValidationPipe } from './validation/pipes/body-blog-id-validation.pipe';
+//import { BlogIdForPostValidationPipe } from './validation/pipes/body-blog-id-validation.pipe';
 import { CommentRepository } from './repositories/comment.repository';
 import { CommentService } from './domain/comment.service';
 import { CommentQueryRepository } from './queryRepositories/comment.query-repository';
@@ -38,8 +37,6 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { EmailAdapter } from './adapters/email.adapter';
 import { EmailService } from './domain/email.service';
 import { EmailConfirmationCodeValidator } from './validation/EmailConfirmationCodeValidator';
-import { EmailConfirmationCodePipe } from './validation/pipes/email-confirmation-code.pipe';
-import { EmailOrLoginExistsPipe } from './validation/pipes/email-login-exist.pipe';
 import { JwtModule } from '@nestjs/jwt';
 import { Device, DeviceSchema } from './models/Device';
 import { AuthorizationController } from './controllers/authorization.controller';
@@ -47,14 +44,10 @@ import { SecurityController } from './controllers/security.controller';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthorizationService } from './domain/authorization.service';
 import { SecurityService } from './domain/security.service';
-import { RefreshTokenGuard } from './guards/refreshToken.guard';
 import { SecurityQueryRepository } from './queryRepositories/security.query-repository';
 import { AuthorizationRepository } from './repositories/authorization.repository';
 import { SecurityRepository } from './repositories/security.repository';
 import { LoginValidation } from './validation/login';
-import { PasswordRecoveryCodeExistValidator } from './validation/passwordRecCodeValid';
-import { LoginValidationPipe } from './validation/pipes/login-validation.pipe';
-import { PasswordRecoveryCodeValidPipe } from './validation/pipes/password-recovery-code-valid.pipe';
 import { AuthGuard } from './guards/auth.guard';
 import { CommentController } from './controllers/comments.controller';
 import { IsBlogIdValidConstraint } from './decorators/isBlogIdValid';
@@ -112,19 +105,19 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
     ]),
   ],
   controllers: [AppController, TestingController, BlogsController, PostsController, UsersController, CommentController, AuthorizationController, SecurityController],
-  providers: [AppService, IsBlogIdValidConstraint, BasicAuthGuard,
+  providers: [AppService, IsBlogIdValidConstraint,
     JwtAuthService,
-    BlogService, BlogQueryRepository, BlogRepository, BlogExistValidator, BlogIdForPostValidationPipe,
+    BlogService, BlogQueryRepository, BlogRepository, BlogExistValidator,
     CommentService, CommentQueryRepository, CommentRepository, CommentExistValidator,
     PostService, PostQueryRepository, PostRepository, PostExistValidator,
     UserService, UserQueryRepository, UserRepository, UserExistValidator,
-    EmailAdapter, EmailService, EmailConfirmationCodeValidator, EmailConfirmationCodePipe, EmailOrLoginExistsPipe,
-    AuthorizationService, AuthorizationRepository, PasswordRecoveryCodeExistValidator, PasswordRecoveryCodeValidPipe,
+    EmailAdapter, EmailService, EmailConfirmationCodeValidator,
+    AuthorizationService, AuthorizationRepository,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-    LoginValidation, LoginValidationPipe, SecurityService, SecurityRepository, SecurityQueryRepository, RefreshTokenGuard],
+    LoginValidation, SecurityService, SecurityRepository, SecurityQueryRepository],
 })
 
 export class AppModule {}

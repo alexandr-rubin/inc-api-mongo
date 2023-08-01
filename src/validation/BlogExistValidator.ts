@@ -1,7 +1,9 @@
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
 import { BlogQueryRepository } from '../queryRepositories/blog.query-repository';
+import { Injectable } from '@nestjs/common';
 
 @ValidatorConstraint({ async: true })
+@Injectable()
 export class BlogExistValidator implements ValidatorConstraintInterface {
   constructor(private readonly blogQueryRepository: BlogQueryRepository) {}
 

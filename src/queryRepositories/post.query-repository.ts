@@ -87,7 +87,7 @@ export class PostQueryRepository {
     }
     return newArray 
   }
-
+  
   async getCommentsForSpecifiedPost(postId: string, params: QueryParamsModel, userId: string): Promise<Paginator<CommentViewModel> | null>{
     const isFinded = await this.postModel.findById(postId)
     if(!isFinded){
@@ -126,5 +126,18 @@ export class PostQueryRepository {
       return null
     }
     return post
+  }
+
+  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel): Promise<Paginator<Post>>{
+    const query = createPaginationQuery(params)
+    const skip = (query.pageNumber - 1) * query.pageSize
+    const posts = await this.postModel.find(query.searchNameTerm === null ? {blogId: blogId} : {blogId: blogId, name: {$regex: query.searchNameTerm, $options: 'i'}}, {__v: false})
+    .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
+    .skip(skip)
+    .limit(query.pageSize).lean()
+    const count = await this.postModel.countDocuments({blogId: blogId})
+    const transformedPosts = posts.map(({ _id, ...rest }) => ({ id: _id.toString(), ...rest }))
+    const result = Paginator.createPaginationResult(count, query, transformedPosts)
+    return result
   }
 }

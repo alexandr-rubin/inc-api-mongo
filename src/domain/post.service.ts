@@ -13,6 +13,9 @@ export class PostService {///////////
   async addPost(post: PostInputModel): Promise<PostViewModel>{
     //
     const blog = await this.blogQueryRepository.getBlogById(post.blogId)
+    if(!blog){
+      throw new NotFoundException()
+    }
     const newPost: Post = {...post, blogName: blog.name, createdAt: new Date().toISOString(),
     likesAndDislikesCount: { likesCount: 0, dislikesCount: 0}, likesAndDislikes: []}
     const savedPost = await this.postRepository.addPost(newPost)

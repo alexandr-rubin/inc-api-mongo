@@ -1,14 +1,12 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { Blog, BlogDocument, BlogInputModel, BlogViewModel } from "../models/Blogs";
-import { Post, PostDocument, PostForSpecBlogInputModel, PostViewModel } from "../models/Post";
+import { Blog, BlogInputModel, BlogViewModel } from "../models/Blogs";
+import { Post, PostForSpecBlogInputModel, PostViewModel } from "../models/Post";
 import { BlogRepository } from "../repositories/blog.repository";
+import { BlogQueryRepository } from "../queryRepositories/blog.query-repository";
 
 @Injectable()
 export class BlogService {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>, @InjectModel(Post.name) private postModel: Model<PostDocument>,
-  private blogRepository: BlogRepository){}
+  constructor(private blogRepository: BlogRepository, private blogQueryRepository: BlogQueryRepository){}
 
   async addBlog(blog: BlogInputModel): Promise<BlogViewModel>{
     const newBlog: Blog = {...blog, createdAt: new Date().toISOString(), isMembership: false}
@@ -19,12 +17,12 @@ export class BlogService {
   }
 
   async addPostForSpecificBlog(blogId: string, post: PostForSpecBlogInputModel): Promise<PostViewModel>{
-    const blog = await this.blogModel.findById(blogId, { __v: false })
+    const blog = await this.blogQueryRepository.getBlogById(blogId)
     if(!blog){
       throw new NotFoundException()
     }
-    const newPost = new this.postModel({...post, blogId: blogId, blogName: blog.name, createdAt: new Date().toISOString(),
-    likesAndDislikesCount: { likesCount: 0, dislikesCount: 0}, likesAndDislikes: [] })
+    const newPost: Post = {...post, blogId: blogId, blogName: blog.name, createdAt: new Date().toISOString(),
+    likesAndDislikesCount: { likesCount: 0, dislikesCount: 0}, likesAndDislikes: [] }
     const save = await this.blogRepository.addPostForSpecificBlog(newPost)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { __v, _id, likesAndDislikesCount, likesAndDislikes, ...result } = {id: save._id.toString(), ...save, extendedLikesInfo: { likesCount: 0, dislikesCount: 0, myStatus: 'None', newestLikes: [/*{ addedAt: '', login: '', userId: ''}*/]}}

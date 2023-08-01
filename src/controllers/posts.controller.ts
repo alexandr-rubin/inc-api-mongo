@@ -5,7 +5,7 @@ import { PostService } from "../domain/post.service";
 import { PostQueryRepository } from "../queryRepositories/post.query-repository";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { CommentInputModel } from "../models/Comment";
-import { BlogIdForPostValidationPipe } from "../validation/pipes/body-blog-id-validation.pipe";
+//import { BlogIdForPostValidationPipe } from "../validation/pipes/body-blog-id-validation.pipe";
 import { PostIdValidationPipe } from "../validation/pipes/post-Id-validation.pipe";
 import { AccessTokenVrifyModel } from "../models/Auth";
 import { Request } from 'express'
@@ -33,7 +33,7 @@ export class PostsController {
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post()
-  async createPost(@Body(BlogIdForPostValidationPipe) post: PostInputModel) {
+  async createPost(@Body(/*BlogIdForPostValidationPipe*/) post: PostInputModel) {
     return await this.postService.addPost(post)
   }
 
