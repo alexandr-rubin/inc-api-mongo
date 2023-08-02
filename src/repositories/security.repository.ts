@@ -2,10 +2,11 @@ import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/co
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Device, DeviceDocument } from "../models/Device";
+import { APILog, APILogDocument } from "src/models/APILogs";
 
 @Injectable()
 export class SecurityRepository {
-  constructor(@InjectModel(Device.name) private deviceModel: Model<DeviceDocument>) {}
+  constructor(@InjectModel(Device.name) private deviceModel: Model<DeviceDocument>, @InjectModel(APILog.name) private APILogModel: Model<APILogDocument>) {}
   async terminateAllDeviceSessions(userId: string, deviceId: string): Promise<boolean> {
     const isTerminated = (await this.deviceModel.deleteMany({userId: userId, deviceId: {$ne: deviceId}})).acknowledged
     return isTerminated
@@ -22,5 +23,21 @@ export class SecurityRepository {
     }
     const isTerminated = (await this.deviceModel.deleteOne({deviceId: deviceId})).acknowledged
     return isTerminated
+  }
+
+  async addLog(logEntry: APILog): Promise<APILog> {
+    const newAPILog = new this.APILogModel(logEntry)
+    const save = await newAPILog.save()
+    return save
+  }
+
+  async countDoc(filter:any): Promise<number> {
+    const count = await this.APILogModel.countDocuments(filter)
+    return count
+  }
+
+  async deleteAllAPILogsTesting(): Promise<boolean> {
+    const result = await this.APILogModel.deleteMany({})
+    return !!result
   }
 }

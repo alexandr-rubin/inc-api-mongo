@@ -1,8 +1,9 @@
-import { Prop, SchemaFactory } from "@nestjs/mongoose"
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose"
 import { HydratedDocument } from "mongoose";
 
 export type APILogDocument = HydratedDocument<APILog>;
 
+@Schema()   
 export class APILog {
     @Prop()
     IP!: string

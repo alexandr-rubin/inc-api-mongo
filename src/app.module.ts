@@ -52,7 +52,8 @@ import { AuthGuard } from './guards/auth.guard';
 import { CommentController } from './controllers/comments.controller';
 import { IsBlogIdValidConstraint } from './decorators/isBlogIdValid';
 import { APILog, APILogSchema } from './models/APILogs';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { LogAPIThrottlerGuard } from './guards/logAPIThrottlerGuard';
 
 dotenv.config()
 
@@ -98,7 +99,7 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
     JwtModule.register({
       global: true,
       secret: JWT_SECRET_KEY,
-      signOptions: { expiresIn: '10s' },
+      signOptions: { expiresIn: '10m' },
     }),
     ConfigModule.forRoot(),
     MongooseModule.forRoot(MONGODB_URI),
@@ -126,7 +127,7 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
     },
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard
+      useClass: LogAPIThrottlerGuard
     },
     LoginValidation, SecurityService, SecurityRepository, SecurityQueryRepository],
 })

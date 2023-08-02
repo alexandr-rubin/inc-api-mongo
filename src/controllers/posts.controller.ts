@@ -13,7 +13,9 @@ import { Public } from "../decorators/public.decorator";
 import { JwtAuthService } from "../domain/JWT.service";
 import { BasicAuthGuard } from "../guards/basic-auth.guard";
 import { likeStatusValidation } from "../validation/likeStatus";
+import { SkipThrottle } from "@nestjs/throttler";
 
+@SkipThrottle()
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postService: PostService, private readonly postQueryRepository: PostQueryRepository, private readonly jwtAuthService: JwtAuthService){}

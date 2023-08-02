@@ -10,7 +10,9 @@ import { Public } from "../decorators/public.decorator";
 import { Request } from 'express'
 import { JwtAuthService } from "../domain/JWT.service";
 import { BasicAuthGuard } from "../guards/basic-auth.guard";
+import { SkipThrottle } from "@nestjs/throttler";
 
+@SkipThrottle()
 @Controller('blogs')
 export class BlogsController {
   constructor(private readonly blogService: BlogService,  private readonly postService: BlogService,private readonly blogQueryRepository: BlogQueryRepository,

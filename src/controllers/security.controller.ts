@@ -4,7 +4,9 @@ import { SecurityQueryRepository } from "../queryRepositories/security.query-rep
 import { Request } from "express";
 import { SecurityService } from "../domain/security.service";
 import { RefreshTokenGuard } from "../guards/refreshToken.guard";
+import { SkipThrottle } from "@nestjs/throttler";
 
+@SkipThrottle()
 @Controller('security')
 export class SecurityController {
   constructor(private readonly securityQueryRepository: SecurityQueryRepository, private securityService: SecurityService){}

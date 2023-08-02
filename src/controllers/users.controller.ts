@@ -8,7 +8,9 @@ import { UserIdValidationPipe } from "../validation/pipes/user-Id-validation.pip
 import { Public } from "../decorators/public.decorator";
 import { BasicAuthGuard } from "../guards/basic-auth.guard";
 import { EmailOrLoginExistsPipe } from "../validation/pipes/email-login-exist.pipe";
+import { SkipThrottle } from "@nestjs/throttler";
 
+@SkipThrottle()
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UserService, private readonly userQueryRepository: UserQueryRepository){}

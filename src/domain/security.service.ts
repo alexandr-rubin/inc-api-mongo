@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { SecurityRepository } from "../repositories/security.repository";
+import { APILog } from "src/models/APILogs";
 
 @Injectable()
 export class SecurityService {
@@ -16,5 +17,18 @@ export class SecurityService {
     const decodedToken= await this.jwtService.verifyAsync(token)
     const isTerminated = await this.securityRepository.terminateSpecifiedDeviceSessions(deviceId, decodedToken.userId)
     return isTerminated
+  }
+
+  async addLog(logEntry: APILog): Promise<APILog> {
+    return await this.securityRepository.addLog(logEntry)
+  }
+
+  async countDoc(filter:any): Promise<number> {
+    return await this.securityRepository.countDoc(filter)
+  }
+
+  async deleteAllAPILogsTesting() {
+    const result = await this.securityRepository.deleteAllAPILogsTesting()
+    return result
   }
 }

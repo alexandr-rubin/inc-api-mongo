@@ -9,7 +9,9 @@ import { Request } from 'express'
 import { AccessTokenVrifyModel } from "../models/Auth";
 import { JwtAuthService } from "../domain/JWT.service";
 import { likeStatusValidation } from "src/validation/likeStatus";
+import { SkipThrottle } from "@nestjs/throttler";
 
+@SkipThrottle()
 @Controller('comments')
 export class CommentController {
   constructor(private readonly commentQueryRepository: CommentQueryRepository, private readonly commentService: CommentService, private readonly jwtAuthService: JwtAuthService){}
