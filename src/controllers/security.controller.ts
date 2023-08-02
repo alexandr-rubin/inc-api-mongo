@@ -18,6 +18,7 @@ export class SecurityController {
     return this.securityQueryRepository.getActiveDevices(req.cookies.refreshToken)
   }
 
+  @Public()
   @UseGuards(RefreshTokenGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete('devices')
@@ -26,6 +27,7 @@ export class SecurityController {
     return isTerminated
   }
 
+  @Public()
   @UseGuards(RefreshTokenGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete('devices/:deviceId')
