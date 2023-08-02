@@ -21,6 +21,7 @@ export class TestingController {
     await this.blogService.deleteBlogsTesting()
     await this.commentService.deleteCommentTesting()
     await this.securityService.deleteAllAPILogsTesting()
+    await this.securityService.deleteAllDevicesTesting()
 
     return res.sendStatus(HttpStatusCode.NO_CONTENT_204)  
   }

@@ -40,4 +40,9 @@ export class SecurityRepository {
     const result = await this.APILogModel.deleteMany({})
     return !!result
   }
+
+  async deleteAllDevicesTesting(): Promise<boolean> {
+    const result = await this.deviceModel.deleteMany({})
+    return !!result
+  }
 }

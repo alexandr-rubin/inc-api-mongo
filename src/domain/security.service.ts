@@ -31,4 +31,9 @@ export class SecurityService {
     const result = await this.securityRepository.deleteAllAPILogsTesting()
     return result
   }
+
+  async deleteAllDevicesTesting(): Promise<boolean> {
+    const result = await this.securityRepository.deleteAllDevicesTesting()
+    return !!result
+  }
 }
