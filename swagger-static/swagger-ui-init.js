@@ -646,7 +646,7 @@ window.onload = function() {
           }
         }
       },
-      "/security": {
+      "/security/devices": {
         "get": {
           "operationId": "SecurityController_getActiveDevices",
           "parameters": [],
@@ -655,9 +655,7 @@ window.onload = function() {
               "description": ""
             }
           }
-        }
-      },
-      "/security/devices": {
+        },
         "delete": {
           "operationId": "SecurityController_deleteDevices",
           "parameters": [],

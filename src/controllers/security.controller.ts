@@ -11,7 +11,7 @@ import { SkipThrottle } from "@nestjs/throttler";
 export class SecurityController {
   constructor(private readonly securityQueryRepository: SecurityQueryRepository, private securityService: SecurityService){}
   @UseGuards(RefreshTokenGuard)
-  @Get()
+  @Get('devices')
   async getActiveDevices(@Req() req: Request) {
     return this.securityQueryRepository.getActiveDevices(req.cookies.refreshToken)
   }
