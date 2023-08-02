@@ -11,7 +11,7 @@ export class LogAPIThrottlerGuard extends ThrottlerGuard {
   }
 
   async handleRequest(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest()
+    const request = await context.switchToHttp().getRequest()
     const currentDate = new Date()
     const tenSecondsAgo = new Date(currentDate.getTime() - 10 * 1000)
 

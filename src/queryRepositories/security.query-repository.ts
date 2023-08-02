@@ -30,7 +30,7 @@ export class SecurityQueryRepository {
   /////////////////////////
   async compareTokenDate(token: string): Promise<boolean>{
     try{
-      const decodedToken = await this.jwtService.verify(token)
+      const decodedToken = await this.jwtService.verifyAsync(token)
       const device = await this.getDeviceByToken(token)
       if(!device || decodedToken.issuedAt !== device.issuedAt){
         return false

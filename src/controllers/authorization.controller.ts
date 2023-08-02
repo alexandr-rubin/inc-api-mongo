@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, HttpCode, Ip, Post, Req, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Headers, HttpCode, InternalServerErrorException, Ip, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { UserInputModel } from "../models/User";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { AuthorizationService } from "../domain/authorization.service";
@@ -22,8 +22,8 @@ export class AuthorizationController {
   async login(@Headers() headers, @Ip() ip, @Body(LoginValidationPipe) loginData: LoginValidation, @Res() res: Response) {
     const userId = await this.authorizationService.verifyUser(loginData)
 
-    const userAgent = headers['user-agent']
-    const clientIP = ip
+    const userAgent = await headers['user-agent']
+    const clientIP = await ip
     const tokens = await this.authorizationService.signIn(userId, userAgent, clientIP)
 
     res.cookie('refreshToken', tokens.refreshToken, {
@@ -31,7 +31,7 @@ export class AuthorizationController {
       secure: true,
     })
 
-    res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
+    return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
   }
 
   @Public()
@@ -42,13 +42,16 @@ export class AuthorizationController {
     const userAgent = headers['user-agent']
     const clientIP = ip
     const tokens = await this.authorizationService.updateDevice(oldToken, clientIP, userAgent)
+    if(!tokens){
+      throw new InternalServerErrorException()
+    }
 
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
     })
 
-    res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
+    return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
   }
 
   @Public()
