@@ -24,14 +24,14 @@ export class LogAPIThrottlerGuard extends ThrottlerGuard {
     const count = await this.scurityService.countDoc(filter)
     console.log(count)
     if (count >= 5) {
-      throw new ThrottlerException()
+      throw new ThrottlerException('To many requests')
     }
 
     const logEntry = { ...filter, date: currentDate.toISOString() }
     const isAdded = await this.scurityService.addLog(logEntry)
 
     if (!isAdded) {
-      throw new ThrottlerException()
+      throw new ThrottlerException('To many requests')
     }
 
     return true
