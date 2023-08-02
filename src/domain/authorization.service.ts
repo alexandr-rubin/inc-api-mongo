@@ -138,13 +138,13 @@ export class AuthorizationService {
   }
 
   async updateDevice(refreshToken: string, clientIP: string, userAgent: string | undefined): Promise<CreateJWT | null> {
-    const decodedToken: any = this.jwtService.verify(refreshToken)
+    const decodedToken = await this.jwtService.verifyAsync(refreshToken)
         if (!userAgent){
             userAgent = 'default device name'
         }
         const deviceId = decodedToken.deviceId
+        const userId = decodedToken.userId
         const issuedAt = new Date().toISOString()
-        const userId = await this.jwtService.verifyAsync(refreshToken)
         const tokens = await this.createJWT(userId, deviceId, issuedAt)
         const decodedNewToken = await this.jwtService.verifyAsync(tokens.refreshToken)
         const expirationDate = new Date(decodedNewToken.exp * 1000)
