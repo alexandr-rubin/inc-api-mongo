@@ -8,7 +8,7 @@ import { genExpirationDate } from "../helpers/genCodeExpirationDate";
 import { generateHash } from "../helpers/generateHash";
 import { LoginValidation } from "../validation/login";
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt'
+import { compare } from 'bcryptjs'
 import * as dotenv from 'dotenv'
 import { Device } from "../models/Device";
 import { AuthorizationRepository } from "../repositories/authorization.repository";
@@ -95,7 +95,7 @@ export class AuthorizationService {
     const user = await this.userRepository.verifyUser(loginData)
     if(user){
       try {
-        const isMatch = await bcrypt.compare(loginData.password, user.password)
+        const isMatch = await compare(loginData.password, user.password)
         if(isMatch){
           return user._id.toString()
         }

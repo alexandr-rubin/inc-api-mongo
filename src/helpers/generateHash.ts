@@ -1,9 +1,9 @@
-import bcrypt from 'bcrypt'
+import {genSalt, hash} from 'bcryptjs'
 
 export async function generateHash(password: string) {
-  const salt = await bcrypt.genSalt(10)
+  const salt = await genSalt(10)
   console.log(salt)
-  const passHash = await bcrypt.hash(password, salt)
+  const passHash = await hash(password, salt)
   console.log('hash: ' + passHash)
   return passHash
 }
