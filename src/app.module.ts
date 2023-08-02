@@ -51,6 +51,8 @@ import { LoginValidation } from './validation/login';
 import { AuthGuard } from './guards/auth.guard';
 import { CommentController } from './controllers/comments.controller';
 import { IsBlogIdValidConstraint } from './decorators/isBlogIdValid';
+import { APILog, APILogSchema } from './models/APILogs';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 dotenv.config()
 
@@ -66,6 +68,10 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
     //CommentsModule,
     //EmailModule,
     //AuthModule,
+    ThrottlerModule.forRoot({
+      ttl: 10,
+      limit: 5,
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'swagger-static'),
       serveRoot: process.env.NODE_ENV === 'development' ? '/' : '/swagger',
@@ -101,7 +107,8 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
       { name: Blog.name, schema: BlogSchema },
       { name: Comment.name, schema: CommentSchema },
       { name: User.name, schema: UserSchema },
-      { name: Device.name, schema: DeviceSchema }
+      { name: Device.name, schema: DeviceSchema },
+      { name: APILog.name, schema: APILogSchema }
     ]),
   ],
   controllers: [AppController, TestingController, BlogsController, PostsController, UsersController, CommentController, AuthorizationController, SecurityController],
@@ -116,6 +123,10 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
     {
       provide: APP_GUARD,
       useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard
     },
     LoginValidation, SecurityService, SecurityRepository, SecurityQueryRepository],
 })
