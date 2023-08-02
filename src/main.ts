@@ -7,11 +7,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { validationExceptionFactory } from './validation/Factories/custom-exception-factory';
 import { HttpExceptionFilter } from './validation/filters/exception.filter';
 import {useContainer} from "class-validator";
-import * as cookieParser from 'cookie-parser'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(cookieParser())
   useContainer(app.select(AppModule), { fallbackOnErrors: true })
   
   app.enableCors()
