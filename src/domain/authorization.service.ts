@@ -122,7 +122,7 @@ export class AuthorizationService {
 
   async signIn(userId: string, userAgent: string | undefined, clientIP: string){
     if (!userAgent){
-      //
+      ///
       userAgent = 'default device name'
     }
     const deviceId = uuidv4()
