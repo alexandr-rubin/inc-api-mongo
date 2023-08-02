@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { registerDecorator, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
 import { BlogQueryRepository } from '../queryRepositories/blog.query-repository';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post, PostDocument } from 'src/models/Post';
+import { Post, PostDocument } from '../models/Post';
 import { Model } from 'mongoose';
-import { PostService } from 'src/domain/post.service';
-import { PostRepository } from 'src/repositories/post.repository';
-import { BlogService } from 'src/domain/blog.service';
-import { CommentService } from 'src/domain/comment.service';
-import { BlogExistValidator } from 'src/validation/BlogExistValidator';
+import { PostService } from '../domain/post.service';
+import { PostRepository } from '../repositories/post.repository';
+import { BlogService } from '../domain/blog.service';
+import { CommentService } from '../domain/comment.service';
+import { BlogExistValidator } from '../validation/BlogExistValidator';
 
 @ValidatorConstraint({ async: true })
 @Injectable()
