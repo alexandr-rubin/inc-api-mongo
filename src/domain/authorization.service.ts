@@ -114,10 +114,11 @@ export class AuthorizationService {
   async createJWT(userId: string, deviceId: string, issuedAt: string): Promise<CreateJWT> {
     const accessTokenPayload = { userId: userId, JWT_SECRET_KEY }
     const refreshTokenPayload = { deviceId: deviceId, userId: userId, issuedAt: issuedAt }
-    return {
+    const result = {
       accessToken: await this.jwtService.signAsync(accessTokenPayload),
       refreshToken: await this.jwtService.signAsync(refreshTokenPayload, { expiresIn: '20s' })
-    };
+    }
+    return result
   }
 
   async signIn(userId: string, userAgent: string | undefined, clientIP: string){

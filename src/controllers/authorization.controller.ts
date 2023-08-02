@@ -39,8 +39,8 @@ export class AuthorizationController {
   @Post('/refresh-token')
   async updateTokens(@Headers() headers, @Ip() ip, @Res() res: Response, @Req() req: Request) {
     const oldToken = await req.cookies.refreshToken
-    const userAgent = headers['user-agent']
-    const clientIP = ip
+    const userAgent = await headers['user-agent']
+    const clientIP = await ip
     const tokens = await this.authorizationService.updateDevice(oldToken, clientIP, userAgent)
     if(!tokens){
       throw new InternalServerErrorException()
