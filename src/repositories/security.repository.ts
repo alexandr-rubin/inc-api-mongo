@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Device, DeviceDocument } from "../models/Device";
@@ -19,7 +19,7 @@ export class SecurityRepository {
       throw new NotFoundException()
     }
     if(device.userId !== userId) {
-      throw new UnauthorizedException()
+      throw new ForbiddenException()
     }
     const isTerminated = (await this.deviceModel.deleteOne({deviceId: deviceId})).acknowledged
     return isTerminated
