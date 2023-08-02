@@ -20,40 +20,38 @@ export class AuthorizationController {
   @Public()
   @Post('/login')
   async login(@Headers() headers, @Ip() ip, @Body(LoginValidationPipe) loginData: LoginValidation, @Res() res: Response) {
-    // const userId = await this.authorizationService.verifyUser(loginData)
+    const userId = await this.authorizationService.verifyUser(loginData)
 
-    // const userAgent = await headers['user-agent']
-    // const clientIP = await ip
-    // const tokens = await this.authorizationService.signIn(userId, userAgent, clientIP)
+    const userAgent = await headers['user-agent']
+    const clientIP = await ip
+    const tokens = await this.authorizationService.signIn(userId, userAgent, clientIP)
 
-    // res.cookie('refreshToken', tokens.refreshToken, {
-    //   httpOnly: true,
-    //   secure: true,
-    // })
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: true,
+    })
 
-    // return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
-    return res.status(HttpStatusCode.OK_200)
+    return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
   }
 
   @Public()
   @UseGuards(RefreshTokenGuard)
   @Post('/refresh-token')
   async updateTokens(@Headers() headers, @Ip() ip, @Res() res: Response, @Req() req: Request) {
-    // const oldToken = await req.cookies.refreshToken
-    // const userAgent = await headers['user-agent']
-    // const clientIP = await ip
-    // const tokens = await this.authorizationService.updateDevice(oldToken, clientIP, userAgent)
-    // if(!tokens){
-    //   throw new InternalServerErrorException()
-    // }
+    const oldToken = await req.cookies.refreshToken
+    const userAgent = await headers['user-agent']
+    const clientIP = await ip
+    const tokens = await this.authorizationService.updateDevice(oldToken, clientIP, userAgent)
+    if(!tokens){
+      throw new InternalServerErrorException()
+    }
 
-    // res.cookie('refreshToken', tokens.refreshToken, {
-    //   httpOnly: true,
-    //   secure: true,
-    // })
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: true,
+    })
 
-    // return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
-    return res.status(HttpStatusCode.OK_200)
+    return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
   }
 
   @Public()
@@ -69,8 +67,7 @@ export class AuthorizationController {
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Post('/registration')
   async createUser(@Body(EmailOrLoginExistsPipe) user: UserInputModel) {
-    // return await this.authorizationService.createUser(user)
-    return
+    return await this.authorizationService.createUser(user)
   }
 
   @Public()
@@ -84,8 +81,7 @@ export class AuthorizationController {
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Post('/registration-email-resending')//add code validation
   async registrationEmailResending(@Body(EmailConfirmationCodePipe) email: EmailValidation) {
-    // return await this.authorizationService.resendEmail(email.email)
-    return
+    return await this.authorizationService.resendEmail(email.email)
   }
 
   @Public()
