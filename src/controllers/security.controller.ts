@@ -5,7 +5,7 @@ import { Request } from "express";
 import { SecurityService } from "../domain/security.service";
 import { RefreshTokenGuard } from "../guards/refreshToken.guard";
 import { SkipThrottle } from "@nestjs/throttler";
-import { Public } from "src/decorators/public.decorator";
+import { Public } from "../decorators/public.decorator";
 
 @SkipThrottle()
 @Controller('security')

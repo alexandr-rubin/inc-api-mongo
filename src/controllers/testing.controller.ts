@@ -6,7 +6,7 @@ import { PostService } from "../domain/post.service";
 import { BlogService } from "../domain/blog.service";
 import { CommentService } from "../domain/comment.service";
 import { Public } from "../decorators/public.decorator";
-import { SecurityService } from "src/domain/security.service";
+import { SecurityService } from "../domain/security.service";
 import { SkipThrottle } from "@nestjs/throttler";
 
 @SkipThrottle()

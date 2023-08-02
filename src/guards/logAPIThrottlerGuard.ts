@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ThrottlerException, ThrottlerGuard, ThrottlerModuleOptions, ThrottlerStorage } from '@nestjs/throttler';
-import { SecurityService } from 'src/domain/security.service';
+import { SecurityService } from '../domain/security.service';
 
 @Injectable()
 export class LogAPIThrottlerGuard extends ThrottlerGuard {
@@ -24,14 +24,14 @@ export class LogAPIThrottlerGuard extends ThrottlerGuard {
     const count = await this.scurityService.countDoc(filter)
     console.log(count)
     if (count >= 5) {
-      throw new ThrottlerException('To many requests')
+      return false
     }
 
     const logEntry = { ...filter, date: currentDate.toISOString() }
     const isAdded = await this.scurityService.addLog(logEntry)
 
     if (!isAdded) {
-      throw new ThrottlerException('To many requests')
+      return false
     }
 
     return true
