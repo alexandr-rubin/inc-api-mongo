@@ -110,7 +110,7 @@ export class AuthorizationService {
     throw new UnauthorizedException()
   }
 
-  /////
+  ////
   async createJWT(userId: string, deviceId: string, issuedAt: string): Promise<CreateJWT> {
     const accessTokenPayload = { userId: userId, JWT_SECRET_KEY }
     const refreshTokenPayload = { deviceId: deviceId, userId: userId, issuedAt: issuedAt }
