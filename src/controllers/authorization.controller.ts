@@ -38,7 +38,7 @@ export class AuthorizationController {
   @UseGuards(RefreshTokenGuard)
   @Post('/refresh-token')
   async updateTokens(@Headers() headers, @Ip() ip, @Res() res: Response, @Req() req: Request) {
-    const oldToken = req.cookies.refreshToken
+    const oldToken = await req.cookies.refreshToken
     const userAgent = headers['user-agent']
     const clientIP = ip
     const tokens = await this.authorizationService.updateDevice(oldToken, clientIP, userAgent)
@@ -56,7 +56,7 @@ export class AuthorizationController {
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Post('/logout')
   async logout(@Req() req: Request) {
-    const oldToken = req.cookies.refreshToken
+    const oldToken = await req.cookies.refreshToken
     return await this.authorizationService.logoutDevice(oldToken)
   }
 
