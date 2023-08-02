@@ -116,7 +116,7 @@ export class AuthorizationService {
     const refreshTokenPayload = { deviceId: deviceId, userId: userId, issuedAt: issuedAt }
     return {
       accessToken: await this.jwtService.signAsync(accessTokenPayload),
-      refreshToken: await this.jwtService.signAsync(refreshTokenPayload, { expiresIn: '20s' })
+      refreshToken: await this.jwtService.signAsync(refreshTokenPayload, { expiresIn: '2h' })
     };
   }
 
