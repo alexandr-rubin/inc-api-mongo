@@ -15,7 +15,7 @@ export class SecurityController {
   @UseGuards(RefreshTokenGuard)
   @Get('devices')
   async getActiveDevices(@Req() req: Request) {
-    return this.securityQueryRepository.getActiveDevices(req.cookies.refreshToken)
+    return await this.securityQueryRepository.getActiveDevices(req.cookies.refreshToken)
   }
 
   @Public()

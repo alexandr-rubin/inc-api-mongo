@@ -13,7 +13,6 @@ export class RefreshTokenGuard implements CanActivate {
     let token = ''
 
     try{
-      console.log(request.cookies)
       token = request.cookies.refreshToken
     }
     catch{

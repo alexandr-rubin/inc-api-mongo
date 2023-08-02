@@ -22,7 +22,6 @@ export class LogAPIThrottlerGuard extends ThrottlerGuard {
     }
 
     const count = await this.scurityService.countDoc(filter)
-    console.log(count)
     if (count >= 5) {
       // throw new ThrottlerException()
       return false
