@@ -139,21 +139,21 @@ export class AuthorizationService {
 
   async updateDevice(refreshToken: string, clientIP: string, userAgent: string | undefined): Promise<CreateJWT | null> {
     const decodedToken = await this.jwtService.verifyAsync(refreshToken)
-        if (!userAgent){
-            userAgent = 'default device name'
-        }
-        const deviceId = decodedToken.deviceId
-        const userId = decodedToken.userId
-        const issuedAt = new Date().toISOString()
-        const tokens = await this.createJWT(userId, deviceId, issuedAt)
-        const decodedNewToken = await this.jwtService.verifyAsync(tokens.refreshToken)
-        const expirationDate = new Date(decodedNewToken.exp * 1000)
-        const newDevice: Device = {issuedAt: issuedAt, expirationDate: expirationDate.toISOString(), IP: clientIP, deviceName: userAgent, deviceId: deviceId, userId: userId, isValid: true}
-        const isUpdated = await this.authorizationRepository.updateDevice(newDevice)
-        if(!isUpdated){
-          return null
-        }
-        return tokens
+    if (!userAgent){
+        userAgent = 'default device name'
+    }
+    const deviceId = decodedToken.deviceId
+    const issuedAt = new Date().toISOString()
+    const userId = decodedToken.userId
+    const tokens = await this.createJWT(userId, deviceId, issuedAt)
+    const decodedNewToken = await this.jwtService.verifyAsync(tokens.refreshToken)
+    const expirationDate = new Date(decodedNewToken.exp * 1000)
+    const newDevice: Device = {issuedAt: issuedAt, expirationDate: expirationDate.toISOString(), IP: clientIP, deviceName: userAgent, deviceId: deviceId, userId: userId, isValid: true}
+    const isUpdated = await this.authorizationRepository.updateDevice(newDevice)
+    if(!isUpdated){
+      return null
+    }
+    return tokens
   }
 
   async logoutDevice(refreshToken: string): Promise<Device>{

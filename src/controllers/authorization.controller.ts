@@ -48,7 +48,7 @@ export class AuthorizationController {
       secure: true,
     })
 
-    return {accessToken: tokens.accessToken}
+    res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
   }
 
   @Public()
