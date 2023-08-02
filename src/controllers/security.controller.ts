@@ -5,11 +5,13 @@ import { Request } from "express";
 import { SecurityService } from "../domain/security.service";
 import { RefreshTokenGuard } from "../guards/refreshToken.guard";
 import { SkipThrottle } from "@nestjs/throttler";
+import { Public } from "src/decorators/public.decorator";
 
 @SkipThrottle()
 @Controller('security')
 export class SecurityController {
   constructor(private readonly securityQueryRepository: SecurityQueryRepository, private securityService: SecurityService){}
+  @Public()
   @UseGuards(RefreshTokenGuard)
   @Get('devices')
   async getActiveDevices(@Req() req: Request) {
