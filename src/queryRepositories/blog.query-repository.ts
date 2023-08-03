@@ -5,13 +5,10 @@ import { Paginator } from "../models/Paginator";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { createPaginationQuery } from "../helpers/pagination";
 import { Blog, BlogDocument, BlogViewModel } from "../models/Blogs";
-import { PostViewModel } from "../models/Post";
-import { PostQueryRepository } from "./post.query-repository";
 
 @Injectable()
 export class BlogQueryRepository {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>, 
-  private postQueryRepository: PostQueryRepository){}
+  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>){}
   async getBlogs(params: QueryParamsModel): Promise<Paginator<Blog>> {
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
@@ -46,13 +43,13 @@ export class BlogQueryRepository {
     return true
   }
 
-  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel>>{
-    const blog = await this.getBlogById(blogId)
-    if(!blog){
-      throw new NotFoundException()
-    }
-    //////////
-    const result = await this.postQueryRepository.getPostsForSpecifiedBlog(blogId, params)
-    return await this.postQueryRepository.editPostToViewModel(result, userId)
-  }
+  // async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel>>{
+  //   const blog = await this.getBlogById(blogId)
+  //   if(!blog){
+  //     throw new NotFoundException()
+  //   }
+  //   //////////
+  //   const result = await this.postQueryRepository.getPostsForSpecifiedBlog(blogId, params)
+  //   return await this.postQueryRepository.editPostToViewModel(result, userId)
+  // }
 }

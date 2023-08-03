@@ -14,7 +14,7 @@ export class PostService {///////////
     //
     const blog = await this.blogQueryRepository.getBlogById(post.blogId)
     if(!blog){
-      throw new NotFoundException()
+      throw new NotFoundException('Blog is not found')
     }
     const newPost: Post = {...post, blogName: blog.name, createdAt: new Date().toISOString(),
     likesAndDislikesCount: { likesCount: 0, dislikesCount: 0}, likesAndDislikes: []}

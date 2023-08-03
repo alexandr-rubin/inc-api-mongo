@@ -128,7 +128,7 @@ export class PostQueryRepository {
     return post
   }
 
-  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel): Promise<Paginator<Post>>{
+  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel>>{
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
     const posts = await this.postModel.find(query.searchNameTerm === null ? {blogId: blogId} : {blogId: blogId, name: {$regex: query.searchNameTerm, $options: 'i'}}, {__v: false})
@@ -138,6 +138,6 @@ export class PostQueryRepository {
     const count = await this.postModel.countDocuments({blogId: blogId})
     const transformedPosts = posts.map(({ _id, ...rest }) => ({ id: _id.toString(), ...rest }))
     const result = Paginator.createPaginationResult(count, query, transformedPosts)
-    return result
+    return this.editPostToViewModel(result, userId)
   }
 }

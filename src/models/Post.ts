@@ -19,7 +19,7 @@ export class Post {
   blogName!: string
   @Prop()
   createdAt!: string
-  // откуда _id
+  // _id
   @Prop({type: {
     likesCount: Number, 
     dislikesCount: Number
@@ -55,7 +55,7 @@ export class PostInputModel {
   @Matches(/[^ ]+/, { message: 'Name field should not contain only whitespaces' })
   content!: string
   @IsString()
-  //@IsBlogIdValid({message: 'Blog with id does not exist.'})
+  @IsBlogIdValid({message: 'Blog with id does not exist.'})
   blogId!: string
 }
 

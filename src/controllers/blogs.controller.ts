@@ -11,12 +11,13 @@ import { Request } from 'express'
 import { JwtAuthService } from "../domain/JWT.service";
 import { BasicAuthGuard } from "../guards/basic-auth.guard";
 import { SkipThrottle } from "@nestjs/throttler";
+import { PostQueryRepository } from "src/queryRepositories/post.query-repository";
 
 @SkipThrottle()
 @Controller('blogs')
 export class BlogsController {
-  constructor(private readonly blogService: BlogService,  private readonly postService: BlogService,private readonly blogQueryRepository: BlogQueryRepository,
-  private readonly jwtAuthService: JwtAuthService){}
+  constructor(private readonly blogService: BlogService,  private readonly postService: BlogService, private readonly blogQueryRepository: BlogQueryRepository,
+  private readonly jwtAuthService: JwtAuthService, private readonly postQueryRepository: PostQueryRepository){}
 
   @Public()
   @Get()
@@ -72,6 +73,6 @@ export class BlogsController {
     if(bearer){
       userId = await this.jwtAuthService.verifyToken(bearer)
     }
-    return await this.blogQueryRepository.getPostsForSpecifiedBlog(blogId, params, userId)
+    return await this.postQueryRepository.getPostsForSpecifiedBlog(blogId, params, userId)
   }
 }
