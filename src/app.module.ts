@@ -99,7 +99,7 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
     JwtModule.register({
       global: true,
       secret: JWT_SECRET_KEY,
-      signOptions: { expiresIn: '10m' },
+      signOptions: { expiresIn: '10s' },
     }),
     ConfigModule.forRoot(),
     MongooseModule.forRoot(MONGODB_URI),
@@ -125,10 +125,10 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: LogAPIThrottlerGuard
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: LogAPIThrottlerGuard
+    },
     LoginValidation, SecurityService, SecurityRepository, SecurityQueryRepository],
 })
 
