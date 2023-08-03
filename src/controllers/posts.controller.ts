@@ -67,8 +67,6 @@ export class PostsController {
     return await this.postService.updatePostById(id, post) 
   }
 
-  //add comment valid
-  @Public()
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post(':postId/comments')
   async createComment(@Param('postId', PostIdValidationPipe) postId: string, @Body() content: CommentInputModel, @Req() req: AccessTokenVrifyModel) {
