@@ -16,7 +16,7 @@ import { RefreshTokenGuard } from "../guards/refreshToken.guard";
 import { LogAPIThrottlerGuard } from "../guards/logAPIThrottlerGuard";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 
-@UseGuards(LogAPIThrottlerGuard)
+//@UseGuards(LogAPIThrottlerGuard)
 @Controller('auth')
 export class AuthorizationController {
   constructor(private readonly authorizationService: AuthorizationService){}
