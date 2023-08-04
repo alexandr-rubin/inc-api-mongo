@@ -12,7 +12,7 @@ import { Request } from 'express'
 import { JwtAuthService } from "../domain/JWT.service";
 import { BasicAuthGuard } from "../guards/basic-auth.guard";
 import { likeStatusValidation } from "../validation/likeStatus";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 
 @Controller('posts')
 export class PostsController {

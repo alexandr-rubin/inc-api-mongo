@@ -9,7 +9,7 @@ import { BlogIdValidationPipe } from "../validation/pipes/blog-Id-validation.pip
 import { Request } from 'express'
 import { JwtAuthService } from "../domain/JWT.service";
 import { BasicAuthGuard } from "../guards/basic-auth.guard";
-import { PostQueryRepository } from "src/queryRepositories/post.query-repository";
+import { PostQueryRepository } from "../queryRepositories/post.query-repository";
 
 @Controller('blogs')
 export class BlogsController {

@@ -2,7 +2,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as dotenv from 'dotenv'
-import { UserQueryRepository } from 'src/queryRepositories/user.query-repository';
+import { UserQueryRepository } from '../queryRepositories/user.query-repository';
 
 dotenv.config()
 

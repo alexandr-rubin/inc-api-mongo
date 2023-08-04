@@ -8,7 +8,7 @@ import { Request } from 'express'
 import { AccessTokenVrifyModel } from "../models/Auth";
 import { JwtAuthService } from "../domain/JWT.service";
 import { likeStatusValidation } from "../validation/likeStatus";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 
 @Controller('comments')
 export class CommentController {
