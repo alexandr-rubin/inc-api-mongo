@@ -13,7 +13,10 @@ import { LoginValidation } from "../validation/login";
 import { LoginValidationPipe } from "../validation/pipes/login-validation.pipe";
 import { AccessTokenVrifyModel } from "../models/Auth";
 import { RefreshTokenGuard } from "../guards/refreshToken.guard";
+import { LogAPIThrottlerGuard } from "src/guards/logAPIThrottlerGuard";
+import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 
+@UseGuards(LogAPIThrottlerGuard)
 @Controller('auth')
 export class AuthorizationController {
   constructor(private readonly authorizationService: AuthorizationService){}
@@ -54,7 +57,6 @@ export class AuthorizationController {
     return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
   }
 
-  @Public()
   @UseGuards(RefreshTokenGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Post('/logout')
@@ -63,35 +65,30 @@ export class AuthorizationController {
     return await this.authorizationService.logoutDevice(oldToken)
   }
 
-  @Public()
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Post('/registration')
   async createUser(@Body(EmailOrLoginExistsPipe) user: UserInputModel) {
     return await this.authorizationService.createUser(user)
   }
 
-  @Public()
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Post('/registration-confirmation')//add code validation
   async registrationConfirmation(@Body(EmailConfirmationCodePipe) code: {code: string}) {
     return await this.authorizationService.confrmEmail(code.code)
   }
 
-  @Public()
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Post('/registration-email-resending')//add code validation
   async registrationEmailResending(@Body(EmailConfirmationCodePipe) email: EmailValidation) {
     return await this.authorizationService.resendEmail(email.email)
   }
 
-  @Public()
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Post('/password-recovery')//add code validation
   async passwordRecovery(@Body() email: EmailValidation) {
     return await this.authorizationService.recoverPassword(email.email)
   }
 
-  @Public()
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Post('/new-password')//add code validation
   async newPassword(@Body(PasswordRecoveryCodeValidPipe) newPasswordAndCode: NewPasswordInputModelValidation) {
@@ -99,6 +96,7 @@ export class AuthorizationController {
     return await this.authorizationService.updatePassword(newPasswordAndCode.newPassword, newPasswordAndCode.recoveryCode)
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('/me')
   async getCurrentUser(@Req() req: AccessTokenVrifyModel) {
     ////////////

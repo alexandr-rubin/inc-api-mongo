@@ -6,26 +6,21 @@ import { QueryParamsModel } from "../models/PaginationQuery";
 import { BlogQueryRepository } from "../queryRepositories/blog.query-repository";
 import { PostForSpecBlogInputModel } from "../models/Post";
 import { BlogIdValidationPipe } from "../validation/pipes/blog-Id-validation.pipe";
-import { Public } from "../decorators/public.decorator";
 import { Request } from 'express'
 import { JwtAuthService } from "../domain/JWT.service";
 import { BasicAuthGuard } from "../guards/basic-auth.guard";
-import { SkipThrottle } from "@nestjs/throttler";
 import { PostQueryRepository } from "src/queryRepositories/post.query-repository";
 
-@SkipThrottle()
 @Controller('blogs')
 export class BlogsController {
   constructor(private readonly blogService: BlogService,  private readonly postService: BlogService, private readonly blogQueryRepository: BlogQueryRepository,
   private readonly jwtAuthService: JwtAuthService, private readonly postQueryRepository: PostQueryRepository){}
 
-  @Public()
   @Get()
   async getUsers(@Query() params: QueryParamsModel) {
     return await this.blogQueryRepository.getBlogs(params)
   }
 
-  @Public()
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post()
@@ -33,7 +28,6 @@ export class BlogsController {
     return await this.blogService.addBlog(blog)
   }
 
-  @Public()
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post(':blogId/posts')
@@ -43,7 +37,6 @@ export class BlogsController {
     return result
   }
 
-  @Public()
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete(':blogId')
@@ -51,13 +44,11 @@ export class BlogsController {
     return await this.blogService.deleteBlogById(id)
   }
 
-  @Public()
   @Get(':blogId')
   async getBlogById(@Param('blogId', BlogIdValidationPipe) id: string) {
     return await this.blogQueryRepository.getBlogById(id)
   }
 
-  @Public()
   @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put(':blogId')
@@ -65,7 +56,6 @@ export class BlogsController {
     return await this.blogService.updateBlogById(id, blog)
   }
 
-  @Public()
   @Get(':blogId/posts')
   async getPostsForSpecifiBlog(@Query() params: QueryParamsModel, @Param('blogId', BlogIdValidationPipe) blogId: string, @Req() req: Request) {
     let userId = ''

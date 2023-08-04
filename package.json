@@ -34,6 +34,7 @@
     "@types/bcryptjs": "^2.4.2",
     "@types/cookie-parser": "^1.4.3",
     "@types/dotenv": "^8.2.0",
+    "@types/passport-local": "^1.0.35",
     "@types/uuid": "^9.0.2",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",

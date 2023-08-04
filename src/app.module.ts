@@ -41,19 +41,19 @@ import { JwtModule } from '@nestjs/jwt';
 import { Device, DeviceSchema } from './models/Device';
 import { AuthorizationController } from './controllers/authorization.controller';
 import { SecurityController } from './controllers/security.controller';
-import { APP_GUARD } from '@nestjs/core';
 import { AuthorizationService } from './domain/authorization.service';
 import { SecurityService } from './domain/security.service';
 import { SecurityQueryRepository } from './queryRepositories/security.query-repository';
 import { AuthorizationRepository } from './repositories/authorization.repository';
 import { SecurityRepository } from './repositories/security.repository';
 import { LoginValidation } from './validation/login';
-import { AuthGuard } from './guards/auth.guard';
+//import { AuthGuard } from './guards/auth.guard';
 import { CommentController } from './controllers/comments.controller';
 import { IsBlogIdValidConstraint } from './decorators/isBlogIdValid';
 import { APILog, APILogSchema } from './models/APILogs';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { LogAPIThrottlerGuard } from './guards/logAPIThrottlerGuard';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 dotenv.config()
 
@@ -113,7 +113,7 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
     ]),
   ],
   controllers: [AppController, TestingController, BlogsController, PostsController, UsersController, CommentController, AuthorizationController, SecurityController],
-  providers: [AppService, IsBlogIdValidConstraint,
+  providers: [AppService, IsBlogIdValidConstraint, JwtStrategy, JwtAuthGuard,
     JwtAuthService,
     BlogService, BlogQueryRepository, BlogRepository, BlogExistValidator,
     CommentService, CommentQueryRepository, CommentRepository, CommentExistValidator,
@@ -121,14 +121,6 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
     UserService, UserQueryRepository, UserRepository, UserExistValidator,
     EmailAdapter, EmailService, EmailConfirmationCodeValidator,
     AuthorizationService, AuthorizationRepository,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: LogAPIThrottlerGuard
-    },
     LoginValidation, SecurityService, SecurityRepository, SecurityQueryRepository],
 })
 
