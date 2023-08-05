@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import * as dotenv from 'dotenv'
-import { UserQueryRepository } from '../queryRepositories/user.query-repository';
+import { UserQueryRepository } from '../users/user.query-repository';
 //////////////////
 dotenv.config()
 

@@ -1,5 +1,5 @@
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
-import { CommentQueryRepository } from '../queryRepositories/comment.query-repository';
+import { CommentQueryRepository } from '../comments/comment.query-repository';
 
 @ValidatorConstraint({ async: true })
 export class CommentExistValidator implements ValidatorConstraintInterface {

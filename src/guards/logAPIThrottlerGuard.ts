@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ThrottlerException, ThrottlerGuard, ThrottlerModuleOptions, ThrottlerStorage } from '@nestjs/throttler';
-import { SecurityService } from '../domain/security.service';
+import { SecurityService } from '../security/security.service';
 
 @Injectable()
 export class LogAPIThrottlerGuard extends ThrottlerGuard {

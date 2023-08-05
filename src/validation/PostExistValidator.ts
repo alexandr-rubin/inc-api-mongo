@@ -1,5 +1,5 @@
 import { ValidationArguments, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
-import { PostQueryRepository } from '../queryRepositories/post.query-repository';
+import { PostQueryRepository } from '../posts/post.query-repository';
 
 @ValidatorConstraint({ async: true })
 export class PostExistValidator implements ValidatorConstraintInterface {

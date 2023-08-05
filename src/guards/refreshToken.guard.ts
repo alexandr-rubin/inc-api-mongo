@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { AuthorizationService } from '../domain/authorization.service';
-import { SecurityQueryRepository } from '../queryRepositories/security.query-repository';
-import { UserQueryRepository } from '../queryRepositories/user.query-repository';
+import { AuthorizationService } from '../authorization/authorization.service';
+import { SecurityQueryRepository } from '../security/security.query-repository';
+import { UserQueryRepository } from '../users/user.query-repository';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {

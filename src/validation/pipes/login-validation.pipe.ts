@@ -1,6 +1,6 @@
 import { PipeTransform, Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginValidation } from '../login';
-import { UserQueryRepository } from '../../queryRepositories/user.query-repository';
+import { UserQueryRepository } from '../../users/user.query-repository';
 
 @Injectable()
 export class LoginValidationPipe implements PipeTransform {

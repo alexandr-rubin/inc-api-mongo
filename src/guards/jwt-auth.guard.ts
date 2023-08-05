@@ -7,7 +7,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import * as dotenv from 'dotenv'
-import { UserQueryRepository } from '../queryRepositories/user.query-repository';
+import { UserQueryRepository } from '../users/user.query-repository';
 import { AuthGuard } from '@nestjs/passport';
 //////////////////
 dotenv.config()
