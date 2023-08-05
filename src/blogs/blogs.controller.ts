@@ -9,7 +9,7 @@ import { JwtAuthService } from "../domain/JWT.service";
 import { BasicAuthGuard } from "../guards/basic-auth.guard";
 import { PostQueryRepository } from "../posts/post.query-repository";
 import { BlogInputModel } from "./models/input/BlogInputModel";
-import { PostForSpecBlogInputModel } from "src/posts/models/input/PostForSpecBlog";
+import { PostForSpecBlogInputModel } from "../posts/models/input/PostForSpecBlog";
 
 @Controller('blogs')
 export class BlogsController {

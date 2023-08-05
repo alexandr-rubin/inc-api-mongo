@@ -4,9 +4,9 @@ import { BlogQueryRepository } from "./blog.query-repository";
 import { BlogInputModel } from "./models/input/BlogInputModel";
 import { BlogViewModel } from "./models/view/BlogViewModel";
 import { Blog } from "./models/schemas/Blog";
-import { PostForSpecBlogInputModel } from "src/posts/models/input/PostForSpecBlog";
-import { PostViewModel } from "src/posts/models/view/Post";
-import { Post } from "src/posts/models/schemas/Post";
+import { PostForSpecBlogInputModel } from "../posts/models/input/PostForSpecBlog";
+import { PostViewModel } from "../posts/models/view/Post";
+import { Post } from "../posts/models/schemas/Post";
 
 @Injectable()
 export class BlogService {

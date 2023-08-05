@@ -3,7 +3,7 @@ import { PostRepository } from "./post.repository";
 import { LikeStatuses } from "../helpers/likeStatuses";
 import { BlogQueryRepository } from "../blogs/blog.query-repository";
 import { PostQueryRepository } from "./post.query-repository";
-import { CommentViewModel } from "src/comments/models/view/CommentViewModel";
+import { CommentViewModel } from "../comments/models/view/CommentViewModel";
 import { Comment } from "src/comments/models/schemas/Comment";
 import { PostInputModel } from "./models/input/Post";
 import { PostViewModel } from "./models/view/Post";

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { LikeStatuses } from "../helpers/likeStatuses";
-import { Comment, CommentDocument } from "src/comments/models/schemas/Comment";
+import { Comment, CommentDocument } from "../comments/models/schemas/Comment";
 import { PostInputModel } from "./models/input/Post";
 import { Post, PostDocument } from "./models/schemas/Post";
 

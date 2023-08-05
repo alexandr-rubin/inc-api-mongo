@@ -4,7 +4,7 @@ import { Model } from "mongoose";
 import { PostRepository } from "../posts/post.repository";
 import { BlogInputModel } from "./models/input/BlogInputModel";
 import { Blog, BlogDocument } from "./models/schemas/Blog";
-import { Post, PostDocument } from "src/posts/models/schemas/Post";
+import { Post, PostDocument } from "../posts/models/schemas/Post";
 
 @Injectable()
 export class BlogRepository {

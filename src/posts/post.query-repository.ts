@@ -6,8 +6,8 @@ import { QueryParamsModel } from "../models/PaginationQuery";
 import { createPaginationQuery } from "../helpers/pagination";
 import { LikeStatuses } from "../helpers/likeStatuses";
 import { WithId } from 'mongodb' 
-import { CommentViewModel } from "src/comments/models/view/CommentViewModel";
-import { Comment, CommentDocument } from "src/comments/models/schemas/Comment";
+import { CommentViewModel } from "../comments/models/view/CommentViewModel";
+import { Comment, CommentDocument } from "../comments/models/schemas/Comment";
 import { PostViewModel } from "./models/view/Post";
 import { PostDocument, Post } from "./models/schemas/Post";
 

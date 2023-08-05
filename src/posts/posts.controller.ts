@@ -11,7 +11,7 @@ import { JwtAuthService } from "../domain/JWT.service";
 import { BasicAuthGuard } from "../guards/basic-auth.guard";
 import { likeStatusValidation } from "../validation/likeStatus";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
-import { CommentInputModel } from "src/comments/models/input/CommentInputModel";
+import { CommentInputModel } from "../comments/models/input/CommentInputModel";
 import { PostInputModel } from "./models/input/Post";
 
 @Controller('posts')
