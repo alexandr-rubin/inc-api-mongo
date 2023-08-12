@@ -35,7 +35,7 @@ window.onload = function() {
       },
       "/blogs": {
         "get": {
-          "operationId": "BlogsController_getUsers",
+          "operationId": "BlogsController_getBlogs",
           "parameters": [],
           "responses": {
             "200": {

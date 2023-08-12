@@ -97,7 +97,7 @@ import { getConfiguration } from './config/configuration';
       global: true,
       // через конфиг когда добавлю отдельный модуль 
       secret: process.env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: '10s' },
+      signOptions: { expiresIn: '10h' },
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     MongooseModule.forFeature([

@@ -12,11 +12,11 @@ import { Post } from "../posts/models/schemas/Post";
 export class BlogService {
   constructor(private blogRepository: BlogRepository, private blogQueryRepository: BlogQueryRepository){}
 
-  async addBlog(blog: BlogInputModel): Promise<BlogViewModel>{
-    const newBlog: Blog = {...blog, createdAt: new Date().toISOString(), isMembership: false}
+  async addBlog(blog: BlogInputModel, creatorId: string): Promise<BlogViewModel>{
+    const newBlog: Blog = {...blog, createdAt: new Date().toISOString(), isMembership: false, userId: creatorId}
     const savedBlog = (await this.blogRepository.addBlog(newBlog)).toJSON()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { __v, _id, ...result } = {id: savedBlog._id.toString(), ...savedBlog}
+    const { __v, _id, userId, ...result } = {id: savedBlog._id.toString(), ...savedBlog}
     return result
   }
 

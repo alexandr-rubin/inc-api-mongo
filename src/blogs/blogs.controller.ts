@@ -6,29 +6,29 @@ import { BlogQueryRepository } from "./blog.query-repository";
 import { BlogIdValidationPipe } from "../validation/pipes/blog-Id-validation.pipe";
 import { Request } from 'express'
 import { JwtAuthService } from "../domain/JWT.service";
-import { BasicAuthGuard } from "../guards/basic-auth.guard";
 import { PostQueryRepository } from "../posts/post.query-repository";
 import { BlogInputModel } from "./models/input/BlogInputModel";
 import { PostForSpecBlogInputModel } from "../posts/models/input/PostForSpecBlog";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard";
+import { AccessTokenVrifyModel } from "src/authorization/models/input/Auth";
 
+@UseGuards(JwtAuthGuard)
 @Controller('blogs')
 export class BlogsController {
   constructor(private readonly blogService: BlogService,  private readonly postService: BlogService, private readonly blogQueryRepository: BlogQueryRepository,
   private readonly jwtAuthService: JwtAuthService, private readonly postQueryRepository: PostQueryRepository){}
 
   @Get()
-  async getUsers(@Query() params: QueryParamsModel) {
+  async getBlogs(@Query() params: QueryParamsModel) {
     return await this.blogQueryRepository.getBlogs(params)
   }
 
-  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post()
-  async createBlog(@Body() blog: BlogInputModel) {
-    return await this.blogService.addBlog(blog)
+  async createBlog(@Body() blog: BlogInputModel, @Req() req: AccessTokenVrifyModel) {
+    return await this.blogService.addBlog(blog, req.user.userId)
   }
 
-  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post(':blogId/posts')
   async createPostForSecificBlog(@Param('blogId', BlogIdValidationPipe) blogId: string, @Body() post: PostForSpecBlogInputModel) {
@@ -37,7 +37,6 @@ export class BlogsController {
     return result
   }
 
-  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete(':blogId')
   async deleteBlogById(@Param('blogId', BlogIdValidationPipe) id: string) {
@@ -49,7 +48,6 @@ export class BlogsController {
     return await this.blogQueryRepository.getBlogById(id)
   }
 
-  @UseGuards(BasicAuthGuard)
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put(':blogId')
   async updateBlogById(@Param('blogId', BlogIdValidationPipe) id: string, @Body() blog: BlogInputModel) {

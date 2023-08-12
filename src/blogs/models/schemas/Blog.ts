@@ -15,6 +15,8 @@ export class Blog {
   createdAt!: string
   @Prop()
   isMembership!: boolean
+  @Prop()
+  userId!: string
 }
 
 export const BlogSchema = SchemaFactory.createForClass(Blog)

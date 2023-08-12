@@ -8,7 +8,6 @@ import { EmailValidation } from "../validation/Email";
 import { NewPasswordInputModelValidation } from "../validation/newPasswordInputModel";
 import { PasswordRecoveryCodeValidPipe } from "../validation/pipes/password-recovery-code-valid.pipe";
 import { EmailOrLoginExistsPipe } from "../validation/pipes/email-login-exist.pipe";
-import { Public } from "../decorators/public.decorator";
 import { LoginValidation } from "../validation/login";
 import { LoginValidationPipe } from "../validation/pipes/login-validation.pipe";
 import { AccessTokenVrifyModel } from "./models/input/Auth";
@@ -20,7 +19,6 @@ import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 @Controller('auth')
 export class AuthorizationController {
   constructor(private readonly authorizationService: AuthorizationService){}
-  @Public()
   @Post('/login')
   async login(@Headers() headers, @Ip() ip, @Body(LoginValidationPipe) loginData: LoginValidation, @Res() res: Response) {
     const userId = await this.authorizationService.verifyUser(loginData)
@@ -37,7 +35,6 @@ export class AuthorizationController {
     return res.status(HttpStatusCode.OK_200).send({accessToken: tokens.accessToken})
   }
 
-  @Public()
   @UseGuards(RefreshTokenGuard)
   @Post('/refresh-token')
   async updateTokens(@Headers() headers, @Ip() ip, @Res() res: Response, @Req() req: Request) {

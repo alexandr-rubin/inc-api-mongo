@@ -48,6 +48,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       });
       const user = await this.userQueryRepository.getUsergByIdNoView(payload.userId);
       request['user'] = { userId: payload.userId, ...user };
+      request['userId'] = { userId: payload.userId }
     } catch {
       throw new UnauthorizedException();
     }
