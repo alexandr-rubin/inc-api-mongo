@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TestingController } from './testing/testing.controller';
 import { ConfigModule } from '@nestjs/config';
-import * as dotenv from 'dotenv'
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { BlogsController } from './blogs/blogs.controller';
@@ -54,12 +53,7 @@ import { Comment, CommentSchema } from './comments/models/schemas/Comment';
 import { Blog, BlogSchema } from './blogs/models/schemas/Blog';
 import { Post, PostSchema } from './posts/models/schemas/Post';
 import { APILog, APILogSchema } from './security/models/schemas/APILohs';
-
-dotenv.config()
-
-
-const MONGODB_URI = process.env.MONGODB_URI ||  'mongodb://localhost:27017/testDb'
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
+import { getConfiguration } from './config/configuration';
 
 @Module({
   imports: [
@@ -69,6 +63,9 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
     //CommentsModule,
     //EmailModule,
     //AuthModule,
+    ConfigModule.forRoot({
+      load: [getConfiguration]
+    }),
     ThrottlerModule.forRoot({
       ttl: 10,
       limit: 5,
@@ -98,11 +95,11 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
     }),
     JwtModule.register({
       global: true,
-      secret: JWT_SECRET_KEY,
+      // через конфиг когда добавлю отдельный модуль 
+      secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: '10s' },
     }),
-    ConfigModule.forRoot(),
-    MongooseModule.forRoot(MONGODB_URI),
+    MongooseModule.forRoot(process.env.MONGODB_URI),
     MongooseModule.forFeature([
       { name: Post.name, schema: PostSchema },
       { name: Blog.name, schema: BlogSchema },

@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsString, Length, Matches } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
-import { generateHash } from 'src/helpers/generateHash';
+import { generateHash } from '../../helpers/generateHash';
 import { v4 as uuidv4 } from 'uuid'
-import { genExpirationDate } from 'src/helpers/genCodeExpirationDate';
+import { genExpirationDate } from '../../helpers/genCodeExpirationDate';
 
 export type UserDocument = HydratedDocument<User>;
 

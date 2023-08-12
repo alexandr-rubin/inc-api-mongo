@@ -9,19 +9,16 @@ import { generateHash } from "../helpers/generateHash";
 import { LoginValidation } from "../validation/login";
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcryptjs'
-import * as dotenv from 'dotenv'
 import { Device } from "../models/Device";
 import { AuthorizationRepository } from "./authorization.repository";
 import { CreateJWT } from "./models/output/JWTresponce";
-//////////////////
-dotenv.config()
-
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
+import { ConfigService } from "@nestjs/config";
+import { ConfigType } from "src/config/configuration";
 
 @Injectable()
 export class AuthorizationService {
   constructor(private userRepository: UserRepository, private emailService: EmailService, private readonly userQueryRepository: UserQueryRepository, 
-  private jwtService: JwtService, private authorizationRepository: AuthorizationRepository){}
+  private jwtService: JwtService, private authorizationRepository: AuthorizationRepository, private configService: ConfigService<ConfigType>){}
 
   async createUser(userDto: UserInputModel): Promise<User> {
     const newUser: User = await User.createUser(userDto, false)
@@ -112,6 +109,7 @@ export class AuthorizationService {
 
   ////
   async createJWT(userId: string, deviceId: string, issuedAt: string): Promise<CreateJWT> {
+    const JWT_SECRET_KEY = this.configService.get('JWT_SECRET_KEY')
     const accessTokenPayload = { userId: userId, JWT_SECRET_KEY }
     const refreshTokenPayload = { deviceId: deviceId, userId: userId, issuedAt: issuedAt }
     const result = {

@@ -1,5 +1,5 @@
 import { IsString, MaxLength, Matches } from "class-validator"
-import { IsBlogIdValid } from "src/decorators/isBlogIdValid"
+import { IsBlogIdValid } from "../../../decorators/isBlogIdValid"
 
 export class PostInputModel {
     @IsString()

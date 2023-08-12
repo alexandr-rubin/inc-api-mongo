@@ -6,20 +6,18 @@ import {
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
-import * as dotenv from 'dotenv'
 import { UserQueryRepository } from '../users/user.query-repository';
 import { AuthGuard } from '@nestjs/passport';
-//////////////////
-dotenv.config()
-
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'secretkey'
+import { ConfigService } from '@nestjs/config';
+import { ConfigType } from 'src/config/configuration';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
     private readonly jwtService: JwtService,
     private readonly reflector: Reflector,
-    private readonly userQueryRepository: UserQueryRepository
+    private readonly userQueryRepository: UserQueryRepository,
+    private configService: ConfigService<ConfigType>
   ) {
     super();
   }
@@ -44,6 +42,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException();
     }
     try {
+      const JWT_SECRET_KEY = this.configService.get('JWT_SECRET_KEY')
       const payload = await this.jwtService.verifyAsync(token, {
         secret: JWT_SECRET_KEY,
       });

@@ -1,39 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { createWriteStream } from 'fs';
 import { get } from 'http';
-import { ValidationPipe } from '@nestjs/common';
-import { validationExceptionFactory } from './validation/Factories/custom-exception-factory';
-import { HttpExceptionFilter } from './validation/filters/exception.filter';
-import {useContainer} from "class-validator";
-import cookieParser from 'cookie-parser'
+import { ConfigService } from '@nestjs/config';
+import { ConfigType } from './config/configuration';
+import { appSettings } from './app.settings';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(cookieParser())
-  useContainer(app.select(AppModule), { fallbackOnErrors: true })
+
+  appSettings(app)
+
+  const configSerice = app.get(ConfigService<ConfigType>)
+
+  const serverUrl = `http://localhost:${configSerice.get('PORT')}`
   
-  app.enableCors()
-
-  const serverUrl = 'http://localhost:3000'
-
-  const config = new DocumentBuilder()
-    .setTitle('Product example')
-    .setDescription('The API description')
-    .setVersion('1.0')
-    .addTag('Product')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    stopAtFirstError: true,
-    exceptionFactory: validationExceptionFactory
-  }))
-  app.useGlobalFilters(new HttpExceptionFilter())
-
-  await app.listen(3000);
+  await app.listen(configSerice.get('PORT'));
 
   // get the swagger json file (if app is running in development mode)
   if (process.env.NODE_ENV === 'development') {
