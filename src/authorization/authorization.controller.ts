@@ -11,7 +11,6 @@ import { LoginValidation } from "../validation/login";
 import { LoginValidationPipe } from "../validation/pipes/login-validation.pipe";
 import { AccessTokenVrifyModel } from "./models/input/Auth";
 import { RefreshTokenGuard } from "../guards/refreshToken.guard";
-import { LogAPIThrottlerGuard } from "../guards/logAPIThrottlerGuard";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { UserInputModel } from "../users/models/input/UserInput";
 import { Roles } from "../decorators/roles.decorator";
