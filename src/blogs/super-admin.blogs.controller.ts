@@ -17,7 +17,9 @@ export class SuperAdminBlogsController {
   @Get()
   async getBlogs(@Query() params: QueryParamsModel) {
     const blogs = await this.blogQueryRepository.getSuperAdminBlogs(params)
-    return await this.userQueryRepository.getUsersForAdminBlogs(blogs.items)
+    // rename method
+    await this.userQueryRepository.getUsersForAdminBlogs(blogs.items)
+    return blogs
   }
 
   @Put(':blogId/bind-with-user/:userId')

@@ -11,7 +11,7 @@ export class CommentQueryRepository {
 
   async getCommentById(commentId: string, userId: string, bannedUserIds: string[]): Promise<CommentViewModel> {
     const comment = await this.commentModel.findById(commentId, { __v: false, postId: false }).lean()
-    if (!comment){
+    if (!comment || bannedUserIds.includes(comment.commentatorInfo.userId)){
       throw new NotFoundException('Comment not found')
     }
     const like = comment.likesAndDislikes.find(like => like.userId === userId && !bannedUserIds.includes(like.userId))

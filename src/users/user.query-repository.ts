@@ -65,6 +65,7 @@ export class UserQueryRepository {
     return user
   }
 
+  // rename method
   async getUsersForAdminBlogs(blogs: BlogAdminViewModel[]) {
     for(const blog of blogs){
       const user = await this.getUsergByIdNoView(blog.blogOwnerInfo.userId)
