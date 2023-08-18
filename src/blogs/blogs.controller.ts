@@ -12,12 +12,9 @@ import { PostIdValidationPipe } from "../validation/pipes/post-Id-validation.pip
 import { PostService } from "../posts/post.service";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { UserQueryRepository } from "../users/user.query-repository";
-import { Roles } from "../decorators/roles.decorator";
-import { UserRoles } from "../helpers/userRoles";
-import { RolesGuard } from "../guards/roles.guard";
 
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRoles.User)
+@UseGuards(JwtAuthGuard/*, RolesGuard*/)
+//@Roles(UserRoles.User)
 @Controller('blogger/blogs')
 export class BlogsController {
   constructor(private readonly blogService: BlogService,  private readonly postService: PostService, private readonly blogQueryRepository: BlogQueryRepository, 
