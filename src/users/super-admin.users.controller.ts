@@ -11,8 +11,10 @@ import { BanUserInputModel } from "./models/input/BanUserInput";
 import { SecurityService } from "../security/security.service";
 import { Roles } from "../decorators/roles.decorator";
 import { UserRoles } from "../helpers/userRoles";
+import { RolesGuard } from "../guards/roles.guard";
+import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
 
-@UseGuards(BasicAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRoles.Admin)
 @Controller('sa/users')
 export class UsersController {
