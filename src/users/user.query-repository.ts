@@ -5,7 +5,7 @@ import { Paginator } from "../models/Paginator";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { createPaginationQuery } from "../helpers/pagination";
 import { User, UserDocument } from "./models/schemas/User";
-import { BlogAdminViewModel } from "src/blogs/models/view/BlogAdminViewModel";
+import { BlogAdminViewModel } from "../blogs/models/view/BlogAdminViewModel";
 
 @Injectable()
 export class UserQueryRepository {

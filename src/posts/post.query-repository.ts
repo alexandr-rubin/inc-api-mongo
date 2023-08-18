@@ -10,7 +10,7 @@ import { CommentViewModel } from "../comments/models/view/CommentViewModel";
 import { Comment, CommentDocument } from "../comments/models/schemas/Comment";
 import { PostViewModel } from "./models/view/Post";
 import { PostDocument, Post, PostLike } from "./models/schemas/Post";
-import { CommentLike } from "src/comments/models/schemas/CommentLike";
+import { CommentLike } from "../comments/models/schemas/CommentLike";
 
 @Injectable()
 export class PostQueryRepository {
