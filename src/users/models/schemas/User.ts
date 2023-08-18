@@ -45,8 +45,8 @@ export class User {
   }})
   banInfo!: {
     isBanned: boolean,
-    banDate: string,
-    banReason: string
+    banDate: string | null,
+    banReason: string | null
   }
 
   public static async createUser(userDto: UserInputModel, isConfirmed: boolean, role: UserRoles): Promise<User> {
@@ -54,7 +54,7 @@ export class User {
     const expirationDate = genExpirationDate(1, 3)
     const newUser: User = {...userDto, password: passwordHash, createdAt: new Date().toISOString(), 
       confirmationEmail: { confirmationCode: uuidv4(), expirationDate: expirationDate.toISOString(), isConfirmed: isConfirmed},
-      confirmationPassword: { confirmationCode: uuidv4(), expirationDate: expirationDate.toISOString() }, role, banInfo: {isBanned: false, banDate: '', banReason: ''}
+      confirmationPassword: { confirmationCode: uuidv4(), expirationDate: expirationDate.toISOString() }, role, banInfo: {isBanned: false, banDate: null, banReason: null}
     }
 
     return newUser
