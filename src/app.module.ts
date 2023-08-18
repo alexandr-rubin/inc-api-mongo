@@ -56,6 +56,7 @@ import { getConfiguration } from './config/configuration';
 import { User, UserSchema } from './users/models/schemas/User';
 import { PublicBlogsController } from './blogs/public.bogs.controller';
 import { SuperAdminBlogsController } from './blogs/super-admin.blogs.controller';
+import { RolesGuard } from './guards/roles.guard';
 
 @Module({
   imports: [
@@ -114,7 +115,7 @@ import { SuperAdminBlogsController } from './blogs/super-admin.blogs.controller'
   controllers: [AppController, TestingController, BlogsController, PostsController, UsersController, CommentController, AuthorizationController, SecurityController,
     PublicBlogsController, SuperAdminBlogsController],
   providers: [AppService, IsBlogIdValidConstraint, JwtStrategy, JwtAuthGuard,
-    JwtAuthService,
+    JwtAuthService, RolesGuard,
     BlogService, BlogQueryRepository, BlogRepository, BlogExistValidator,
     CommentService, CommentQueryRepository, CommentRepository, CommentExistValidator,
     PostService, PostQueryRepository, PostRepository, PostExistValidator,
