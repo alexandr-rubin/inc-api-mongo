@@ -28,27 +28,26 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getClass(),
     ]);
     if (isPublic) {
-      return true;
+      return true
     }
 
     const canActivate = await super.canActivate(context);
     if (!canActivate) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException()
     }
 
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException()
     }
     try {
       const JWT_SECRET_KEY = this.configService.get('JWT_SECRET_KEY')
       const payload = await this.jwtService.verifyAsync(token, {
         secret: JWT_SECRET_KEY,
       });
-      const user = await this.userQueryRepository.getUsergByIdNoView(payload.userId);
-      request['user'] = { userId: payload.userId, ...user };
-      request['userId'] = { userId: payload.userId }
+      const user = await this.userQueryRepository.getUsergByIdNoView(payload.userId)
+      request['user'] = { userId: payload.userId, ...user }
     } catch {
       throw new UnauthorizedException();
     }
@@ -56,11 +55,11 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   private extractTokenFromHeader(request: any): string | null {
-    const authHeader = request.headers.authorization;
+    const authHeader = request.headers.authorization
     if (authHeader && authHeader.startsWith('Bearer ')) {
-      return authHeader.substring(7);
+      return authHeader.substring(7)
     }
-    return null;
+    return null
   }
 }
 

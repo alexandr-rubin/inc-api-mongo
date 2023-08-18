@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Headers, HttpCode, InternalServerErrorException, Ip, Post, Req, Res, UseGuards } from "@nestjs/common";
-import { UserInputModel } from "../users/models/User";
 import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { AuthorizationService } from "./authorization.service";
 import { Request, Response } from "express";
@@ -14,8 +13,15 @@ import { AccessTokenVrifyModel } from "./models/input/Auth";
 import { RefreshTokenGuard } from "../guards/refreshToken.guard";
 import { LogAPIThrottlerGuard } from "../guards/logAPIThrottlerGuard";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
+import { UserInputModel } from "src/users/models/input/UserInput";
+import { Roles } from "src/decorators/roles.decorator";
+import { UserRoles } from "src/helpers/userRoles";
+import { RolesGuard } from "src/guards/roles.guard";
 
-@UseGuards(LogAPIThrottlerGuard)
+// @UseGuards(LogAPIThrottlerGuard)
+//role
+@UseGuards(RolesGuard)
+@Roles(UserRoles.Guest)
 @Controller('auth')
 export class AuthorizationController {
   constructor(private readonly authorizationService: AuthorizationService){}

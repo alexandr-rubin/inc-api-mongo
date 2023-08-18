@@ -1,9 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsString, Length, Matches } from 'class-validator';
 import { HydratedDocument } from 'mongoose';
-import { generateHash } from '../../helpers/generateHash';
 import { v4 as uuidv4 } from 'uuid'
-import { genExpirationDate } from '../../helpers/genCodeExpirationDate';
+import { UserInputModel } from '../input/UserInput';
+import { generateHash } from '../../../helpers/generateHash';
+import { genExpirationDate } from '../../../helpers/genCodeExpirationDate';
+import { UserRoles } from '../../../helpers/userRoles';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -35,45 +36,29 @@ export class User {
     confirmationCode: string, 
     expirationDate: string
   }
+  @Prop()
+  role!: UserRoles
+  @Prop({type: {
+    isBanned: Boolean,
+    banDate: String,
+    banReason: String
+  }})
+  banInfo!: {
+    isBanned: boolean,
+    banDate: string,
+    banReason: string
+  }
 
-  public static async createUser(userDto: UserInputModel, isConfirmed: boolean): Promise<User> {
+  public static async createUser(userDto: UserInputModel, isConfirmed: boolean, role: UserRoles): Promise<User> {
     const passwordHash = await generateHash(userDto.password)
     const expirationDate = genExpirationDate(1, 3)
     const newUser: User = {...userDto, password: passwordHash, createdAt: new Date().toISOString(), 
       confirmationEmail: { confirmationCode: uuidv4(), expirationDate: expirationDate.toISOString(), isConfirmed: isConfirmed},
-      confirmationPassword: { confirmationCode: uuidv4(), expirationDate: expirationDate.toISOString() }
+      confirmationPassword: { confirmationCode: uuidv4(), expirationDate: expirationDate.toISOString() }, role, banInfo: {isBanned: false, banDate: '', banReason: ''}
     }
 
     return newUser
   }
-}
-
-export class UserViewModel {
-  @Prop()
-  id!: string
-  @Prop()
-  login!: string
-  @Prop()
-  email!: string
-  @Prop()
-  createdAt!: string
-}
-
-export class UserInputModel {
-  @IsString()
-  @Length(3, 10)
-  @Matches(/^[a-zA-Z0-9_-]*$/, {
-    message: 'Only alphanumeric characters, underscores, and hyphens are allowed',
-  })
-  login!: string
-  @IsString()
-  @Length(6, 20)
-  password!: string
-  @IsString()
-  @Matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, {
-    message: 'Invalid email format',
-  })
-  email!: string
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

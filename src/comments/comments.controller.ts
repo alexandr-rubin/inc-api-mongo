@@ -9,10 +9,18 @@ import { JwtAuthService } from "../domain/JWT.service";
 import { likeStatusValidation } from "../validation/likeStatus";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { CommentInputModel } from "./models/input/CommentInputModel";
+import { UserQueryRepository } from "src/users/user.query-repository";
+import { Roles } from "src/decorators/roles.decorator";
+import { UserRoles } from "src/helpers/userRoles";
+import { RolesGuard } from "src/guards/roles.guard";
 
+// comments 403?
+UseGuards(RolesGuard)
+@Roles(UserRoles.Guest)
 @Controller('comments')
 export class CommentController {
-  constructor(private readonly commentQueryRepository: CommentQueryRepository, private readonly commentService: CommentService, private readonly jwtAuthService: JwtAuthService){}
+  constructor(private readonly commentQueryRepository: CommentQueryRepository, private readonly commentService: CommentService, private readonly jwtAuthService: JwtAuthService,
+    private readonly userQueryRepository: UserQueryRepository){}
   @Get(':commentId')
   async getCommentById(@Param('commentId', CommentIdValidationPipe) id: string, @Req() req: Request) {
     let userId = ''
@@ -20,7 +28,10 @@ export class CommentController {
     if(bearer){
       userId = await this.jwtAuthService.verifyToken(bearer)
     }
-    return await this.commentQueryRepository.getCommentById(id, userId)
+
+    const bannedUserIds = await this.userQueryRepository.getBannedUsersId()
+
+    return await this.commentQueryRepository.getCommentById(id, userId, bannedUserIds)
   }
 
   @UseGuards(JwtAuthGuard)

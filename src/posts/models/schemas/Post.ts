@@ -27,7 +27,7 @@ export class Post {
   likesAndDislikes!: PostLike[]
 }
 
-class PostLike {
+export class PostLike {
   @Prop()
   userId!: string
   @Prop()

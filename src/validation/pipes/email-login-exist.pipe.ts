@@ -1,7 +1,7 @@
 import { PipeTransform, Injectable } from '@nestjs/common';
-import { UserInputModel } from '../../users/models/User';
 import { UserQueryRepository } from '../../users/user.query-repository';
 import { validationExceptionFactory } from '../Factories/custom-exception-factory';
+import { UserInputModel } from '../../users/models/input/UserInput';
 
 @Injectable()
 export class EmailOrLoginExistsPipe implements PipeTransform {

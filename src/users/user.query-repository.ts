@@ -1,10 +1,11 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { User, UserDocument } from "./models/User";
 import { Paginator } from "../models/Paginator";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { createPaginationQuery } from "../helpers/pagination";
+import { User, UserDocument } from "./models/schemas/User";
+import { BlogAdminViewModel } from "src/blogs/models/view/BlogAdminViewModel";
 
 @Injectable()
 export class UserQueryRepository {
@@ -22,7 +23,7 @@ export class UserQueryRepository {
         search.email = {$regex: query.searchEmailTerm, $options: 'i'}
     }
     const searchTermsArray = Object.keys(search).map(key => ({ [key]: search[key] }))
-    const users = await this.userModel.find({$or: searchTermsArray.length === 0 ? [{}] : searchTermsArray}, { password: false, confirmationEmail: false, confirmationPassword: false, __v: false })
+    const users = await this.userModel.find({$or: searchTermsArray.length === 0 ? [{}] : searchTermsArray}, { password: false, confirmationEmail: false, confirmationPassword: false, __v: false, role: false, banInfo: {_id: false} })
     .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
     .skip(skip).limit(query.pageSize).lean()
     //
@@ -64,11 +65,30 @@ export class UserQueryRepository {
     return user
   }
 
+  async getUsersForAdminBlogs(blogs: BlogAdminViewModel[]) {
+    for(const blog of blogs){
+      const user = await this.getUsergByIdNoView(blog.blogOwnerInfo.userId)
+      if(!user){
+        throw new NotFoundException() 
+      }
+
+      blog.blogOwnerInfo.userLogin = user.login
+    }
+
+    return blogs
+  }
+
   async getUsergByLogin(login: string): Promise<UserDocument | null> {
     const user = await this.userModel.findOne({login: login})
     if(!user){
       return null
     }
     return user
+  }
+
+  async getBannedUsersId(): Promise<string[]> {
+    const bannedUsers = await this.userModel.find({'banInfo.isBanned': true}, '_id')
+    const bannedUserIds = bannedUsers.map(user => user._id.toString());
+    return bannedUserIds
   }
 }

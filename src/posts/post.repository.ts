@@ -3,7 +3,6 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { LikeStatuses } from "../helpers/likeStatuses";
 import { Comment, CommentDocument } from "../comments/models/schemas/Comment";
-import { PostInputModel } from "./models/input/Post";
 import { Post, PostDocument } from "./models/schemas/Post";
 
 @Injectable()
@@ -28,9 +27,9 @@ export class PostRepository {
     return !!result
   }
 
-  async updatePostById(id: string, post: PostInputModel): Promise<boolean> {
-    const result = await this.postModel.findByIdAndUpdate(id, post)
-    return !!result
+  async updatePostById(post: PostDocument): Promise<Post> {
+    const save = (await post.save()).toJSON()
+    return save
   }
 
   async deletePostsTesting(): Promise<boolean> {

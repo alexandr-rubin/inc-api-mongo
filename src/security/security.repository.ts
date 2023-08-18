@@ -25,6 +25,11 @@ export class SecurityRepository {
     return isTerminated
   }
 
+  async terminateBannedUserSessions(userId: string): Promise<boolean> {
+    const isTerminated = (await this.deviceModel.deleteMany({userId: userId})).acknowledged
+    return isTerminated
+  }
+
   async addLog(logEntry: APILog): Promise<APILog> {
     const newAPILog = new this.APILogModel(logEntry)
     const save = await newAPILog.save()

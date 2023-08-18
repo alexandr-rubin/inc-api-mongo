@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { User, UserDocument } from "./models/User";
 import { LoginValidation } from "../validation/login";
+import { User, UserDocument } from "./models/schemas/User";
 
 @Injectable()
 export class UserRepository {
@@ -44,5 +44,10 @@ export class UserRepository {
 
   async verifyUser(loginData: LoginValidation): Promise<UserDocument | null> {
     return await this.userModel.findOne({$or: [{login: loginData.loginOrEmail}, {email: loginData.loginOrEmail}]})
+  }
+
+  async banOrUnbanUserById(userId: string, isBanned: boolean, banReason: string): Promise<boolean> {
+    const result = await this.userModel.findByIdAndUpdate(userId, {banInfo: {isBanned: isBanned, banDate: new Date().toISOString(), banReason: banReason}})
+    return !!result
   }
 }

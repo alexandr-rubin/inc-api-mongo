@@ -37,4 +37,9 @@ export class BlogRepository {
     const result = await this.blogModel.deleteMany({})
     return !!result
   }
+
+  async bindBlogWithUser(blogId: string, userId: string): Promise<boolean>{
+    const result = await this.blogModel.findByIdAndUpdate(blogId, {userId: userId})  
+    return !!result
+  }
 }

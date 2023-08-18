@@ -22,12 +22,11 @@ import { PostService } from './posts/post.service';
 import { PostQueryRepository } from './posts/post.query-repository';
 import { PostRepository } from './posts/post.repository';
 import { PostExistValidator } from './validation/PostExistValidator';
-import { UsersController } from './users/users.controller';
+import { UsersController } from './users/super-admin.users.controller';
 import { UserService } from './users/user.service';
 import { UserQueryRepository } from './users/user.query-repository';
 import { UserRepository } from './users/user.repository';
 import { UserExistValidator } from './validation/UserExistValidator';
-import { User, UserSchema } from './users/models/User';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { EmailAdapter } from './authorization/adapters/email.adapter';
@@ -54,6 +53,9 @@ import { Blog, BlogSchema } from './blogs/models/schemas/Blog';
 import { Post, PostSchema } from './posts/models/schemas/Post';
 import { APILog, APILogSchema } from './security/models/schemas/APILohs';
 import { getConfiguration } from './config/configuration';
+import { User, UserSchema } from './users/models/schemas/User';
+import { PublicBlogsController } from './blogs/public.bogs.controller';
+import { SuperAdminBlogsController } from './blogs/super-admin.blogs.controller';
 
 @Module({
   imports: [
@@ -97,7 +99,7 @@ import { getConfiguration } from './config/configuration';
       global: true,
       // через конфиг когда добавлю отдельный модуль 
       secret: process.env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: '10h' },
+      signOptions: { expiresIn: '10m' },
     }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     MongooseModule.forFeature([
@@ -109,7 +111,8 @@ import { getConfiguration } from './config/configuration';
       { name: APILog.name, schema: APILogSchema }
     ]),
   ],
-  controllers: [AppController, TestingController, BlogsController, PostsController, UsersController, CommentController, AuthorizationController, SecurityController],
+  controllers: [AppController, TestingController, BlogsController, PostsController, UsersController, CommentController, AuthorizationController, SecurityController,
+    PublicBlogsController, SuperAdminBlogsController],
   providers: [AppService, IsBlogIdValidConstraint, JwtStrategy, JwtAuthGuard,
     JwtAuthService,
     BlogService, BlogQueryRepository, BlogRepository, BlogExistValidator,

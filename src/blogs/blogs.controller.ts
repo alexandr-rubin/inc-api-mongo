@@ -4,23 +4,28 @@ import { BlogService } from "./blog.service";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { BlogQueryRepository } from "./blog.query-repository";
 import { BlogIdValidationPipe } from "../validation/pipes/blog-Id-validation.pipe";
-import { Request } from 'express'
-import { JwtAuthService } from "../domain/JWT.service";
 import { PostQueryRepository } from "../posts/post.query-repository";
 import { BlogInputModel } from "./models/input/BlogInputModel";
 import { PostForSpecBlogInputModel } from "../posts/models/input/PostForSpecBlog";
-import { JwtAuthGuard } from "../guards/jwt-auth.guard";
-import { AccessTokenVrifyModel } from "src/authorization/models/input/Auth";
+import { AccessTokenVrifyModel } from "../authorization/models/input/Auth";
+import { PostIdValidationPipe } from "../validation/pipes/post-Id-validation.pipe";
+import { PostService } from "../posts/post.service";
+import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { UserQueryRepository } from "src/users/user.query-repository";
+import { Roles } from "src/decorators/roles.decorator";
+import { UserRoles } from "src/helpers/userRoles";
+import { RolesGuard } from "src/guards/roles.guard";
 
-@UseGuards(JwtAuthGuard)
-@Controller('blogs')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRoles.User)
+@Controller('blogger/blogs')
 export class BlogsController {
-  constructor(private readonly blogService: BlogService,  private readonly postService: BlogService, private readonly blogQueryRepository: BlogQueryRepository,
-  private readonly jwtAuthService: JwtAuthService, private readonly postQueryRepository: PostQueryRepository){}
+  constructor(private readonly blogService: BlogService,  private readonly postService: PostService, private readonly blogQueryRepository: BlogQueryRepository, 
+  private readonly postQueryRepository: PostQueryRepository, private readonly userQueryRepository: UserQueryRepository){}
 
   @Get()
-  async getBlogs(@Query() params: QueryParamsModel) {
-    return await this.blogQueryRepository.getBlogs(params)
+  async getBlogs(@Query() params: QueryParamsModel, @Req() req: AccessTokenVrifyModel) {
+    return await this.blogQueryRepository.getBlogs(params, req.user.userId)
   }
 
   @HttpCode(HttpStatusCode.CREATED_201)
@@ -31,36 +36,46 @@ export class BlogsController {
 
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post(':blogId/posts')
-  async createPostForSecificBlog(@Param('blogId', BlogIdValidationPipe) blogId: string, @Body() post: PostForSpecBlogInputModel) {
-    const result = await this.postService.addPostForSpecificBlog(blogId, post)
+  async createPostForSecificBlog(@Param('blogId', BlogIdValidationPipe) blogId: string, @Body() post: PostForSpecBlogInputModel, @Req() req: AccessTokenVrifyModel) {
+    const result = await this.blogService.addPostForSpecificBlog(blogId, post, req.user.userId)
 
     return result
   }
 
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Delete(':blogId')
-  async deleteBlogById(@Param('blogId', BlogIdValidationPipe) id: string) {
-    return await this.blogService.deleteBlogById(id)
-  }
-
-  @Get(':blogId')
-  async getBlogById(@Param('blogId', BlogIdValidationPipe) id: string) {
-    return await this.blogQueryRepository.getBlogById(id)
+  async deleteBlogById(@Param('blogId', BlogIdValidationPipe) id: string, @Req() req: AccessTokenVrifyModel) {
+    return await this.blogService.deleteBlogById(id, req.user.userId)
   }
 
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put(':blogId')
-  async updateBlogById(@Param('blogId', BlogIdValidationPipe) id: string, @Body() blog: BlogInputModel) {
-    return await this.blogService.updateBlogById(id, blog)
+  async updateBlogById(@Param('blogId', BlogIdValidationPipe) id: string, @Body() blog: BlogInputModel, @Req() req: AccessTokenVrifyModel) {
+    return await this.blogService.updateBlogById(id, blog, req.user.userId)
   }
 
   @Get(':blogId/posts')
-  async getPostsForSpecifiBlog(@Query() params: QueryParamsModel, @Param('blogId', BlogIdValidationPipe) blogId: string, @Req() req: Request) {
-    let userId = ''
-    const bearer = req.headers.authorization
-    if(bearer){
-      userId = await this.jwtAuthService.verifyToken(bearer)
-    }
-    return await this.postQueryRepository.getPostsForSpecifiedBlog(blogId, params, userId)
+  async getPostsForSpecifyBlog(@Query() params: QueryParamsModel, @Param('blogId', BlogIdValidationPipe) blogId: string, @Req() req: AccessTokenVrifyModel) {
+    // kak сделать валидацию userId
+    await this.blogService.validateBlogUser(blogId, req.user.userId)
+    const bannedUserIds = await this.userQueryRepository.getBannedUsersId()
+    return await this.postQueryRepository.getPostsForSpecifiedBlog(blogId, params, req.user.userId, bannedUserIds)
+  }
+
+  @HttpCode(HttpStatusCode.NO_CONTENT_204)
+  @Put(':blogId/posts/:postId')
+  async updatePostById(@Param('blogId', BlogIdValidationPipe) blogId: string, @Param('postId', PostIdValidationPipe) postId: string, @Body() post: PostForSpecBlogInputModel,
+  @Req() req: AccessTokenVrifyModel) {
+    // create validation guard/pipe
+    await this.blogService.validateBlogUser(blogId, req.user.userId)
+    return await this.postService.updatePostById(postId, post, blogId) 
+  }
+
+  @HttpCode(HttpStatusCode.NO_CONTENT_204)
+  @Delete(':blogId/posts/:postId')
+  async deletePostForSpecifyBlog(@Param('blogId', BlogIdValidationPipe) blogId: string, @Param('postId', PostIdValidationPipe) postId: string, @Req() req: AccessTokenVrifyModel) {
+    // create validation guard/pipe
+    await this.blogService.validateBlogUser(blogId, req.user.userId)
+    return await this.postService.deletePostById(postId, blogId) 
   }
 }

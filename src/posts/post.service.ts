@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PostRepository } from "./post.repository";
 import { LikeStatuses } from "../helpers/likeStatuses";
 import { BlogQueryRepository } from "../blogs/blog.query-repository";
@@ -8,6 +8,7 @@ import { Comment } from "src/comments/models/schemas/Comment";
 import { PostInputModel } from "./models/input/Post";
 import { PostViewModel } from "./models/view/Post";
 import { Post } from "./models/schemas/Post";
+import { PostForSpecBlogInputModel } from "./models/input/PostForSpecBlog";
 
 @Injectable()
 export class PostService {///////////
@@ -27,16 +28,28 @@ export class PostService {///////////
     return result
   }
 
-  async deletePostById(id: string): Promise<boolean> {
-    const isDeleted = await this.postRepository.deletePostById(id)
+  async deletePostById(postId: string, blogId: string): Promise<boolean> {
+    const post = await this.postQueryRepository.getPostgByIdNoView(postId)
+    if(post.blogId !== blogId){
+      throw new ForbiddenException('Incorrect blog id')
+    }
+    const isDeleted = await this.postRepository.deletePostById(postId)
     if(!isDeleted){
       throw new NotFoundException()
     }
     return isDeleted
   }
 
-  async updatePostById(id: string, post: PostInputModel): Promise<boolean> {
-    const isUpdated = await this.postRepository.updatePostById(id, post)
+  async updatePostById(postId: string, newPost: PostForSpecBlogInputModel, blogId: string): Promise<Post> {
+    // вынести из квери репо поиск документа?
+    const post = await this.postQueryRepository.getPostgByIdNoView(postId)
+    if(post.blogId !== blogId){
+      throw new ForbiddenException('Incorrect blog id')
+    }
+    post.title = newPost.title
+    post.shortDescription = newPost.shortDescription;
+    post.content = newPost.content;
+    const isUpdated = await this.postRepository.updatePostById(post)
     if(!isUpdated){
       throw new NotFoundException()
     }

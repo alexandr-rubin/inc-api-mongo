@@ -9,12 +9,13 @@ import { WithId } from 'mongodb'
 import { CommentViewModel } from "../comments/models/view/CommentViewModel";
 import { Comment, CommentDocument } from "../comments/models/schemas/Comment";
 import { PostViewModel } from "./models/view/Post";
-import { PostDocument, Post } from "./models/schemas/Post";
+import { PostDocument, Post, PostLike } from "./models/schemas/Post";
+import { CommentLike } from "src/comments/models/schemas/CommentLike";
 
 @Injectable()
 export class PostQueryRepository {
   constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>, @InjectModel(Comment.name) private commentModel: Model<CommentDocument>){}
-  async getPosts(params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel>> {
+  async getPosts(params: QueryParamsModel, userId: string, bannedUserIds: string[]): Promise<Paginator<PostViewModel>> {
     // fix
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
@@ -30,33 +31,37 @@ export class PostQueryRepository {
     })
     const result = Paginator.createPaginationResult(count, query, transformedPosts)
 
-    return await this.editPostToViewModel(result, userId)
+    return await this.editPostToViewModel(result, userId, bannedUserIds)
   }
 
-  async getPostgById(postId: string, userId: string): Promise<PostViewModel | null> {
+  async getPostgById(postId: string, userId: string, bannedUserIds: string[]): Promise<PostViewModel | null> {
     const post = await this.postModel.findById(postId, { __v: false })
     if(!post){
       throw new NotFoundException()
     }
-    const like = post.likesAndDislikes.find(like => like.userId === userId)
+    const like = post.likesAndDislikes.find(like => like.userId === userId && !bannedUserIds.includes(like.userId))
     const likeStatus = like === undefined ? LikeStatuses.None : like.likeStatus
     const objPost = post.toJSON()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     //const newestLikes = post.likesAndDislikes.filter((element) => element.likeStatus === 'Like').slice(-3).map((element) => element).map(({ likeStatus, ...rest }) => rest)
     const newestLikes = post.likesAndDislikes
-    .filter((element) => element.likeStatus === 'Like')
+    .filter((element) => element.likeStatus === 'Like' && !bannedUserIds.includes(element.userId))
     .slice(-3)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .map(({ likeStatus, ...rest }) => rest)
     .sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime())
+
+    const filteredLikesAndDislikes = this.filterLikesAndDislikes(post.likesAndDislikes, bannedUserIds)
+    const likesCount = filteredLikesAndDislikes.likesCount
+    const dislikesCount = filteredLikesAndDislikes.dislikesCount
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _id, likesAndDislikesCount, likesAndDislikes, ...rest } = {...objPost, extendedLikesInfo: {likesCount: post.likesAndDislikesCount.likesCount, dislikesCount: post.likesAndDislikesCount.dislikesCount, 
+    const { _id, likesAndDislikesCount, likesAndDislikes, ...rest } = {...objPost, extendedLikesInfo: {likesCount: likesCount, dislikesCount: dislikesCount, 
     myStatus: likeStatus, newestLikes: newestLikes }}
     const id = _id.toString()
     return { id, ...rest }
   }
 
-  public async editPostToViewModel(post: Paginator<Post>, userId: string): Promise<Paginator<PostViewModel>>  {
+  public async editPostToViewModel(post: Paginator<Post>, userId: string, bannedUserIds: string[]): Promise<Paginator<PostViewModel>>  {
     const newArray: Paginator<PostViewModel> = {
       ...post,
       items: post.items.map(({ likesAndDislikesCount, ...rest }) => {
@@ -64,8 +69,8 @@ export class PostQueryRepository {
         return {
           ...rest,
           extendedLikesInfo: {
-            likesCount: likesAndDislikesCount.likesCount,
-            dislikesCount: likesAndDislikesCount.dislikesCount,
+            likesCount: 0,
+            dislikesCount: 0,
             myStatus: LikeStatuses.None.toString(),
             newestLikes: []
           }
@@ -74,8 +79,15 @@ export class PostQueryRepository {
     };
     for(let i = 0; i < newArray.items.length; i++){
       //
+      const filteredLikesAndDislikes = this.filterLikesAndDislikes(post.items[i].likesAndDislikes, bannedUserIds)
+      const likesCount = filteredLikesAndDislikes.likesCount
+      const dislikesCount = filteredLikesAndDislikes.dislikesCount
+
+      newArray.items[i].extendedLikesInfo.likesCount = likesCount
+      newArray.items[i].extendedLikesInfo.dislikesCount = dislikesCount
+
       const newestLikes = post.items[i].likesAndDislikes
-      .filter((element) => element.likeStatus === 'Like')
+      .filter((element) => element.likeStatus === 'Like' && !bannedUserIds.includes(element.userId))
       .slice(-3)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       .map(({ likeStatus, ...rest }) => rest)
@@ -90,38 +102,24 @@ export class PostQueryRepository {
     return newArray 
   }
   
-  async getCommentsForSpecifiedPost(postId: string, params: QueryParamsModel, userId: string): Promise<Paginator<CommentViewModel> | null>{
+  async getCommentsForSpecifiedPost(postId: string, params: QueryParamsModel, userId: string, bannedUserIds: string[]): Promise<Paginator<CommentViewModel> | null>{
     const isFinded = await this.postModel.findById(postId)
     if(!isFinded){
       throw new NotFoundException()
     }
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
-    const comments = await this.commentModel.find({postId: postId}, {postId: false, __v: false})
+    const comments = await this.commentModel.find({postId: postId, 'commentatorInfo.userId': { $nin: bannedUserIds }}, {postId: false, __v: false})
     .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
     .skip(skip)
     .limit(query.pageSize).lean()
-    const count = await this.commentModel.countDocuments({postId: postId})
+    const count = await this.commentModel.countDocuments({postId: postId, 'commentatorInfo.userId': { $nin: bannedUserIds }})
     const result = Paginator.createPaginationResult(count, query, comments)
 
-    return await this.editCommentToViewModel(result, userId)
+    return await this.editCommentToViewModel(result, userId, bannedUserIds)
   }
 
-  private async editCommentToViewModel(comment: Paginator<WithId<Comment>>, userId: string): Promise<Paginator<CommentViewModel>> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const newArray = {...comment, items: comment.items.map(({ _id, likesAndDislikesCount, likesAndDislikes, ...rest }) => ({
-        id: _id.toString(), ...rest, commentatorInfo: {userId: rest.commentatorInfo.userId, userLogin: rest.commentatorInfo.userLogin},
-        likesInfo: { likesCount: likesAndDislikesCount.likesCount,  dislikesCount: likesAndDislikesCount.dislikesCount, myStatus: LikeStatuses.None.toString() }
-    }))}
-    for(let i = 0; i < newArray.items.length; i++){
-        const status = comment.items[i].likesAndDislikes.find(element => element.userId === userId)
-        if(status){
-            newArray.items[i].likesInfo.myStatus = status.likeStatus
-        }
-    }
-    return newArray
-  }
-
+  // query repo shouldnt return document
   async getPostgByIdNoView(postId: string): Promise<PostDocument | null> {
     const post = await this.postModel.findById(postId)
     if(!post){
@@ -130,16 +128,53 @@ export class PostQueryRepository {
     return post
   }
 
-  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel>>{
+  async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string | null, bannedUserIds: string[]): Promise<Paginator<PostViewModel>>{
     const query = createPaginationQuery(params)
+    const filter: any = {blogId: blogId}
+
+    if (query.searchNameTerm !== null) {
+      filter.name = { $regex: query.searchNameTerm, $options: 'i' }
+    }
+    
     const skip = (query.pageNumber - 1) * query.pageSize
-    const posts = await this.postModel.find(query.searchNameTerm === null ? {blogId: blogId} : {blogId: blogId, name: {$regex: query.searchNameTerm, $options: 'i'}}, {__v: false})
+    const posts = await this.postModel.find(filter, {__v: false})
     .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
     .skip(skip)
     .limit(query.pageSize).lean()
-    const count = await this.postModel.countDocuments({blogId: blogId})
+    const count = await this.postModel.countDocuments(filter)
     const transformedPosts = posts.map(({ _id, ...rest }) => ({ id: _id.toString(), ...rest }))
     const result = Paginator.createPaginationResult(count, query, transformedPosts)
-    return this.editPostToViewModel(result, userId)
+    return this.editPostToViewModel(result, userId, bannedUserIds)
+  }
+
+  private async editCommentToViewModel(comment: Paginator<WithId<Comment>>, userId: string, bannedUserIds: string[]): Promise<Paginator<CommentViewModel>> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const newArray = {...comment, items: comment.items.map(({ _id, likesAndDislikesCount, likesAndDislikes, ...rest }) => ({
+        id: _id.toString(), ...rest, commentatorInfo: {userId: rest.commentatorInfo.userId, userLogin: rest.commentatorInfo.userLogin},
+        likesInfo: { likesCount: 0,  dislikesCount: 0, myStatus: LikeStatuses.None.toString() }
+    }))}
+    for(let i = 0; i < newArray.items.length; i++){
+      const filteredLikesAndDislikes = this.filterLikesAndDislikes(comment.items[i].likesAndDislikes, bannedUserIds)
+      const likesCount = filteredLikesAndDislikes.likesCount
+      const dislikesCount = filteredLikesAndDislikes.dislikesCount
+
+      newArray.items[i].likesInfo.likesCount = likesCount
+      newArray.items[i].likesInfo.dislikesCount = dislikesCount
+
+      const status = comment.items[i].likesAndDislikes.find(element => element.userId === userId)
+      if(status){
+        newArray.items[i].likesInfo.myStatus = status.likeStatus
+      }
+    }
+    return newArray
+  }
+
+  private filterLikesAndDislikes(likesAndDislikes: PostLike[] | CommentLike[], bannedUserIds: string[]) {
+    const filteredLikesAndDislikes = likesAndDislikes
+    .filter(element => !bannedUserIds.includes(element.userId))
+    const likesCount = filteredLikesAndDislikes.filter(element => element.likeStatus === LikeStatuses.Like).length
+    const dislikesCount = filteredLikesAndDislikes.filter(element => element.likeStatus === LikeStatuses.Dislike).length
+
+    return { likesCount: likesCount, dislikesCount: dislikesCount }
   }
 }

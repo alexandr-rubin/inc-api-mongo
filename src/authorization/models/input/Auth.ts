@@ -3,6 +3,7 @@ export class AccessTokenVrifyModel {
         email: string
         login: string
         userId: string
+        role: string
     }
 }
 

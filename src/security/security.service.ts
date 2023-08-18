@@ -36,4 +36,9 @@ export class SecurityService {
     const result = await this.securityRepository.deleteAllDevicesTesting()
     return !!result
   }
+
+  async terminateBannedUserSessions(userId: string): Promise<boolean>{
+    const isTerminated = await this.securityRepository.terminateBannedUserSessions(userId)
+    return isTerminated
+  }
 }

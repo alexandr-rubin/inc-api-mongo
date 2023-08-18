@@ -1,5 +1,4 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { User, UserInputModel } from "../users/models/User";
 import { UserRepository } from "../users/user.repository";
 import { EmailService } from "./email.service";
 import { UserQueryRepository } from "../users/user.query-repository";
@@ -13,7 +12,10 @@ import { Device } from "../models/Device";
 import { AuthorizationRepository } from "./authorization.repository";
 import { CreateJWT } from "./models/output/JWTresponce";
 import { ConfigService } from "@nestjs/config";
-import { ConfigType } from "src/config/configuration";
+import { ConfigType } from "../config/configuration";
+import { User } from "../users/models/schemas/User";
+import { UserInputModel } from "../users/models/input/UserInput";
+import { UserRoles } from "../helpers/userRoles";
 
 @Injectable()
 export class AuthorizationService {
@@ -21,7 +23,7 @@ export class AuthorizationService {
   private jwtService: JwtService, private authorizationRepository: AuthorizationRepository, private configService: ConfigService<ConfigType>){}
 
   async createUser(userDto: UserInputModel): Promise<User> {
-    const newUser: User = await User.createUser(userDto, false)
+    const newUser: User = await User.createUser(userDto, false, UserRoles.User)
     // какой репо
     const createdUser = await this.userRepository.createUser(newUser)
     await this.emailService.sendRegistrationConfirmationEmail(newUser.email, newUser.confirmationEmail.confirmationCode)

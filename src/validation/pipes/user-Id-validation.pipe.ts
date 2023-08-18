@@ -1,4 +1,4 @@
-import { Injectable, PipeTransform, ArgumentMetadata, NotFoundException } from "@nestjs/common";
+import { Injectable, PipeTransform, ArgumentMetadata, NotFoundException, BadRequestException } from "@nestjs/common";
 import { UserExistValidator } from "../UserExistValidator";
 
 @Injectable()
@@ -10,7 +10,7 @@ export class UserIdValidationPipe implements PipeTransform {
     if (type === 'param' && data === 'userId') {
       const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(value);
       if (!isValidObjectId) {
-        throw new NotFoundException(`Invalid ${data}. It should be a valid ObjectId.`);
+        throw new BadRequestException(`Invalid ${data}. It should be a valid ObjectId.`);
       }
 
       const isValid = await this.userIdExistValidator.validate(value);

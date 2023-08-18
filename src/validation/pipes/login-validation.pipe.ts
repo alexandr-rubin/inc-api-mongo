@@ -1,4 +1,4 @@
-import { PipeTransform, Injectable, UnauthorizedException } from '@nestjs/common';
+import { PipeTransform, Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { LoginValidation } from '../login';
 import { UserQueryRepository } from '../../users/user.query-repository';
 
@@ -15,6 +15,10 @@ export class LoginValidationPipe implements PipeTransform {
 
     if (!user) {
       throw new UnauthorizedException('User with the specified login or email not found.')
+    }
+
+    if(user.banInfo.isBanned){
+      throw new BadRequestException('User is banned')
     }
 
     return value
