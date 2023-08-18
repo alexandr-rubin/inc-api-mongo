@@ -3,16 +3,14 @@ import { BlogService } from "./blog.service";
 import { QueryParamsModel } from "../models/PaginationQuery";
 import { BlogQueryRepository } from "./blog.query-repository";
 import { PostQueryRepository } from "../posts/post.query-repository";
+import { BasicAuthGuard } from "../guards/basic-auth.guard";
 import { UserQueryRepository } from "../users/user.query-repository";
 import { BlogIdValidationPipe } from "../validation/pipes/blog-Id-validation.pipe";
 import { UserIdValidationPipe } from "../validation/pipes/user-Id-validation.pipe";
-import { Roles } from "../decorators/roles.decorator";
-import { UserRoles } from "../helpers/userRoles";
-import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { RolesGuard } from "../guards/roles.guard";
 
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRoles.Admin)
+@UseGuards(BasicAuthGuard, RolesGuard)
+// @Roles(UserRoles.Admin)
 @Controller('sa/blogs')
 export class SuperAdminBlogsController {
   constructor(private readonly blogQueryRepository: BlogQueryRepository, private readonly blogService: BlogService, private readonly postQueryRepository: PostQueryRepository,
