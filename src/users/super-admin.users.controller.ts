@@ -12,7 +12,7 @@ import { SecurityService } from "../security/security.service";
 import { Roles } from "../decorators/roles.decorator";
 import { UserRoles } from "../helpers/userRoles";
 import { RolesGuard } from "../guards/roles.guard";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRoles.Admin)
