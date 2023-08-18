@@ -15,6 +15,9 @@ export class BlogQueryRepository {
     const query = createPaginationQuery(params)
     // remove double filter.(getBlogsWithFilter)
     const filter: any = userId === null ? {} : {userId: userId}
+    if (query.searchNameTerm !== null) {
+      filter.name = { $regex: query.searchNameTerm, $options: 'i' }
+    }
     const blogs = await this.getBlogsWithFilter(query, userId)
     
     //
@@ -45,7 +48,11 @@ export class BlogQueryRepository {
   async getSuperAdminBlogs(params: QueryParamsModel): Promise<Paginator<BlogAdminViewModel>> {
     const query = createPaginationQuery(params)
     const blogs = await this.getBlogsWithFilter(query, null)
-    const count = await this.blogModel.countDocuments({})
+    const filter: any = {}
+    if (query.searchNameTerm !== null) {
+      filter.name = { $regex: query.searchNameTerm, $options: 'i' }
+    }
+    const count = await this.blogModel.countDocuments(filter)
     const transformedBlogs = blogs.map(({ _id, userId, ...rest }) => ({ id: _id.toString(), ...rest, blogOwnerInfo: {userId: userId, userLogin: null} }))
     const result = Paginator.createPaginationResult(count, query, transformedBlogs)
     return result
