@@ -7,10 +7,10 @@ import { BasicAuthGuard } from "src/guards/basic-auth.guard";
 import { UserQueryRepository } from "src/users/user.query-repository";
 import { BlogIdValidationPipe } from "src/validation/pipes/blog-Id-validation.pipe";
 import { UserIdValidationPipe } from "src/validation/pipes/user-Id-validation.pipe";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserRoles } from "src/helpers/userRoles";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
-import { RolesGuard } from "src/guards/roles.guard";
+import { Roles } from "../decorators/roles.decorator";
+import { UserRoles } from "../helpers/userRoles";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard";
+import { RolesGuard } from "../guards/roles.guard";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRoles.Admin)

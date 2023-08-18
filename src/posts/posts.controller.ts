@@ -11,10 +11,10 @@ import { JwtAuthService } from "../domain/JWT.service";
 import { likeStatusValidation } from "../validation/likeStatus";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { CommentInputModel } from "../comments/models/input/CommentInputModel";
-import { UserQueryRepository } from "src/users/user.query-repository";
-import { RolesGuard } from "src/guards/roles.guard";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserRoles } from "src/helpers/userRoles";
+import { UserQueryRepository } from "../users/user.query-repository";
+import { RolesGuard } from "../guards/roles.guard";
+import { Roles } from "../decorators/roles.decorator";
+import { UserRoles } from "../helpers/userRoles";
 
 @UseGuards(RolesGuard)
 @Roles(UserRoles.Guest)

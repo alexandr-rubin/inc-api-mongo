@@ -3,10 +3,10 @@ import { QueryParamsModel } from "../models/PaginationQuery";
 import { BlogQueryRepository } from "./blog.query-repository";
 import { BlogIdValidationPipe } from "../validation/pipes/blog-Id-validation.pipe";
 import { PostQueryRepository } from "../posts/post.query-repository";
-import { UserQueryRepository } from "src/users/user.query-repository";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserRoles } from "src/helpers/userRoles";
-import { RolesGuard } from "src/guards/roles.guard";
+import { UserQueryRepository } from "../users/user.query-repository";
+import { Roles } from "../decorators/roles.decorator";
+import { UserRoles } from "../helpers/userRoles";
+import { RolesGuard } from "../guards/roles.guard";
 
 UseGuards(RolesGuard)
 @Roles(UserRoles.Guest)

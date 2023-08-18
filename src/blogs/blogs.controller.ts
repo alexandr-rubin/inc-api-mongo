@@ -10,11 +10,11 @@ import { PostForSpecBlogInputModel } from "../posts/models/input/PostForSpecBlog
 import { AccessTokenVrifyModel } from "../authorization/models/input/Auth";
 import { PostIdValidationPipe } from "../validation/pipes/post-Id-validation.pipe";
 import { PostService } from "../posts/post.service";
-import { JwtAuthGuard } from "src/guards/jwt-auth.guard";
-import { UserQueryRepository } from "src/users/user.query-repository";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserRoles } from "src/helpers/userRoles";
-import { RolesGuard } from "src/guards/roles.guard";
+import { JwtAuthGuard } from "../guards/jwt-auth.guard";
+import { UserQueryRepository } from "../users/user.query-repository";
+import { Roles } from "../decorators/roles.decorator";
+import { UserRoles } from "../helpers/userRoles";
+import { RolesGuard } from "../guards/roles.guard";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRoles.User)

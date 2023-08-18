@@ -9,10 +9,10 @@ import { JwtAuthService } from "../domain/JWT.service";
 import { likeStatusValidation } from "../validation/likeStatus";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { CommentInputModel } from "./models/input/CommentInputModel";
-import { UserQueryRepository } from "src/users/user.query-repository";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserRoles } from "src/helpers/userRoles";
-import { RolesGuard } from "src/guards/roles.guard";
+import { UserQueryRepository } from "../users/user.query-repository";
+import { Roles } from "../decorators/roles.decorator";
+import { UserRoles } from "../helpers/userRoles";
+import { RolesGuard } from "../guards/roles.guard";
 
 // comments 403?
 UseGuards(RolesGuard)

@@ -13,10 +13,10 @@ import { AccessTokenVrifyModel } from "./models/input/Auth";
 import { RefreshTokenGuard } from "../guards/refreshToken.guard";
 import { LogAPIThrottlerGuard } from "../guards/logAPIThrottlerGuard";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
-import { UserInputModel } from "src/users/models/input/UserInput";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserRoles } from "src/helpers/userRoles";
-import { RolesGuard } from "src/guards/roles.guard";
+import { UserInputModel } from "../users/models/input/UserInput";
+import { Roles } from "../decorators/roles.decorator";
+import { UserRoles } from "../helpers/userRoles";
+import { RolesGuard } from "../guards/roles.guard";
 
 // @UseGuards(LogAPIThrottlerGuard)
 //role

@@ -8,9 +8,9 @@ import { BasicAuthGuard } from "../guards/basic-auth.guard";
 import { EmailOrLoginExistsPipe } from "../validation/pipes/email-login-exist.pipe";
 import { UserInputModel } from "./models/input/UserInput";
 import { BanUserInputModel } from "./models/input/BanUserInput";
-import { SecurityService } from "src/security/security.service";
-import { Roles } from "src/decorators/roles.decorator";
-import { UserRoles } from "src/helpers/userRoles";
+import { SecurityService } from "../security/security.service";
+import { Roles } from "../decorators/roles.decorator";
+import { UserRoles } from "../helpers/userRoles";
 
 @UseGuards(BasicAuthGuard)
 @Roles(UserRoles.Admin)
