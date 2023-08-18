@@ -47,7 +47,9 @@ export class UserRepository {
   }
 
   async banOrUnbanUserById(userId: string, isBanned: boolean, banReason: string): Promise<boolean> {
-    const result = await this.userModel.findByIdAndUpdate(userId, {banInfo: {isBanned: isBanned, banDate: new Date().toISOString(), banReason: banReason}})
+    const banDate = isBanned ? new Date().toISOString() : null
+    banReason = isBanned ? banReason : null
+    const result = await this.userModel.findByIdAndUpdate(userId, {banInfo: {isBanned: isBanned, banDate: banDate, banReason: banReason}})
     return !!result
   }
 }
