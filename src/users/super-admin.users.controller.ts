@@ -9,10 +9,8 @@ import { EmailOrLoginExistsPipe } from "../validation/pipes/email-login-exist.pi
 import { UserInputModel } from "./models/input/UserInput";
 import { BanUserInputModel } from "./models/input/BanUserInput";
 import { SecurityService } from "../security/security.service";
-import { RolesGuard } from "../guards/roles.guard";
 
-@UseGuards(BasicAuthGuard, RolesGuard)
-// @Roles(UserRoles.Admin)
+@UseGuards(BasicAuthGuard)
 @Controller('sa/users')
 export class UsersController {
   constructor(private readonly userService: UserService, private readonly userQueryRepository: UserQueryRepository, private readonly securityService: SecurityService){}
@@ -36,7 +34,7 @@ export class UsersController {
   @Put(':userId/ban')
   async banOrUnbanUserById(@Body() banInfo: BanUserInputModel, @Param('userId', UserIdValidationPipe) userId: string) {
     if(banInfo.isBanned){
-      const isTerminated = await this.securityService.terminateBannedUserSessions(userId)
+      await this.securityService.terminateBannedUserSessions(userId)
     }
     
     return await this.userService.banOrUnbanUserById(userId, banInfo.isBanned, banInfo.banReason)

@@ -64,6 +64,7 @@ export class PostQueryRepository {
   public async editPostToViewModel(post: Paginator<Post>, userId: string, bannedUserIds: string[]): Promise<Paginator<PostViewModel>>  {
     const newArray: Paginator<PostViewModel> = {
       ...post,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       items: post.items.map(({ likesAndDislikesCount, ...rest }) => {
         delete rest.likesAndDislikes
         return {

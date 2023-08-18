@@ -7,10 +7,8 @@ import { BasicAuthGuard } from "../guards/basic-auth.guard";
 import { UserQueryRepository } from "../users/user.query-repository";
 import { BlogIdValidationPipe } from "../validation/pipes/blog-Id-validation.pipe";
 import { UserIdValidationPipe } from "../validation/pipes/user-Id-validation.pipe";
-import { RolesGuard } from "../guards/roles.guard";
 
-@UseGuards(BasicAuthGuard, RolesGuard)
-// @Roles(UserRoles.Admin)
+@UseGuards(BasicAuthGuard)
 @Controller('sa/blogs')
 export class SuperAdminBlogsController {
   constructor(private readonly blogQueryRepository: BlogQueryRepository, private readonly blogService: BlogService, private readonly postQueryRepository: PostQueryRepository,
