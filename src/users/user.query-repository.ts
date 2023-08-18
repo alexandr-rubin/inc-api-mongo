@@ -17,12 +17,20 @@ export class UserQueryRepository {
     //
     const search : any = {}
     if(query.searchLoginTerm != null){
-        search.login = {$regex: query.searchLoginTerm, $options: 'i'}
+      search.login = {$regex: query.searchLoginTerm, $options: 'i'}
     }
     if(query.searchEmailTerm != null){
-        search.email = {$regex: query.searchEmailTerm, $options: 'i'}
+      search.email = {$regex: query.searchEmailTerm, $options: 'i'}
     }
+    if(query.banStatus != null && query.banStatus === "banned"){
+      search["banInfo.isBanned"] = true
+    }
+    if(query.banStatus != null && query.banStatus === "notBanned"){
+      search["banInfo.isBanned"] = false
+    }
+
     const searchTermsArray = Object.keys(search).map(key => ({ [key]: search[key] }))
+    console.log(searchTermsArray)
     const users = await this.userModel.find({$or: searchTermsArray.length === 0 ? [{}] : searchTermsArray}, { password: false, confirmationEmail: false, confirmationPassword: false, __v: false, role: false, banInfo: {_id: false} })
     .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
     .skip(skip).limit(query.pageSize).lean()
