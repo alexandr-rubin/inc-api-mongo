@@ -57,9 +57,12 @@ import { User, UserSchema } from './users/models/schemas/User';
 import { PublicBlogsController } from './blogs/public.bogs.controller';
 import { SuperAdminBlogsController } from './blogs/super-admin.blogs.controller';
 import { RolesGuard } from './guards/roles.guard';
+import { CqrsModule } from '@nestjs/cqrs';
+import { UpdatePostLikeStatusUseCase } from './posts/use-cases/update-post-like-staus-use-case';
 
 @Module({
   imports: [
+    CqrsModule,
     //UsersModule,
     //PostsModule,
     //BlogsModule,
@@ -118,7 +121,7 @@ import { RolesGuard } from './guards/roles.guard';
     JwtAuthService, RolesGuard,
     BlogService, BlogQueryRepository, BlogRepository, BlogExistValidator,
     CommentService, CommentQueryRepository, CommentRepository, CommentExistValidator,
-    PostService, PostQueryRepository, PostRepository, PostExistValidator,
+    PostService, PostQueryRepository, PostRepository, PostExistValidator, UpdatePostLikeStatusUseCase,
     UserService, UserQueryRepository, UserRepository, UserExistValidator,
     EmailAdapter, EmailService, EmailConfirmationCodeValidator,
     AuthorizationService, AuthorizationRepository,

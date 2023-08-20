@@ -34,6 +34,8 @@ export class UserService {
   }
 
   async banOrUnbanUserById(userId: string, isBanned: boolean, banReason: string): Promise<boolean> {
-    return await this.userRepository.banOrUnbanUserById(userId, isBanned, banReason)
+    const banDate = isBanned ? new Date().toISOString() : null
+    banReason = isBanned ? banReason : null
+    return await this.userRepository.banOrUnbanUserById(userId, isBanned, banReason, banDate)
   }
 }

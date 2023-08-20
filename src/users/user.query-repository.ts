@@ -30,7 +30,6 @@ export class UserQueryRepository {
     }
 
     const searchTermsArray = Object.keys(search).map(key => ({ [key]: search[key] }))
-    console.log(searchTermsArray)
     const users = await this.userModel.find({$or: searchTermsArray.length === 0 ? [{}] : searchTermsArray}, { password: false, confirmationEmail: false, confirmationPassword: false, __v: false, role: false, banInfo: {_id: false} })
     .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
     .skip(skip).limit(query.pageSize).lean()

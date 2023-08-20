@@ -14,10 +14,7 @@ export class BlogQueryRepository {
   async getBlogs(params: QueryParamsModel, userId: string | null): Promise<Paginator<BlogViewModel>> {
     const query = createPaginationQuery(params)
     // remove double filter.(getBlogsWithFilter)
-    const filter: any = userId === null ? {} : {userId: userId}
-    if (query.searchNameTerm !== null) {
-      filter.name = { $regex: query.searchNameTerm, $options: 'i' }
-    }
+    const filter = this.generateFilter(query, userId)
     const blogs = await this.getBlogsWithFilter(query, userId)
     
     //
@@ -30,28 +27,10 @@ export class BlogQueryRepository {
     return result
   }
 
-  // add filter to params
-  private async getBlogsWithFilter(query: QueryParamsModel, userId: string | null){
-    const filter: any = userId === null ? {} : {userId: userId}
-    if (query.searchNameTerm !== null) {
-      filter.name = { $regex: query.searchNameTerm, $options: 'i' }
-    }
-    const skip = (query.pageNumber - 1) * query.pageSize
-    //
-    const blogs = await this.blogModel.find(filter, { __v: false })
-    .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
-    .skip(skip).limit(query.pageSize).lean()
-
-    return blogs
-  }
-
   async getSuperAdminBlogs(params: QueryParamsModel): Promise<Paginator<BlogAdminViewModel>> {
     const query = createPaginationQuery(params)
     const blogs = await this.getBlogsWithFilter(query, null)
-    const filter: any = {}
-    if (query.searchNameTerm !== null) {
-      filter.name = { $regex: query.searchNameTerm, $options: 'i' }
-    }
+    const filter = this.generateFilter(query, null)
     const count = await this.blogModel.countDocuments(filter)
     const transformedBlogs = blogs.map(({ _id, userId, ...rest }) => ({ id: _id.toString(), ...rest, blogOwnerInfo: {userId: userId, userLogin: null} }))
     const result = Paginator.createPaginationResult(count, query, transformedBlogs)
@@ -69,6 +48,7 @@ export class BlogQueryRepository {
   }
 
   async getBlogByIdNoView(blogId: string): Promise<Blog | null> {
+    // to json?
     const blog = await this.blogModel.findById(blogId, { __v: false })
     if (!blog){
       return null
@@ -76,13 +56,24 @@ export class BlogQueryRepository {
     return blog
   }
 
-  // async getPostsForSpecifiedBlog(blogId: string, params: QueryParamsModel, userId: string): Promise<Paginator<PostViewModel>>{
-  //   const blog = await this.getBlogById(blogId)
-  //   if(!blog){
-  //     throw new NotFoundException()
-  //   }
-  //   //////////
-  //   const result = await this.postQueryRepository.getPostsForSpecifiedBlog(blogId, params)
-  //   return await this.postQueryRepository.editPostToViewModel(result, userId)
-  // }
+  // add filter to params
+  private async getBlogsWithFilter(query: QueryParamsModel, userId: string | null){
+    const filter = this.generateFilter(query, userId)
+    const skip = (query.pageNumber - 1) * query.pageSize
+    //
+    const blogs = await this.blogModel.find(filter, { __v: false })
+    .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
+    .skip(skip).limit(query.pageSize).lean()
+
+    return blogs
+  }
+
+  private generateFilter(query: QueryParamsModel, userId: string | null) {
+    const filter: any = userId === null ? {} : {userId: userId}
+    if (query.searchNameTerm !== null) {
+      filter.name = { $regex: query.searchNameTerm, $options: 'i' }
+    }
+
+    return filter
+  }
 }

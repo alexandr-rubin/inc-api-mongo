@@ -15,13 +15,15 @@ import { UserQueryRepository } from "../users/user.query-repository";
 import { RolesGuard } from "../guards/roles.guard";
 import { Roles } from "../decorators/roles.decorator";
 import { UserRoles } from "../helpers/userRoles";
+import { CommandBus } from "@nestjs/cqrs";
+import { UpdatePostLikeStatusCommand } from "./use-cases/update-post-like-staus-use-case";
 
 @UseGuards(RolesGuard)
 @Roles(UserRoles.Guest)
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postService: PostService, private readonly postQueryRepository: PostQueryRepository, private readonly jwtAuthService: JwtAuthService,
-    private readonly userQueryRepository: UserQueryRepository){}
+    private readonly userQueryRepository: UserQueryRepository, private commandBus: CommandBus){}
   @Get()
   async getPosts(@Query() params: QueryParamsModel, @Req() req: Request) {
     let userId = ''
@@ -90,6 +92,6 @@ export class PostsController {
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put('/:postId/like-status')
   async updateLikeStatus(@Param('postId', PostIdValidationPipe) postId: string, @Body() likeStatus: likeStatusValidation, @Req() req: AccessTokenVrifyModel) {
-    return await this.postService.updatePostLikeStatus(postId, likeStatus.likeStatus, req.user.userId, req.user.login)
+    return await this.commandBus.execute(new UpdatePostLikeStatusCommand(postId, likeStatus.likeStatus, req.user.userId, req.user.login))
   }
 }

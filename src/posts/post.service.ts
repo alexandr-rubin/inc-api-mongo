@@ -76,34 +76,78 @@ export class PostService {///////////
     return result
   }
 
-  async updatePostLikeStatus(postId: string, likeStatus: string, userId:string, login: string): Promise<boolean> {
-    const post = await this.postQueryRepository.getPostgByIdNoView(postId)
-    if(!post){
-      throw new NotFoundException()
-    }
+  // private async firstLike(likeStatus: string, userId: string, post: PostDocument, login: string) {
+  //   if(likeStatus === LikeStatuses.None){
+  //     return true
+  //   }
+  //   post.likesAndDislikes.push({userId: userId, login: login, addedAt: new Date().toISOString(), likeStatus: likeStatus})
+  //   await this.postRepository.savePost(post)
+  //   if(likeStatus === LikeStatuses.Like){
+  //     await this.postRepository.incLike(post.id)
+  //   }
+  //   else{
+  //     await this.postRepository.incDisLike(post.id)
+  //   }
+  //   return true
+  // }
 
-    const like = post.likesAndDislikes.find(likeOrDislike => likeOrDislike.userId === userId)
+  // private async updateNoneLikeStatus(likeLikeStatus: string, likeStatus: string, postId: string, userId: string) {
+  //   if(likeLikeStatus === LikeStatuses.Like) {
+  //     await this.postRepository.updateNoneLikeStatusLike(likeStatus, postId, userId)
+  //   }
+  //   else if(likeLikeStatus === LikeStatuses.Dislike){
+  //     await this.postRepository.updateNoneLikeStatusDislike(likeStatus, postId, userId)
+  //   }
+  //   return true
+  // }
 
-    if(!like){
-      if(likeStatus === LikeStatuses.None){
-        return true
-      }
-      post.likesAndDislikes.push({userId: userId, login: login, addedAt: new Date().toISOString(), likeStatus: likeStatus})
-      await this.postRepository.updateFirstLike(likeStatus, post)
-      return true
-    }
-    if(like.likeStatus === likeStatus){
-      return true
-    }
-    if(likeStatus === LikeStatuses.None){
-      await this.postRepository.updateNoneLikeStatus(like.likeStatus, likeStatus, postId, userId)
-      return true
-    }
-    if(like.likeStatus !== likeStatus){
-      await this.postRepository.updateLikeStatus(like.likeStatus, likeStatus, postId, userId)
-      return true
-    }
+  // private async incPostLikeOrDislike(likeStatus: string, postId: string) {
+  //   if(likeStatus === LikeStatuses.None){
+  //     return
+  //   }
+  //   if(likeStatus === LikeStatuses.Like){
+  //     await this.postRepository.incLike(postId)
+  //   }
+  //   else{
+  //     await this.postRepository.incDisLike(postId)
+  //   }
+  // }
 
-    return true
-  }
+  // async updatePostLikeStatus(postId: string, likeStatus: string, userId:string, login: string): Promise<boolean> {
+  //   const post = await this.postQueryRepository.getPostgByIdNoView(postId)
+  //   if(!post){
+  //     throw new NotFoundException()
+  //   }
+
+  //   const like = post.likesAndDislikes.find(likeOrDislike => likeOrDislike.userId === userId)
+
+  //   if(!like){
+  //     return await this.firstLike(likeStatus, userId, post, login)
+  //   }
+  //   if(like.likeStatus === likeStatus){
+  //     return true
+  //   }
+  //   if(likeStatus === LikeStatuses.None){
+  //     return await this.updateNoneLikeStatus(like.likeStatus, likeStatus, postId, userId)
+  //   }
+  //   if(like.likeStatus !== likeStatus){
+  //     if(like.likeStatus === LikeStatuses.None){
+  //       await this.incPostLikeOrDislike(likeStatus, postId)
+  //     }
+  //     else if(likeStatus === LikeStatuses.Like){
+  //       await this.postRepository.incLike(postId)
+  //       await this.postRepository.decDisLike(postId)
+  //     }
+  //     else{
+  //       await this.postRepository.decLike(postId)
+  //       await this.postRepository.incDisLike(postId)
+  //     }
+
+  //     await this.postRepository.updatePostLikeStatus(postId, likeStatus, userId)
+
+  //     return true
+  //   }
+
+  //   return true
+  // }
 }
