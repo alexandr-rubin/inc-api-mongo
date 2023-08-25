@@ -166,8 +166,11 @@ export class PostQueryRepository {
     const postsArray = await this.getPostssForBlogs(blogIdArray)
     const postIdArray = postsArray.map(({...post}) => (post._id.toString()))
     const query = createPaginationQuery(params)
+    const skip = (query.pageNumber - 1) * query.pageSize
     const filter = { postId: { $in: postIdArray }, 'commentatorInfo.userId': { $nin: bannedUserIds } }
-    const comments = await this.commentModel.find(filter, {__v: false}).lean()
+    const comments = await this.commentModel.find(filter, {__v: false}).sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
+    .skip(skip)
+    .limit(query.pageSize).lean()
     const mappedComments = comments.map(comment => {
       // if !post
       const post = postsArray.find(post => post._id.toString() === comment.postId)
