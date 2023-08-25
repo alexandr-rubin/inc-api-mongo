@@ -67,7 +67,7 @@ export class BlogRepository {
       bannedUserInfo.isBanned = newBannedUserInfo.isBanned
     }
     else{
-      throw new NotFoundException('Banned user is not found')
+      throw new NotFoundException('Banned user is not found.')
     }
     blog.markModified('blogBannedUsers')
     return await blog.save()
