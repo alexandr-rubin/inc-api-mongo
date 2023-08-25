@@ -98,12 +98,20 @@ export class BlogService {
       userId: userId,
       userLogin: userLogin
     }
-    const blog = await this.blogQueryRepository.getBlogByIdNoView(banInfo.blogId)
+    const blog = await this.blogRepository.getBlogDocument(banInfo.blogId)
+    if(!blog){
+      throw new NotFoundException()
+    }
     const bannedUserInfo = blog.blogBannedUsers.find(user => user.userId === userId)
-    if(!bannedUserInfo && banInfo.isBanned){
-      return await this.blogRepository.banNewUserForBlog(banInfo.blogId, newBannedUserInfo)
+    if(!bannedUserInfo){
+      blog.blogBannedUsers.push(newBannedUserInfo)
+      return await this.blogRepository.banNewUserForBlog(blog)
     }
 
-    return await this.blogRepository.banExistingUserForBlog(userId, banInfo.blogId, newBannedUserInfo)
+    bannedUserInfo.banDate = newBannedUserInfo.banDate
+    bannedUserInfo.banReason = newBannedUserInfo.banReason
+    bannedUserInfo.isBanned = newBannedUserInfo.isBanned
+
+    return await this.blogRepository.banExistingUserForBlog(blog)
   }
 }

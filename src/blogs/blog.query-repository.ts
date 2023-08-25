@@ -113,7 +113,7 @@ export class BlogQueryRepository {
       }
     }))
 
-    const count = bannedUsers.length
+    const count = blog.blogBannedUsers.filter(user => user.isBanned === true).length
 
     const result = Paginator.createPaginationResult(count, query, mappedArray)
 
