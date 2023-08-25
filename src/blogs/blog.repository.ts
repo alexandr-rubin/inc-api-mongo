@@ -5,10 +5,12 @@ import { PostRepository } from "../posts/post.repository";
 import { BlogInputModel } from "./models/input/BlogInputModel";
 import { Blog, BlogDocument } from "./models/schemas/Blog";
 import { Post, PostDocument } from "../posts/models/schemas/Post";
+import { BlogBannedUsers, BlogBannedUsersDocument } from "./models/schemas/BlogBannedUsers";
 
 @Injectable()
 export class BlogRepository {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>, private postRepository: PostRepository){}
+  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>, private postRepository: PostRepository,
+  @InjectModel(BlogBannedUsers.name) private blogBannedUsersModel: Model<BlogBannedUsersDocument>){}
 
   // типизация
   async addBlog(blog: Blog){
@@ -38,6 +40,11 @@ export class BlogRepository {
     return !!result
   }
 
+  async deleteBannedUsersTesting(): Promise<boolean> {
+    const result = await this.blogBannedUsersModel.deleteMany({})
+    return !!result
+  }
+
   async bindBlogWithUser(blogId: string, userId: string): Promise<boolean>{
     const result = await this.blogModel.findByIdAndUpdate(blogId, {userId: userId})  
     return !!result
@@ -48,16 +55,13 @@ export class BlogRepository {
     return !!result
   }
 
-  async banNewUserForBlog(blog: BlogDocument) {
-    return await blog.save()
+  async banNewUserForBlog(newBannedUserInfo: BlogBannedUsers) {
+    const bannedUser = new this.blogBannedUsersModel(newBannedUserInfo)
+    await bannedUser.save()
+    return bannedUser
   }
 
-  async getBlogDocument(blogId: string): Promise<BlogDocument> {
-    return await this.blogModel.findById(blogId)
-  }
-
-  async banExistingUserForBlog(blog: BlogDocument) {
-    blog.markModified('blogBannedUsers')
+  async banExistingUserForBlog(blog: BlogBannedUsersDocument) {
     return await blog.save()
   }
 }

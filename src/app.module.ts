@@ -60,6 +60,7 @@ import { RolesGuard } from './guards/roles.guard';
 import { CqrsModule } from '@nestjs/cqrs';
 import { UpdatePostLikeStatusUseCase } from './posts/use-cases/update-post-like-staus-use-case';
 import { BloggerBlogsUsersController } from './blogs/blogs-users.controller';
+import { BlogBannedUsers, BlogBannedUsersSchema } from './blogs/models/schemas/BlogBannedUsers';
 
 @Module({
   imports: [
@@ -119,7 +120,8 @@ import { BloggerBlogsUsersController } from './blogs/blogs-users.controller';
       { name: Comment.name, schema: CommentSchema },
       { name: User.name, schema: UserSchema },
       { name: Device.name, schema: DeviceSchema },
-      { name: APILog.name, schema: APILogSchema }
+      { name: APILog.name, schema: APILogSchema },
+      { name: BlogBannedUsers.name, schema: BlogBannedUsersSchema }
     ]),
   ],
   controllers: [AppController, TestingController, BlogsController, PostsController, UsersController, CommentController, AuthorizationController, SecurityController,

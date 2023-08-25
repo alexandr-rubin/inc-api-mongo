@@ -7,17 +7,18 @@ import { createPaginationQuery } from "../helpers/pagination";
 import { BlogViewModel } from "./models/view/BlogViewModel";
 import { Blog, BlogDocument } from "./models/schemas/Blog";
 import { BlogAdminViewModel } from "./models/view/BlogAdminViewModel";
+import { BlogBannedUsers, BlogBannedUsersDocument } from "./models/schemas/BlogBannedUsers";
 
 @Injectable()
 export class BlogQueryRepository {
-  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>){}
+  constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>, @InjectModel(BlogBannedUsers.name) private blogBannedUsersModel: Model<BlogBannedUsersDocument>){}
   async getBlogs(params: QueryParamsModel, userId: string | null): Promise<Paginator<BlogViewModel>> {
     const query = createPaginationQuery(params)
     const blogs = await this.getBlogsWithFilter(query, userId)
     
     //
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const transformedBlogs = blogs.filter(blog => !blog.banInfo.isBanned).map(({ _id, userId, blogBannedUsers, banInfo, ...rest }) => ({ id: _id.toString(), ...rest }))
+    const transformedBlogs = blogs.filter(blog => !blog.banInfo.isBanned).map(({ _id, userId, banInfo, ...rest }) => ({ id: _id.toString(), ...rest }))
 
     const count = transformedBlogs.length
     const result = Paginator.createPaginationResult(count, query, transformedBlogs)
@@ -41,7 +42,7 @@ export class BlogQueryRepository {
     const filter = this.generateFilter(query, null)
     const count = await this.blogModel.countDocuments(filter)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const transformedBlogs = blogs.map(({ _id, userId, blogBannedUsers, ...rest }) => ({ id: _id.toString(), ...rest, blogOwnerInfo: {userId: userId, userLogin: null}, 
+    const transformedBlogs = blogs.map(({ _id, userId, ...rest }) => ({ id: _id.toString(), ...rest, blogOwnerInfo: {userId: userId, userLogin: null}, 
     banInfo: {isBanned: rest.banInfo.isBanned, banDate: rest.banInfo.banDate} }))
     const result = Paginator.createPaginationResult(count, query, transformedBlogs)
     return result
@@ -73,51 +74,78 @@ export class BlogQueryRepository {
     return bannedBlogsIds
   }
 
-  async getBannedUsersForBlog(params: QueryParamsModel, blogId: string) {
-    const blog = await this.blogModel.findById(blogId)
-    if(!blog){
-      throw new NotFoundException()
-    }
-    const query = createPaginationQuery(params)
+  async getBannedUsersForBlog(params: QueryParamsModel, blogId: string)/*: Promise<Paginator<>>*/ {
+    // const blog = await this.blogModel.findById(blogId)
     
-    // const bannedUsers = blog.blogBannedUsers.filter(user => 
-    //   user.isBanned === true && 
-    //   (query.searchLoginTerm === null || new RegExp(query.searchLoginTerm, 'i').test(user.userLogin))
+    // if(!blog){
+    //   throw new NotFoundException()
+    // }
+    // const query = createPaginationQuery(params)
+    
+    // // const bannedUsers = blog.blogBannedUsers.filter(user => 
+    // //   user.isBanned === true && 
+    // //   (query.searchLoginTerm === null || new RegExp(query.searchLoginTerm, 'i').test(user.userLogin))
+    // // )
+
+    // const skip = (query.pageNumber - 1) * query.pageSize
+
+    // //fix
+    // const bannedUsers = blog.blogBannedUsers
+    // .filter(user => 
+    // user.isBanned === true && 
+    // (query.searchLoginTerm === null || new RegExp(query.searchLoginTerm, 'i').test(user.userLogin))
     // )
-
-    const skip = (query.pageNumber - 1) * query.pageSize
-
-    //fix
-    const bannedUsers = blog.blogBannedUsers
-    .filter(user => 
-    user.isBanned === true && 
-    (query.searchLoginTerm === null || new RegExp(query.searchLoginTerm, 'i').test(user.userLogin))
-    )
-    .sort((a, b) => {
-      if (query.sortDirection === 'asc') {
-        return a[query.sortBy] - b[query.sortBy];
-      } else {
-        return b[query.sortBy] - a[query.sortBy];
-      }
-    })
-    .slice(skip, skip + query.pageSize)
-    .map(user => user)
+    // .sort((a, b) => {
+    //   if (query.sortDirection === 'asc') {
+    //     return a[query.sortBy] - b[query.sortBy];
+    //   } else {
+    //     return b[query.sortBy] - a[query.sortBy];
+    //   }
+    // })
+    // .slice(skip, skip + query.pageSize)
     
-    const mappedArray = bannedUsers.map(user => ({
-      id: user.userId,
-      login: user.userLogin,
-      banInfo: {
-        isBanned: user.isBanned,
-        banDate: user.banDate,
-        banReason: user.banReason
-      }
+    // const mappedArray = bannedUsers.map(user => ({
+    //   id: user.userId,
+    //   login: user.userLogin,
+    //   banInfo: {
+    //     isBanned: user.isBanned,
+    //     banDate: user.banDate,
+    //     banReason: user.banReason
+    //   }
+    // }))
+
+    // const count = blog.blogBannedUsers.filter(user => user.isBanned === true).length
+
+    // const result = Paginator.createPaginationResult(count, query, mappedArray)
+
+    // return result
+    
+    const query = createPaginationQuery(params)
+    const skip = (query.pageNumber - 1) * query.pageSize
+    const filter = query.searchLoginTerm === null ? {blogId: blogId, isBanned: true} : { userLogin: { $regex: query.searchLoginTerm, $options: 'i' }, isBanned: true}
+    const users = await this.blogBannedUsersModel.find(filter, { __v: false })
+    .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1}).skip(skip).limit(query.pageSize).lean()
+
+    const mappedUsers = users.map(user => ({
+        id: user.userId,
+        login: user.userLogin,
+        banInfo: {
+          isBanned: user.isBanned,
+          banDate: user.banDate,
+          banReason: user.banReason
+        }
     }))
 
-    const count = blog.blogBannedUsers.filter(user => user.isBanned === true).length
+    const count = await this.blogBannedUsersModel.countDocuments(filter)
 
-    const result = Paginator.createPaginationResult(count, query, mappedArray)
-
+    const result = Paginator.createPaginationResult(count, query, mappedUsers)
+    
     return result
+  }
+
+  async getSingleBannedUserForBlog(userId: string, blogId: string): Promise<BlogBannedUsersDocument>{
+    const user = await this.blogBannedUsersModel.findOne({userId: userId, blogId: blogId})
+    return user
   }
 
   // add filter to params

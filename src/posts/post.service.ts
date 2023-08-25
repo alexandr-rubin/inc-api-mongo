@@ -63,9 +63,8 @@ export class PostService {///////////
 
   async createComment(userId: string, userLogin: string, content: string, pId: string): Promise<CommentViewModel | null> {
     const post = await this.postQueryRepository.getPostgByIdNoView(pId)
-    const blog = await this.blogQueryRepository.getBlogByIdNoView(post.blogId)
-    const userInfo = blog.blogBannedUsers.find(user => user.userId === userId)
-    if(userInfo && userInfo.isBanned === true){
+    const bannedUser = await this.blogQueryRepository.getSingleBannedUserForBlog(userId, post.blogId)
+    if(bannedUser && bannedUser.isBanned === true){
       throw new ForbiddenException()
     }
     // у сблога список бан. если там есть юзер id то ошибка

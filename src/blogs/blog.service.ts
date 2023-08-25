@@ -8,17 +8,17 @@ import { PostForSpecBlogInputModel } from "../posts/models/input/PostForSpecBlog
 import { PostViewModel } from "../posts/models/view/Post";
 import { Post } from "../posts/models/schemas/Post";
 import { BanUserForBlogInputModel } from "./models/input/BanUserForBlogInputModel";
-import { BlogBannedUsers } from "./models/input/BlogBannedUsersInputModel";
+import { BlogBannedUsers } from "./models/schemas/BlogBannedUsers";
 
 @Injectable()
 export class BlogService {
   constructor(private blogRepository: BlogRepository, private blogQueryRepository: BlogQueryRepository){}
 
   async addBlog(blog: BlogInputModel, creatorId: string): Promise<BlogViewModel>{
-    const newBlog: Blog = {...blog, createdAt: new Date().toISOString(), isMembership: false, userId: creatorId, blogBannedUsers: [], banInfo: {isBanned: false, banDate: null}}
+    const newBlog: Blog = {...blog, createdAt: new Date().toISOString(), isMembership: false, userId: creatorId, banInfo: {isBanned: false, banDate: null}}
     const savedBlog = (await this.blogRepository.addBlog(newBlog)).toJSON()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { __v, _id, userId, blogBannedUsers, banInfo, ...result } = {id: savedBlog._id.toString(), ...savedBlog}
+    const { __v, _id, userId, banInfo, ...result } = {id: savedBlog._id.toString(), ...savedBlog}
     return result
   }
 
@@ -84,6 +84,11 @@ export class BlogService {
     return !!result
   }
 
+  async deleteBannedUsersTesting(): Promise<boolean> {
+    const result = await this.blogRepository.deleteBannedUsersTesting()
+    return !!result
+  }
+
   async banOrUnbanBlogById(blogId: string, isBanned: boolean): Promise<boolean> {
     const banDate = isBanned ? new Date().toISOString() : null
     return await this.blogRepository.banOrUnbanBlogById(blogId, isBanned, banDate)
@@ -96,22 +101,20 @@ export class BlogService {
       banReason: banInfo.isBanned ? banInfo.banReason : null,
       banDate: banInfo.isBanned ? new Date().toISOString() : null,
       userId: userId,
-      userLogin: userLogin
+      userLogin: userLogin,
+      blogId: banInfo.blogId
     }
-    const blog = await this.blogRepository.getBlogDocument(banInfo.blogId)
-    if(!blog){
-      throw new NotFoundException()
-    }
-    const bannedUserInfo = blog.blogBannedUsers.find(user => user.userId === userId)
-    if(!bannedUserInfo){
-      blog.blogBannedUsers.push(newBannedUserInfo)
-      return await this.blogRepository.banNewUserForBlog(blog)
+    
+    const bannedUser = await this.blogQueryRepository.getSingleBannedUserForBlog(userId, banInfo.blogId)
+    if(!bannedUser){
+      console.log(newBannedUserInfo)
+      return await this.blogRepository.banNewUserForBlog(newBannedUserInfo)
     }
 
-    bannedUserInfo.banDate = newBannedUserInfo.banDate
-    bannedUserInfo.banReason = newBannedUserInfo.banReason
-    bannedUserInfo.isBanned = newBannedUserInfo.isBanned
+    bannedUser.banDate = newBannedUserInfo.banDate
+    bannedUser.banReason = newBannedUserInfo.banReason
+    bannedUser.isBanned = newBannedUserInfo.isBanned
 
-    return await this.blogRepository.banExistingUserForBlog(blog)
+    return await this.blogRepository.banExistingUserForBlog(bannedUser)
   }
 }
