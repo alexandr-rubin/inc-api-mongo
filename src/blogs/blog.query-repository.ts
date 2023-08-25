@@ -49,7 +49,7 @@ export class BlogQueryRepository {
 
   async getBlogById(blogId: string): Promise<BlogViewModel> {
     const blog = await this.blogModel.findById(blogId, { __v: false, userId: false })
-    if (!blog){
+    if (!blog || blog.banInfo.isBanned){
       throw new NotFoundException()
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
