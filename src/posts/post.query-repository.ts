@@ -165,7 +165,7 @@ export class PostQueryRepository {
   async getCommentsForBlogs(params: QueryParamsModel, blogIdArray: string[], userId: string, bannedUserIds: string[]): Promise<Paginator<CommentViewModel>> {
     const postIdArray = await this.getPostsIdsForBlogs(blogIdArray)
     const query = createPaginationQuery(params)
-    const filter = { postId: { $in: postIdArray }/*, 'commentatorInfo.userId': { $nin: bannedUserIds }*/ }
+    const filter = { postId: { $in: postIdArray }, 'commentatorInfo.userId': { $nin: bannedUserIds } }
     const comments = await this.commentModel.find(filter, {postId: false, __v: false}).lean()
     const count = await this.commentModel.countDocuments(filter)
     const result = Paginator.createPaginationResult(count, query, comments)

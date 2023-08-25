@@ -26,9 +26,8 @@ export class BlogQueryRepository {
     return result
   }
 
-  async getBlogsIds(params: QueryParamsModel, userId: string | null): Promise<string[]> {
-    const query = createPaginationQuery(params)
-    const blogs = await this.getBlogsWithFilter(query, userId)
+  async getBlogsIds(userId: string | null): Promise<string[]> {
+    const blogs = await this.blogModel.find({userId: userId, 'banInfo.isBanned': false})
     
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const blogIdArray = blogs.map((blog) => (blog._id.toString()))
