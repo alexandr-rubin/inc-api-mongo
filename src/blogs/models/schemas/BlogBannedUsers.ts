@@ -14,7 +14,7 @@ export class BlogBannedUsers {
   @Prop()
   userId!: string
   @Prop()
-  userLogin!: string
+  login!: string
   @Prop()
   blogId!: string
 }

@@ -128,7 +128,7 @@ export class BlogQueryRepository {
 
     const mappedUsers = users.map(user => ({
         id: user.userId,
-        login: user.userLogin,
+        login: user.login,
         banInfo: {
           isBanned: user.isBanned,
           banDate: user.banDate,
@@ -136,7 +136,7 @@ export class BlogQueryRepository {
         }
     }))
 
-    const count = await this.blogBannedUsersModel.countDocuments(filter)
+    const count = await this.blogBannedUsersModel.countDocuments({blogId: blogId, isBanned: true})
 
     const result = Paginator.createPaginationResult(count, query, mappedUsers)
     

@@ -101,7 +101,7 @@ export class BlogService {
       banReason: banInfo.isBanned ? banInfo.banReason : null,
       banDate: banInfo.isBanned ? new Date().toISOString() : null,
       userId: userId,
-      userLogin: userLogin,
+      login: userLogin,
       blogId: banInfo.blogId
     }
     
