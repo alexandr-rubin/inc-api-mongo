@@ -13,15 +13,13 @@ export class BlogQueryRepository {
   constructor(@InjectModel(Blog.name) private blogModel: Model<BlogDocument>){}
   async getBlogs(params: QueryParamsModel, userId: string | null): Promise<Paginator<BlogViewModel>> {
     const query = createPaginationQuery(params)
-    // remove double filter.(getBlogsWithFilter)
-    const filter = this.generateFilter(query, userId)
     const blogs = await this.getBlogsWithFilter(query, userId)
     
     //
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const transformedBlogs = blogs.map(({ _id, userId, blogBannedUsers, banInfo, ...rest }) => ({ id: _id.toString(), ...rest }))
+    const transformedBlogs = blogs.filter(blog => !blog.banInfo.isBanned).map(({ _id, userId, blogBannedUsers, banInfo, ...rest }) => ({ id: _id.toString(), ...rest }))
 
-    const count = await this.blogModel.countDocuments(filter)
+    const count = transformedBlogs.length
     const result = Paginator.createPaginationResult(count, query, transformedBlogs)
     
     return result
