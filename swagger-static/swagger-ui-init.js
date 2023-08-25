@@ -63,6 +63,17 @@ window.onload = function() {
           }
         }
       },
+      "/blogger/blogs/comments": {
+        "get": {
+          "operationId": "BlogsController_getComments",
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        }
+      },
       "/blogger/blogs/{blogId}/posts": {
         "post": {
           "operationId": "BlogsController_createPostForSecificBlog",
@@ -786,6 +797,86 @@ window.onload = function() {
             }
           }
         }
+      },
+      "/sa/blogs/{blogId}/ban": {
+        "put": {
+          "operationId": "SuperAdminBlogsController_banOrUnbanUserById",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BanBlogInputModel"
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/blogger/users/blog/{blogId}": {
+        "get": {
+          "operationId": "BloggerBlogsUsersController_getBlogs",
+          "parameters": [
+            {
+              "name": "blogId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": ""
+            }
+          }
+        }
+      },
+      "/blogger/users/{userId}/ban": {
+        "put": {
+          "operationId": "BloggerBlogsUsersController_banOrUnbanUserForBlog",
+          "parameters": [
+            {
+              "name": "userId",
+              "required": true,
+              "in": "path",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BanUserForBlogInputModel"
+                }
+              }
+            }
+          },
+          "responses": {
+            "204": {
+              "description": ""
+            }
+          }
+        }
       }
     },
     "info": {
@@ -836,6 +927,14 @@ window.onload = function() {
           "properties": {}
         },
         "NewPasswordInputModelValidation": {
+          "type": "object",
+          "properties": {}
+        },
+        "BanBlogInputModel": {
+          "type": "object",
+          "properties": {}
+        },
+        "BanUserForBlogInputModel": {
           "type": "object",
           "properties": {}
         }

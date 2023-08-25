@@ -7,16 +7,18 @@ import { Blog } from "./models/schemas/Blog";
 import { PostForSpecBlogInputModel } from "../posts/models/input/PostForSpecBlog";
 import { PostViewModel } from "../posts/models/view/Post";
 import { Post } from "../posts/models/schemas/Post";
+import { BanUserForBlogInputModel } from "./models/input/BanUserForBlogInputModel";
+import { BlogBannedUsers } from "./models/input/BlogBannedUsersInputModel";
 
 @Injectable()
 export class BlogService {
   constructor(private blogRepository: BlogRepository, private blogQueryRepository: BlogQueryRepository){}
 
   async addBlog(blog: BlogInputModel, creatorId: string): Promise<BlogViewModel>{
-    const newBlog: Blog = {...blog, createdAt: new Date().toISOString(), isMembership: false, userId: creatorId}
+    const newBlog: Blog = {...blog, createdAt: new Date().toISOString(), isMembership: false, userId: creatorId, blogBannedUsers: [], banInfo: {isBanned: false, banDate: null}}
     const savedBlog = (await this.blogRepository.addBlog(newBlog)).toJSON()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { __v, _id, userId, ...result } = {id: savedBlog._id.toString(), ...savedBlog}
+    const { __v, _id, userId, banInfo, ...result } = {id: savedBlog._id.toString(), ...savedBlog}
     return result
   }
 
@@ -80,5 +82,28 @@ export class BlogService {
   async deleteBlogsTesting(): Promise<boolean> {
     const result = await this.blogRepository.deleteBlogsTesting()
     return !!result
+  }
+
+  async banOrUnbanBlogById(blogId: string, isBanned: boolean): Promise<boolean> {
+    const banDate = isBanned ? new Date().toISOString() : null
+    return await this.blogRepository.banOrUnbanBlogById(blogId, isBanned, banDate)
+  }
+
+  async banOrUnbanUserForBlog(userLogin: string, userId: string, blogOwnerId: string, banInfo: BanUserForBlogInputModel) {
+    await this.validateBlogUser(banInfo.blogId, blogOwnerId)
+    const newBannedUserInfo: BlogBannedUsers = {
+      isBanned: banInfo.isBanned,
+      banReason: banInfo.isBanned ? banInfo.banReason : null,
+      banDate: banInfo.isBanned ? new Date().toISOString() : null,
+      userId: userId,
+      userLogin: userLogin
+    }
+    const blog = await this.blogQueryRepository.getBlogByIdNoView(banInfo.blogId)
+    const bannedUserInfo = blog.blogBannedUsers.find(user => user.userId === userId)
+    if(!bannedUserInfo && banInfo.isBanned){
+      return await this.blogRepository.banNewUserForBlog(banInfo.blogId, newBannedUserInfo)
+    }
+
+    return await this.blogRepository.banExistingUserForBlog(userId, banInfo.blogId, newBannedUserInfo)
   }
 }

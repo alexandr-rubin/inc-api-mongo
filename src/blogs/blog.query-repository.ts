@@ -19,7 +19,7 @@ export class BlogQueryRepository {
     
     //
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const transformedBlogs = blogs.map(({ _id, userId, ...rest }) => ({ id: _id.toString(), ...rest }))
+    const transformedBlogs = blogs.map(({ _id, userId, blogBannedUsers, banInfo, ...rest }) => ({ id: _id.toString(), ...rest }))
 
     const count = await this.blogModel.countDocuments(filter)
     const result = Paginator.createPaginationResult(count, query, transformedBlogs)
@@ -27,12 +27,24 @@ export class BlogQueryRepository {
     return result
   }
 
+  async getBlogsIds(params: QueryParamsModel, userId: string | null): Promise<string[]> {
+    const query = createPaginationQuery(params)
+    const blogs = await this.getBlogsWithFilter(query, userId)
+    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const blogIdArray = blogs.map((blog) => (blog._id.toString()))
+    
+    return blogIdArray
+  }
+
   async getSuperAdminBlogs(params: QueryParamsModel): Promise<Paginator<BlogAdminViewModel>> {
     const query = createPaginationQuery(params)
     const blogs = await this.getBlogsWithFilter(query, null)
     const filter = this.generateFilter(query, null)
     const count = await this.blogModel.countDocuments(filter)
-    const transformedBlogs = blogs.map(({ _id, userId, ...rest }) => ({ id: _id.toString(), ...rest, blogOwnerInfo: {userId: userId, userLogin: null} }))
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const transformedBlogs = blogs.map(({ _id, userId, blogBannedUsers, ...rest }) => ({ id: _id.toString(), ...rest, blogOwnerInfo: {userId: userId, userLogin: null}, 
+    banInfo: {isBanned: rest.banInfo.isBanned, banDate: rest.banInfo.banDate} }))
     const result = Paginator.createPaginationResult(count, query, transformedBlogs)
     return result
   }
@@ -42,8 +54,9 @@ export class BlogQueryRepository {
     if (!blog){
       throw new NotFoundException()
     }
-    const { _id, ...rest } = blog.toJSON()
-    const id = _id.toString()
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _id, banInfo, ...rest } = blog.toJSON()
+    const id = rest.id
     return { id, ...rest }
   }
 
@@ -54,6 +67,41 @@ export class BlogQueryRepository {
       return null
     }
     return blog
+  }
+
+  async getBannedBlogsId(): Promise<string[]> {
+    const bannedBlogs = await this.blogModel.find({'banInfo.isBanned': true}, '_id')
+    const bannedBlogsIds = bannedBlogs.map(blog => blog._id.toString());
+    return bannedBlogsIds
+  }
+
+  async getBannedUsersForBlog(params: QueryParamsModel, blogId: string) {
+    const blog = await this.blogModel.findById(blogId)
+    if(!blog){
+      throw new NotFoundException()
+    }
+    const query = createPaginationQuery(params)
+    
+    const bannedUsers = blog.blogBannedUsers.filter(user => 
+      user.isBanned === true && 
+      (query.searchLoginTerm === null || new RegExp(query.searchLoginTerm, 'i').test(user.userLogin))
+    )
+
+    const mappedArray = bannedUsers.map(user => ({
+      id: user.userId,
+      login: user.userLogin,
+      banInfo: {
+        isBanned: user.isBanned,
+        banDate: user.banDate,
+        banReason: user.banReason
+      }
+    }))
+
+    const count = bannedUsers.length
+
+    const result = Paginator.createPaginationResult(count, query, mappedArray)
+
+    return result
   }
 
   // add filter to params

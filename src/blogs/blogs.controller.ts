@@ -25,6 +25,13 @@ export class BlogsController {
     return await this.blogQueryRepository.getBlogs(params, req.user.userId)
   }
 
+  @Get('/comments')
+  async getComments(@Query() params: QueryParamsModel, @Req() req: AccessTokenVrifyModel) {
+    const blogIdArray = await this.blogQueryRepository.getBlogsIds(params, req.user.userId)
+    const bannedUserIds = await this.userQueryRepository.getBannedUsersId()
+    return await this.postQueryRepository.getCommentsForBlogs(params, blogIdArray, req.user.userId, bannedUserIds)
+  }
+
   @HttpCode(HttpStatusCode.CREATED_201)
   @Post()
   async createBlog(@Body() blog: BlogInputModel, @Req() req: AccessTokenVrifyModel) {

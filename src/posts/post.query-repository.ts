@@ -15,14 +15,25 @@ import { CommentLike } from "../comments/models/schemas/CommentLike";
 @Injectable()
 export class PostQueryRepository {
   constructor(@InjectModel(Post.name) private postModel: Model<PostDocument>, @InjectModel(Comment.name) private commentModel: Model<CommentDocument>){}
-  async getPosts(params: QueryParamsModel, userId: string, bannedUserIds: string[]): Promise<Paginator<PostViewModel>> {
+  async getPosts(params: QueryParamsModel, userId: string, bannedUserIds: string[], bannedBlogsIds: string[]): Promise<Paginator<PostViewModel>> {
     // fix
     const query = createPaginationQuery(params)
     const skip = (query.pageNumber - 1) * query.pageSize
-    const posts = await this.postModel.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}, {__v: false})
-    .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
-    .skip(skip).limit(query.pageSize).lean()
-    const count = await this.postModel.countDocuments(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}})
+    // const posts = await this.postModel.find(query.searchNameTerm === null ? {} : {name: {$regex: query.searchNameTerm, $options: 'i'}}, {__v: false})
+    // .sort({[query.sortBy]: query.sortDirection === 'asc' ? 1 : -1})
+    // .skip(skip).limit(query.pageSize).lean()
+    const filter = {
+      $and: [
+        query.searchNameTerm === null ? {} : { name: { $regex: query.searchNameTerm, $options: 'i' } },
+        { blogId: { $nin: bannedBlogsIds } }
+      ]
+    }
+    const posts = await this.postModel
+    .find(filter, { __v: false })
+    .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
+    .skip(skip).limit(query.pageSize)
+    .lean();
+    const count = await this.postModel.countDocuments(filter)
     //
     const transformedPosts = posts.map((post) => {
       const { _id, ...rest } = post
@@ -34,8 +45,12 @@ export class PostQueryRepository {
     return await this.editPostToViewModel(result, userId, bannedUserIds)
   }
 
-  async getPostgById(postId: string, userId: string, bannedUserIds: string[]): Promise<PostViewModel | null> {
-    const post = await this.postModel.findById(postId, { __v: false })
+  async getPostgById(postId: string, userId: string, bannedUserIds: string[], bannedBlogsIds: string[]): Promise<PostViewModel | null> {
+    const post = await this.postModel
+    .findOne({
+      _id: postId,
+      blogId: { $nin: bannedBlogsIds }
+    }, { __v: false })
     if(!post){
       throw new NotFoundException()
     }
@@ -146,6 +161,23 @@ export class PostQueryRepository {
     const transformedPosts = posts.map(({ _id, ...rest }) => ({ id: _id.toString(), ...rest }))
     const result = Paginator.createPaginationResult(count, query, transformedPosts)
     return this.editPostToViewModel(result, userId, bannedUserIds)
+  }
+  async getCommentsForBlogs(params: QueryParamsModel, blogIdArray: string[], userId: string, bannedUserIds: string[]): Promise<Paginator<CommentViewModel>> {
+    const postIdArray = await this.getPostsIdsForBlogs(blogIdArray)
+    const query = createPaginationQuery(params)
+    const filter = { postId: { $in: postIdArray }, 'commentatorInfo.userId': { $nin: bannedUserIds } }
+    const comments = await this.commentModel.find(filter, {postId: false, __v: false}).lean()
+    const count = await this.commentModel.countDocuments(filter)
+    const result = Paginator.createPaginationResult(count, query, comments)
+
+    return await this.editCommentToViewModel(result, userId, bannedUserIds)
+  }
+
+  private async getPostsIdsForBlogs(blogIdArray: string[]): Promise<string[]> {
+    const posts = await this.postModel
+    .find({ blogId: { $in: blogIdArray } }).lean()
+    const postIdArray = posts.map(({...post}) => (post._id.toString()))
+    return postIdArray
   }
 
   private async editCommentToViewModel(comment: Paginator<WithId<Comment>>, userId: string, bannedUserIds: string[]): Promise<Paginator<CommentViewModel>> {

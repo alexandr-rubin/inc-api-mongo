@@ -3,7 +3,7 @@ export const getConfiguration = () => ({
   port: parseInt(process.env.PORT, 10) ?? 3000,
   db: {
     mongo: {
-      mongodb_uri: process.env.MONGODB_URI ?? 'mongodb://localhost:27017/testDb',
+      mongodb_uri: process.env.MONGODB_URI ?? 'mongodb://127.0.0.1:27017/testDB',
     }
   },
   jwt_secret_key: process.env.JWT_SECRET_KEY ?? 'SECRETKEY'

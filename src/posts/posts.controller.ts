@@ -17,13 +17,14 @@ import { Roles } from "../decorators/roles.decorator";
 import { UserRoles } from "../helpers/userRoles";
 import { CommandBus } from "@nestjs/cqrs";
 import { UpdatePostLikeStatusCommand } from "./use-cases/update-post-like-staus-use-case";
+import { BlogQueryRepository } from "../blogs/blog.query-repository";
 
 @UseGuards(RolesGuard)
 @Roles(UserRoles.Guest)
 @Controller('posts')
 export class PostsController {
   constructor(private readonly postService: PostService, private readonly postQueryRepository: PostQueryRepository, private readonly jwtAuthService: JwtAuthService,
-    private readonly userQueryRepository: UserQueryRepository, private commandBus: CommandBus){}
+    private readonly userQueryRepository: UserQueryRepository, private readonly blogQueryRepository: BlogQueryRepository, private commandBus: CommandBus){}
   @Get()
   async getPosts(@Query() params: QueryParamsModel, @Req() req: Request) {
     let userId = ''
@@ -32,8 +33,9 @@ export class PostsController {
       userId = await this.jwtAuthService.verifyToken(bearer)
     }
     const bannedUserIds = await this.userQueryRepository.getBannedUsersId()
+    const bannedBlogsIds = await this.blogQueryRepository.getBannedBlogsId()
     // add userID
-    return await this.postQueryRepository.getPosts(params, userId, bannedUserIds)
+    return await this.postQueryRepository.getPosts(params, userId, bannedUserIds, bannedBlogsIds)
   }
 
   // @UseGuards(BasicAuthGuard)
@@ -58,8 +60,9 @@ export class PostsController {
       userId = await this.jwtAuthService.verifyToken(bearer)
     }
     const bannedUserIds = await this.userQueryRepository.getBannedUsersId()
+    const bannedBlogsIds = await this.blogQueryRepository.getBannedBlogsId()
     // userID
-    return await this.postQueryRepository.getPostgById(id, userId, bannedUserIds)
+    return await this.postQueryRepository.getPostgById(id, userId, bannedUserIds, bannedBlogsIds)
   }
 
   // @UseGuards(BasicAuthGuard)

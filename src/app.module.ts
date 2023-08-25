@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TestingController } from './testing/testing.controller';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { BlogsController } from './blogs/blogs.controller';
@@ -59,6 +59,7 @@ import { SuperAdminBlogsController } from './blogs/super-admin.blogs.controller'
 import { RolesGuard } from './guards/roles.guard';
 import { CqrsModule } from '@nestjs/cqrs';
 import { UpdatePostLikeStatusUseCase } from './posts/use-cases/update-post-like-staus-use-case';
+import { BloggerBlogsUsersController } from './blogs/blogs-users.controller';
 
 @Module({
   imports: [
@@ -105,7 +106,13 @@ import { UpdatePostLikeStatusUseCase } from './posts/use-cases/update-post-like-
       secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: '10m' },
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule], // Импортируйте ConfigModule
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get<string>('db.mongo.mongodb_uri'), // Получение URI MongoDB из конфигурации
+      }),
+      inject: [ConfigService], // Внедрение ConfigService
+    }),
     MongooseModule.forFeature([
       { name: Post.name, schema: PostSchema },
       { name: Blog.name, schema: BlogSchema },
@@ -116,7 +123,7 @@ import { UpdatePostLikeStatusUseCase } from './posts/use-cases/update-post-like-
     ]),
   ],
   controllers: [AppController, TestingController, BlogsController, PostsController, UsersController, CommentController, AuthorizationController, SecurityController,
-    PublicBlogsController, SuperAdminBlogsController],
+    PublicBlogsController, SuperAdminBlogsController, BloggerBlogsUsersController],
   providers: [AppService, IsBlogIdValidConstraint, JwtStrategy, JwtAuthGuard,
     JwtAuthService, RolesGuard,
     BlogService, BlogQueryRepository, BlogRepository, BlogExistValidator,
