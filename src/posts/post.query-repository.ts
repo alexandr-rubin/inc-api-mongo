@@ -163,21 +163,35 @@ export class PostQueryRepository {
     return this.editPostToViewModel(result, userId, bannedUserIds)
   }
   async getCommentsForBlogs(params: QueryParamsModel, blogIdArray: string[], userId: string, bannedUserIds: string[]): Promise<Paginator<CommentViewModel>> {
-    const postIdArray = await this.getPostsIdsForBlogs(blogIdArray)
+    const postsArray = await this.getPostssForBlogs(blogIdArray)
+    const postIdArray = postsArray.map(({...post}) => (post._id.toString()))
     const query = createPaginationQuery(params)
     const filter = { postId: { $in: postIdArray }, 'commentatorInfo.userId': { $nin: bannedUserIds } }
-    const comments = await this.commentModel.find(filter, {postId: false, __v: false}).lean()
+    const comments = await this.commentModel.find(filter, {__v: false}).lean()
+    const mappedComments = comments.map(comment => {
+      // if !post
+      const post = postsArray.find(post => post._id.toString() === comment.postId)
+      delete comment.postId
+      const postInfo = {
+        id: post._id,
+        title: post.title,
+        blogId: post.blogId,
+        blogName: post.blogName
+      }
+
+      return {...comment, postInfo}
+    })
+
     const count = await this.commentModel.countDocuments(filter)
-    const result = Paginator.createPaginationResult(count, query, comments)
+    const result = Paginator.createPaginationResult(count, query, mappedComments)
 
     return await this.editCommentToViewModel(result, userId, bannedUserIds)
   }
 
-  private async getPostsIdsForBlogs(blogIdArray: string[]): Promise<string[]> {
+  private async getPostssForBlogs(blogIdArray: string[]): Promise<WithId<Post>[]> {
     const posts = await this.postModel
     .find({ blogId: { $in: blogIdArray } }).lean()
-    const postIdArray = posts.map(({...post}) => (post._id.toString()))
-    return postIdArray
+    return posts
   }
 
   private async editCommentToViewModel(comment: Paginator<WithId<Comment>>, userId: string, bannedUserIds: string[]): Promise<Paginator<CommentViewModel>> {
