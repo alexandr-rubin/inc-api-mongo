@@ -18,7 +18,7 @@ export class BlogService {
     const newBlog: Blog = {...blog, createdAt: new Date().toISOString(), isMembership: false, userId: creatorId, blogBannedUsers: [], banInfo: {isBanned: false, banDate: null}}
     const savedBlog = (await this.blogRepository.addBlog(newBlog)).toJSON()
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { __v, _id, userId, banInfo, ...result } = {id: savedBlog._id.toString(), ...savedBlog}
+    const { __v, _id, userId, blogBannedUsers, banInfo, ...result } = {id: savedBlog._id.toString(), ...savedBlog}
     return result
   }
 

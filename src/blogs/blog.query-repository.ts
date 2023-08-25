@@ -80,11 +80,29 @@ export class BlogQueryRepository {
     }
     const query = createPaginationQuery(params)
     
-    const bannedUsers = blog.blogBannedUsers.filter(user => 
-      user.isBanned === true && 
-      (query.searchLoginTerm === null || new RegExp(query.searchLoginTerm, 'i').test(user.userLogin))
-    )
+    // const bannedUsers = blog.blogBannedUsers.filter(user => 
+    //   user.isBanned === true && 
+    //   (query.searchLoginTerm === null || new RegExp(query.searchLoginTerm, 'i').test(user.userLogin))
+    // )
 
+    const skip = (query.pageNumber - 1) * query.pageSize
+
+    //fix
+    const bannedUsers = blog.blogBannedUsers
+    .filter(user => 
+    user.isBanned === true && 
+    (query.searchLoginTerm === null || new RegExp(query.searchLoginTerm, 'i').test(user.userLogin))
+    )
+    .sort((a, b) => {
+      if (query.sortDirection === 'asc') {
+        return a[query.sortBy] - b[query.sortBy];
+      } else {
+        return b[query.sortBy] - a[query.sortBy];
+      }
+    })
+    .slice(skip, skip + query.pageSize)
+    .map(user => user)
+    
     const mappedArray = bannedUsers.map(user => ({
       id: user.userId,
       login: user.userLogin,
