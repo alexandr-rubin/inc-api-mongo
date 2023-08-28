@@ -107,7 +107,6 @@ export class BlogService {
     
     const bannedUser = await this.blogQueryRepository.getSingleBannedUserForBlog(userId, banInfo.blogId)
     if(!bannedUser){
-      console.log(newBannedUserInfo)
       return await this.blogRepository.banNewUserForBlog(newBannedUserInfo)
     }
 

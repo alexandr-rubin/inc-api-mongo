@@ -2,9 +2,7 @@ import { Body, Controller, Get, HttpCode, Param, Put, Query, Req, UseGuards } fr
 import { HttpStatusCode } from "../helpers/httpStatusCode";
 import { BlogService } from "./blog.service";
 import { BlogQueryRepository } from "./blog.query-repository";
-import { PostQueryRepository } from "../posts/post.query-repository";
 import { AccessTokenVrifyModel } from "../authorization/models/input/Auth";
-import { PostService } from "../posts/post.service";
 import { JwtAuthGuard } from "../guards/jwt-auth.guard";
 import { UserQueryRepository } from "../users/user.query-repository";
 import { UserIdValidationPipe } from "../validation/pipes/user-Id-validation.pipe";
@@ -16,8 +14,7 @@ import { BlogIdValidationPipe } from "../validation/pipes/blog-Id-validation.pip
 //@Roles(UserRoles.User)
 @Controller('blogger/users')
 export class BloggerBlogsUsersController {
-  constructor(private readonly blogService: BlogService,  private readonly postService: PostService, private readonly blogQueryRepository: BlogQueryRepository, 
-  private readonly postQueryRepository: PostQueryRepository, private readonly userQueryRepository: UserQueryRepository){}
+  constructor(private readonly blogService: BlogService, private readonly blogQueryRepository: BlogQueryRepository, private readonly userQueryRepository: UserQueryRepository){}
 
   @Get('blog/:blogId')
   async getBlogs(@Param('blogId', BlogIdValidationPipe) blogId: string, @Query() params: QueryParamsModel, @Req() req: AccessTokenVrifyModel) {

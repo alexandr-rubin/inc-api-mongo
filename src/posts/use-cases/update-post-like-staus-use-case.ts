@@ -42,7 +42,7 @@ export class UpdatePostLikeStatusUseCase implements ICommandHandler<UpdatePostLi
         await this.postRepository.incDisLike(command.postId)
       }
 
-      await this.postRepository.updatePostLikeStatus(command.postId, command.likeStatus, command.userId)
+      await this.updatePostLikeStatus(command.postId, command.likeStatus, command.userId)
 
       return true
     }
@@ -67,10 +67,14 @@ export class UpdatePostLikeStatusUseCase implements ICommandHandler<UpdatePostLi
 
   private async updateNoneLikeStatus(likeLikeStatus: string, likeStatus: string, postId: string, userId: string) {
     if(likeLikeStatus === LikeStatuses.Like) {
-      await this.postRepository.updateNoneLikeStatusLike(likeStatus, postId, userId)
+      // await this.postRepository.updateNoneLikeStatusLike(likeStatus, postId, userId)
+      await this.postRepository.decLike(postId)
+      await this.updatePostLikeStatus(postId, likeStatus, userId)
     }
     else if(likeLikeStatus === LikeStatuses.Dislike){
-      await this.postRepository.updateNoneLikeStatusDislike(likeStatus, postId, userId)
+      // await this.postRepository.updateNoneLikeStatusDislike(likeStatus, postId, userId)
+      await this.postRepository.decDisLike(postId)
+      await this.updatePostLikeStatus(postId, likeStatus, userId)
     }
     return true
   }
@@ -85,5 +89,15 @@ export class UpdatePostLikeStatusUseCase implements ICommandHandler<UpdatePostLi
     else{
       await this.postRepository.incDisLike(postId)
     }
+  }
+
+  private async updatePostLikeStatus(postId: string, likeStatus: string, userId: string) {
+    const post = await this.postRepository.getPostDocument(postId)
+    if(!post){
+      throw new NotFoundException('Post is not found')
+    }
+    const like = post.likesAndDislikes.find(likeOrDislike => likeOrDislike.userId === userId)
+    like.likeStatus = likeStatus
+    await this.postRepository.updatePostLikeStatus(post)
   }
 }

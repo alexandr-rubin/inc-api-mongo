@@ -40,19 +40,19 @@ export class PostRepository {
     await post.save()
   }
   
-  async updateNoneLikeStatusLike(likeStatus:string, postId: string, userId: string){
-    await this.decLike(postId)
-    await this.updatePostLikeStatus(postId, likeStatus, userId)
+  // async updateNoneLikeStatusLike(likeStatus:string, postId: string, userId: string){
+  //   await this.decLike(postId)
+  //   await this.updatePostLikeStatus(postId, likeStatus, userId)
 
-    return true
-  }
+  //   return true
+  // }
 
-  async updateNoneLikeStatusDislike(likeStatus:string, postId: string, userId: string){
-    await this.decDisLike(postId)
-    await this.updatePostLikeStatus(postId, likeStatus, userId)
+  // async updateNoneLikeStatusDislike(likeStatus:string, postId: string, userId: string){
+  //   await this.decDisLike(postId)
+  //   await this.updatePostLikeStatus(postId, likeStatus, userId)
 
-    return true
-  }
+  //   return true
+  // }
 
   // async updateLikeStatus(likeLikeStatus: string, likeStatus: string, postId: string, userId: string) {
   //   if(likeLikeStatus === LikeStatuses.None){
@@ -90,11 +90,15 @@ export class PostRepository {
   async decDisLike(postId: string){
     await this.postModel.updateOne({_id: postId}, {$inc: {'likesAndDislikesCount.dislikesCount': -1} })
   }
-  async updatePostLikeStatus(postId: string, likeStatus: string, userId: string) {
-    const post = await this.postModel.findOne({_id: postId})
-    const like = post.likesAndDislikes.find(likeOrDislike => likeOrDislike.userId === userId)
-    like.likeStatus = likeStatus
+
+  async updatePostLikeStatus(post: PostDocument) {
     post.markModified('likesAndDislikes')
     await post.save()
+  }
+
+  async getPostDocument(postId): Promise<PostDocument> {
+    const post = await this.postModel.findById(postId)
+
+    return post
   }
 }
