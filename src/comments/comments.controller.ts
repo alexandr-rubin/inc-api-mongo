@@ -13,6 +13,8 @@ import { UserQueryRepository } from "../users/user.query-repository";
 import { Roles } from "../decorators/roles.decorator";
 import { UserRoles } from "../helpers/userRoles";
 import { RolesGuard } from "../guards/roles.guard";
+import { CommandBus } from "@nestjs/cqrs";
+import { UpdateCommentLikeStatusCommand } from "./use-cases/update-comment-like-use-case";
 
 // comments 403?
 UseGuards(RolesGuard)
@@ -20,7 +22,7 @@ UseGuards(RolesGuard)
 @Controller('comments')
 export class CommentController {
   constructor(private readonly commentQueryRepository: CommentQueryRepository, private readonly commentService: CommentService, private readonly jwtAuthService: JwtAuthService,
-    private readonly userQueryRepository: UserQueryRepository){}
+    private readonly userQueryRepository: UserQueryRepository, private commandBus: CommandBus){}
   @Get(':commentId')
   async getCommentById(@Param('commentId', CommentIdValidationPipe) id: string, @Req() req: Request) {
     let userId = ''
@@ -62,6 +64,7 @@ export class CommentController {
   @HttpCode(HttpStatusCode.NO_CONTENT_204)
   @Put('/:commentId/like-status')
   async updateLikeStatus(@Param('commentId', CommentIdValidationPipe) commentId: string, @Body() likeStatus: likeStatusValidation, @Req() req: AccessTokenVrifyModel) {
-    return await this.commentService.updatePostLikeStatus(commentId, likeStatus.likeStatus, req.user.userId)
+    //return await this.commentService.updateCommentLike(commentId, likeStatus.likeStatus, req.user.userId)
+    return await this.commandBus.execute(new UpdateCommentLikeStatusCommand(commentId, likeStatus.likeStatus, req.user.userId))
   }
 }

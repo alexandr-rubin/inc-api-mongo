@@ -61,6 +61,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { UpdatePostLikeStatusUseCase } from './posts/use-cases/update-post-like-staus-use-case';
 import { BloggerBlogsUsersController } from './blogs/blogs-users.controller';
 import { BlogBannedUsers, BlogBannedUsersSchema } from './blogs/models/schemas/BlogBannedUsers';
+import { UpdateCommentLikeStatusUseCase } from './comments/use-cases/update-comment-like-use-case';
 
 @Module({
   imports: [
@@ -129,7 +130,7 @@ import { BlogBannedUsers, BlogBannedUsersSchema } from './blogs/models/schemas/B
   providers: [AppService, IsBlogIdValidConstraint, JwtStrategy, JwtAuthGuard,
     JwtAuthService, RolesGuard,
     BlogService, BlogQueryRepository, BlogRepository, BlogExistValidator,
-    CommentService, CommentQueryRepository, CommentRepository, CommentExistValidator,
+    CommentService, CommentQueryRepository, CommentRepository, CommentExistValidator, UpdateCommentLikeStatusUseCase,
     PostService, PostQueryRepository, PostRepository, PostExistValidator, UpdatePostLikeStatusUseCase,
     UserService, UserQueryRepository, UserRepository, UserExistValidator,
     EmailAdapter, EmailService, EmailConfirmationCodeValidator,

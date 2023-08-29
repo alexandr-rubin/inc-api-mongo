@@ -47,15 +47,22 @@ describe('Blogs (e2e)', () => {
       "password": "zxc228",
       "email": "zxc@mail.com"
     }
-  describe('Get blogs', () => {
+  describe('Delete all data', () => {
     it('Delete all', async function() {
       await request(httpServer).delete('/testing/all-data').expect(HttpStatusCode.NO_CONTENT_204)
     })
+    it('sould return no users', async function() {
+      //await request(httpServer).post('/sa/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').send(user).expect(HttpStatusCode.CREATED_201)
+      const usersRes = await request(httpServer).get('/sa/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.OK_200)
+      expect(usersRes.body.items.length).toBe(0)
+    })
     it('sould return no blogs', async function() {
-      await request(httpServer).post('/sa/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').send(user).expect(HttpStatusCode.CREATED_201)
-      const response = await request(httpServer).get('/sa/users').set('Authorization', 'Basic YWRtaW46cXdlcnR5').expect(HttpStatusCode.OK_200)
-
-      console.log(response.body)
+      const blogsRes = await request(httpServer).get('/blogs').expect(HttpStatusCode.OK_200)
+      expect(blogsRes.body.items.length).toBe(0)
+    })
+    it('sould return no posts', async function() {
+      const postsRes = await request(httpServer).get('/posts').expect(HttpStatusCode.OK_200)
+      expect(postsRes.body.items.length).toBe(0)
     })
   })
 });
